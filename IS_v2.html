@@ -1,0 +1,2317 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Information Systems -> Information and Intelligent Systems</title>
+  <link rel="icon" href="https://justaidyn.vercel.app/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f4efe5;
+      --bg-soft: rgba(255, 251, 244, 0.84);
+      --panel: rgba(255, 255, 255, 0.74);
+      --panel-strong: rgba(255, 255, 255, 0.92);
+      --ink: #162235;
+      --muted: #56657c;
+      --line: rgba(22, 34, 53, 0.12);
+      --shadow: 0 30px 70px rgba(18, 33, 53, 0.16);
+      --accent-old: #0f6b73;
+      --accent-old-soft: rgba(15, 107, 115, 0.12);
+      --accent-new: #a65c1b;
+      --accent-new-soft: rgba(166, 92, 27, 0.12);
+      --accent-bridge: #314a72;
+      --gold: #d8b36d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Roboto Slab", "Times New Roman", serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(216, 179, 109, 0.28), transparent 24rem),
+        radial-gradient(circle at 92% 15%, rgba(15, 107, 115, 0.18), transparent 18rem),
+        linear-gradient(155deg, #fbf8f2 0%, #f4efe5 52%, #ede4d4 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(22, 34, 53, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(22, 34, 53, 0.025) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at center, black 42%, transparent 90%);
+      -webkit-mask-image: radial-gradient(circle at center, black 42%, transparent 90%);
+      opacity: 0.6;
+    }
+
+    .page {
+      position: relative;
+      max-width: none;
+      margin: 0 28px 0 320px;
+      padding: 48px 28px 64px;
+    }
+
+    .top-nav {
+      position: fixed;
+      top: 24px;
+      left: 24px;
+      z-index: 40;
+      width: 260px;
+      padding: 14px;
+      border-radius: 28px;
+      border: 1px solid rgba(22, 34, 53, 0.09);
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 22px 40px rgba(22, 34, 53, 0.1);
+    }
+
+    .top-nav summary {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      cursor: pointer;
+      list-style: none;
+      min-height: 48px;
+    }
+
+    .top-nav summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .top-nav-label {
+      display: block;
+      margin: 0;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(49, 74, 114, 0.07);
+      color: var(--accent-bridge);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-align: left;
+    }
+
+    .top-nav-icon {
+      display: inline-grid;
+      gap: 4px;
+      padding: 8px;
+      border-radius: 12px;
+      background: rgba(49, 74, 114, 0.08);
+      border: 1px solid rgba(49, 74, 114, 0.08);
+      flex-shrink: 0;
+    }
+
+    .top-nav-icon span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      border-radius: 999px;
+      background: var(--accent-bridge);
+    }
+
+    .top-nav-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .top-nav[open] .top-nav-list {
+      display: grid;
+    }
+
+    .top-nav a {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 16px;
+      text-decoration: none;
+      color: var(--accent-bridge);
+      background: rgba(49, 74, 114, 0.07);
+      border: 1px solid rgba(49, 74, 114, 0.08);
+      font-size: 0.88rem;
+      font-weight: 700;
+      transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+    }
+
+    .top-nav a:hover {
+      transform: translateX(2px);
+      background: rgba(49, 74, 114, 0.12);
+      border-color: rgba(49, 74, 114, 0.16);
+    }
+
+    .lang-switcher {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin: 14px 0 12px;
+    }
+
+    .lang-btn {
+      appearance: none;
+      border: 1px solid rgba(49, 74, 114, 0.12);
+      background: rgba(49, 74, 114, 0.06);
+      color: var(--accent-bridge);
+      border-radius: 14px;
+      padding: 10px 8px;
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      transition: transform 180ms ease, background 180ms ease, border-color 180ms ease, color 180ms ease;
+    }
+
+    .lang-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(49, 74, 114, 0.1);
+      border-color: rgba(49, 74, 114, 0.18);
+    }
+
+    .lang-btn.is-active {
+      background: linear-gradient(135deg, rgba(49, 74, 114, 0.94), rgba(73, 95, 132, 0.92));
+      border-color: rgba(49, 74, 114, 0.9);
+      color: #fff;
+      box-shadow: 0 12px 22px rgba(49, 74, 114, 0.18);
+    }
+
+    .section-anchor {
+      scroll-margin-top: 32px;
+    }
+
+    .page-controls {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 35;
+      display: grid;
+      gap: 10px;
+    }
+
+    .page-control {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      border: 1px solid rgba(22, 34, 53, 0.1);
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--accent-bridge);
+      box-shadow: 0 16px 28px rgba(22, 34, 53, 0.12);
+      text-decoration: none;
+      font-size: 1.15rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+    }
+
+    .page-control:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.98);
+      border-color: rgba(49, 74, 114, 0.18);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 44px 44px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 32px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(251, 246, 238, 0.84));
+      box-shadow: var(--shadow);
+      isolation: isolate;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(6px);
+      opacity: 0.8;
+      z-index: -1;
+    }
+
+    .hero::before {
+      width: 320px;
+      height: 320px;
+      right: -120px;
+      top: -120px;
+      background: radial-gradient(circle, rgba(15, 107, 115, 0.2), transparent 68%);
+    }
+
+    .hero::after {
+      width: 360px;
+      height: 360px;
+      left: -150px;
+      bottom: -200px;
+      background: radial-gradient(circle, rgba(166, 92, 27, 0.18), transparent 70%);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.32fr) minmax(280px, 0.68fr);
+      gap: 30px;
+      align-items: end;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-rows: minmax(220px, 1fr) auto;
+      min-height: 100%;
+    }
+
+    .hero-title {
+      margin: 0;
+      font-family: "Roboto Slab", "Times New Roman", serif;
+      font-size: clamp(2.55rem, 4.4vw, 5rem);
+      line-height: 0.98;
+      letter-spacing: -0.045em;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .hero-title-lead {
+      display: block;
+      max-width: 8ch;
+    }
+
+    .hero-transition {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 82px minmax(0, 1fr);
+      gap: 16px;
+      margin-top: 18px;
+      align-items: stretch;
+      max-width: 980px;
+    }
+
+    .hero-stage {
+      position: relative;
+      padding: 18px 20px 20px;
+      border-radius: 28px;
+      border: 1px solid rgba(22, 34, 53, 0.1);
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 16px 30px rgba(22, 34, 53, 0.08);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+
+    .hero-stage::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+    }
+
+    .hero-stage-old::before {
+      background: linear-gradient(90deg, rgba(15, 107, 115, 0.95), rgba(15, 107, 115, 0.35));
+    }
+
+    .hero-stage-new::before {
+      background: linear-gradient(90deg, rgba(166, 92, 27, 0.95), rgba(166, 92, 27, 0.35));
+    }
+
+    .hero-stage-title {
+      display: block;
+      font-family: "Roboto Slab", "Times New Roman", serif;
+      font-size: clamp(1.15rem, 1.85vw, 1.85rem);
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-stage-old .hero-stage-title {
+      color: var(--accent-old);
+    }
+
+    .hero-stage-new .hero-stage-title {
+      color: var(--accent-new);
+    }
+
+    .hero-stage-desc {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+      line-height: 1.62;
+    }
+
+    .hero-arrow-card {
+      display: grid;
+      place-items: center;
+      border-radius: 28px;
+      border: 1px solid rgba(49, 74, 114, 0.12);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(245, 240, 232, 0.78));
+      box-shadow: 0 14px 24px rgba(22, 34, 53, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-arrow-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-old), var(--gold), var(--accent-new));
+    }
+
+    .hero-arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      font-size: 1.45rem;
+      color: var(--accent-bridge);
+      background: rgba(49, 74, 114, 0.08);
+      border: 1px solid rgba(49, 74, 114, 0.1);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    }
+
+    .hero-side {
+      position: relative;
+      padding: 24px 22px;
+      border-radius: 26px;
+      border: 1px solid rgba(22, 34, 53, 0.08);
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.88), rgba(247, 241, 231, 0.86));
+      box-shadow: 0 22px 40px rgba(22, 34, 53, 0.12);
+      align-self: stretch;
+    }
+
+    .hero-side::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-old), var(--gold), var(--accent-new));
+    }
+
+    .hero-side-label {
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(49, 74, 114, 0.08);
+      color: var(--accent-bridge);
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .hero-side h2 {
+      margin: 14px 0 12px;
+      font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+      line-height: 1.25;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-side p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.96rem;
+    }
+
+    .hero-points {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .hero-point {
+      display: grid;
+      grid-template-columns: 12px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      padding: 12px 0 0;
+      border-top: 1px solid rgba(22, 34, 53, 0.08);
+    }
+
+    .hero-point::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      margin-top: 4px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-old), var(--accent-new));
+      box-shadow: 0 0 0 4px rgba(49, 74, 114, 0.05);
+    }
+
+    .hero-point strong {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 0.96rem;
+      line-height: 1.4;
+    }
+
+    .hero-point span {
+      display: block;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.92rem;
+    }
+
+    .language-panel {
+      margin-top: 24px;
+      padding: 24px 26px;
+      border-radius: 28px;
+      border: 1px solid rgba(22, 34, 53, 0.1);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(250, 245, 236, 0.88));
+      box-shadow: var(--shadow);
+    }
+
+    .language-kicker {
+      display: inline-block;
+      margin-bottom: 16px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-bridge);
+      background: rgba(49, 74, 114, 0.1);
+    }
+
+    .language-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+    }
+
+    .language-card {
+      position: relative;
+      overflow: hidden;
+      padding: 20px 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(22, 34, 53, 0.08);
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .language-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-old), var(--gold), var(--accent-new));
+    }
+
+    .language-code {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(22, 34, 53, 0.08);
+      color: var(--ink);
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .language-old,
+    .language-new {
+      margin: 0;
+      line-height: 1.55;
+      font-size: 1.04rem;
+    }
+
+    .language-old {
+      margin-top: 18px;
+      color: var(--muted);
+    }
+
+    .language-arrow {
+      margin: 10px 0;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent-new);
+    }
+
+    .language-new {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .language-rationale {
+      position: relative;
+      margin-top: 18px;
+      padding: 18px 20px 20px 22px;
+      border-radius: 22px;
+      border: 1px solid rgba(22, 34, 53, 0.08);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(246, 239, 228, 0.74));
+      overflow: hidden;
+    }
+
+    .language-rationale::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-old), var(--gold), var(--accent-new));
+    }
+
+    .language-rationale strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.98rem;
+      line-height: 1.45;
+      color: var(--ink);
+    }
+
+    .language-rationale p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.68;
+      font-size: 0.96rem;
+    }
+
+    .diagram {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 0.62fr) minmax(0, 1.12fr);
+      gap: 26px;
+      margin-top: 28px;
+      align-items: stretch;
+    }
+
+    .panel {
+      position: relative;
+      overflow: hidden;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      background: linear-gradient(180deg, var(--panel-strong), var(--panel));
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 35%);
+      opacity: 0.9;
+    }
+
+    .panel-old {
+      border-color: rgba(15, 107, 115, 0.2);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(15, 107, 115, 0.05)),
+        linear-gradient(180deg, var(--panel-strong), var(--panel));
+    }
+
+    .panel-new {
+      border-color: rgba(166, 92, 27, 0.22);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(166, 92, 27, 0.06)),
+        linear-gradient(180deg, var(--panel-strong), var(--panel));
+    }
+
+    .section-label {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .panel-old .section-label {
+      color: var(--accent-old);
+      background: var(--accent-old-soft);
+    }
+
+    .panel-new .section-label {
+      color: var(--accent-new);
+      background: var(--accent-new-soft);
+    }
+
+    .panel h2 {
+      margin: 0;
+      font-size: clamp(1.6rem, 2vw, 2.15rem);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+
+    .panel .subtitle {
+      margin: 8px 0 20px;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .name-ru {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: rgba(22, 34, 53, 0.72);
+    }
+
+    .node-list {
+      position: relative;
+      display: grid;
+      gap: 18px;
+      margin-top: 16px;
+    }
+
+    .node-list::before {
+      content: "";
+      position: absolute;
+      left: 26px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(22, 34, 53, 0.12), rgba(22, 34, 53, 0.02));
+    }
+
+    .node {
+      position: relative;
+      display: grid;
+      grid-template-columns: 64px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.68);
+      backdrop-filter: blur(12px);
+      transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+    }
+
+    .node:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 30px rgba(22, 34, 53, 0.12);
+      border-color: rgba(22, 34, 53, 0.16);
+    }
+
+    .node-badge {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      font-family: "Roboto Slab", "Times New Roman", serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: white;
+      z-index: 1;
+    }
+
+    .node-badge::after {
+      content: "";
+      position: absolute;
+      inset: -6px;
+      border-radius: 22px;
+      z-index: -1;
+      opacity: 0.16;
+    }
+
+    .panel-old .node-badge {
+      background: linear-gradient(135deg, #0b8088, #0d5860);
+    }
+
+    .panel-old .node-badge::after {
+      background: var(--accent-old);
+    }
+
+    .panel-new .node-badge {
+      background: linear-gradient(135deg, #be6d25, #8d4713);
+    }
+
+    .panel-new .node-badge::after {
+      background: var(--accent-new);
+    }
+
+    .node h3 {
+      margin: 0 0 8px;
+      font-size: 1.08rem;
+      line-height: 1.32;
+    }
+
+    .node p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.98rem;
+    }
+
+    .bridge {
+      display: grid;
+      gap: 20px;
+      align-content: center;
+      justify-items: stretch;
+      padding: 0;
+      background:
+        linear-gradient(180deg, rgba(49, 74, 114, 0.06), rgba(255, 255, 255, 0.75)),
+        linear-gradient(180deg, var(--panel-strong), var(--panel));
+      border-color: rgba(49, 74, 114, 0.18);
+    }
+
+    .bridge-top {
+      padding: 26px 26px 0;
+      text-align: center;
+    }
+
+    .bridge-top .section-label {
+      color: var(--accent-bridge);
+      background: rgba(49, 74, 114, 0.1);
+      margin-bottom: 10px;
+    }
+
+    .bridge-top h2 {
+      font-size: clamp(1.45rem, 1.8vw, 2rem);
+    }
+
+    .bridge-top p {
+      margin: 12px auto 0;
+      max-width: 360px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.98rem;
+    }
+
+    .bridge-arrow {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 32px;
+      min-height: 110px;
+    }
+
+    .bridge-arrow::before {
+      content: "";
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent-old), var(--gold), var(--accent-new));
+      box-shadow: 0 0 0 10px rgba(49, 74, 114, 0.04);
+    }
+
+    .bridge-arrow::after {
+      content: "";
+      position: absolute;
+      right: 20px;
+      width: 24px;
+      height: 24px;
+      border-top: 8px solid var(--accent-new);
+      border-right: 8px solid var(--accent-new);
+      transform: rotate(45deg);
+      border-radius: 2px;
+    }
+
+    .bridge-flow {
+      display: grid;
+      gap: 12px;
+      padding: 0 26px;
+    }
+
+    .flow-chip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(49, 74, 114, 0.12);
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .flow-chip span:last-child {
+      color: rgba(49, 74, 114, 0.7);
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .formula {
+      margin: 6px 26px 26px;
+      padding: 18px 18px 20px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, rgba(49, 74, 114, 0.9), rgba(28, 45, 73, 0.96));
+      color: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 18px 32px rgba(29, 43, 69, 0.26);
+    }
+
+    .formula small {
+      display: block;
+      margin-bottom: 10px;
+      opacity: 0.78;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .formula strong {
+      display: block;
+      font-size: 1.06rem;
+      line-height: 1.6;
+      font-weight: 700;
+    }
+
+    .summary {
+      margin-top: 26px;
+      padding: 26px 30px;
+      border-radius: 28px;
+      border: 1px solid rgba(22, 34, 53, 0.1);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(253, 249, 241, 0.82));
+      box-shadow: var(--shadow);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.95fr);
+      gap: 20px;
+      align-items: center;
+    }
+
+    .summary h2 {
+      margin: 0 0 12px;
+      font-size: clamp(1.4rem, 1.9vw, 2rem);
+      letter-spacing: -0.02em;
+    }
+
+    .summary p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    .pillars {
+      display: grid;
+      gap: 12px;
+    }
+
+    .pillar {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(22, 34, 53, 0.09);
+    }
+
+    .pillar strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.98rem;
+    }
+
+    .pillar span {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.94rem;
+    }
+
+    .note {
+      margin-top: 20px;
+      padding: 18px 20px;
+      border-left: 4px solid var(--gold);
+      border-radius: 0 18px 18px 0;
+      background: rgba(216, 179, 109, 0.11);
+      color: rgba(22, 34, 53, 0.86);
+      line-height: 1.65;
+      font-size: 0.98rem;
+    }
+
+    .page-footer {
+      margin-top: 26px;
+      padding: 20px 24px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        radial-gradient(circle at top right, rgba(74, 128, 196, 0.16), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(201, 168, 76, 0.12), transparent 28%),
+        linear-gradient(135deg, #0d121a, #131a24 48%, #171e29 100%);
+      box-shadow: 0 26px 48px rgba(8, 12, 18, 0.28);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 18px 24px;
+      align-items: start;
+    }
+
+    .footer-block strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.98rem;
+      line-height: 1.45;
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    .footer-block p {
+      margin: 0;
+      color: rgba(221, 228, 240, 0.78);
+      line-height: 1.65;
+      font-size: 0.95rem;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .footer-link {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.06);
+      color: #d7e4ff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+      transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+    }
+
+    .footer-link:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.18);
+      transform: translateY(-1px);
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(221, 228, 240, 0.72);
+      line-height: 1.65;
+      font-size: 0.92rem;
+    }
+
+    .insight-section {
+      margin-top: 26px;
+      padding: 26px 30px;
+      border-radius: 28px;
+      border: 1px solid rgba(22, 34, 53, 0.1);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(250, 244, 233, 0.84));
+      box-shadow: var(--shadow);
+    }
+
+    .insight-kicker {
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-bridge);
+      background: rgba(49, 74, 114, 0.1);
+    }
+
+    .insight-section h2 {
+      margin: 0 0 12px;
+      font-size: clamp(1.45rem, 2vw, 2.05rem);
+      letter-spacing: -0.02em;
+    }
+
+    .insight-intro {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.72;
+      font-size: 1rem;
+    }
+
+    .expansion-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .expansion-card {
+      position: relative;
+      overflow: hidden;
+      padding: 18px 18px 20px;
+      border-radius: 22px;
+      border: 1px solid rgba(22, 34, 53, 0.08);
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .expansion-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-old), var(--gold), var(--accent-new));
+    }
+
+    .expansion-state {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent-bridge);
+      background: rgba(49, 74, 114, 0.09);
+    }
+
+    .expansion-card strong {
+      display: block;
+      margin-top: 14px;
+      font-size: 1.02rem;
+      line-height: 1.4;
+    }
+
+    .expansion-card p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.96rem;
+    }
+
+    .architecture-stack {
+      display: grid;
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .arch-layer {
+      display: grid;
+      grid-template-columns: 68px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(22, 34, 53, 0.08);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(244, 238, 228, 0.8));
+    }
+
+    .arch-index {
+      display: grid;
+      place-items: center;
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      color: white;
+      font-family: "Roboto Slab", "Times New Roman", serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      background: linear-gradient(135deg, var(--accent-bridge), #22314f);
+      box-shadow: 0 14px 26px rgba(34, 49, 79, 0.18);
+    }
+
+    .arch-layer:nth-child(2) .arch-index {
+      background: linear-gradient(135deg, #245e6c, #0f6b73);
+    }
+
+    .arch-layer:nth-child(3) .arch-index {
+      background: linear-gradient(135deg, #2f6b69, #2f8a73);
+    }
+
+    .arch-layer:nth-child(4) .arch-index {
+      background: linear-gradient(135deg, #9b6b1c, #c38729);
+    }
+
+    .arch-layer:nth-child(5) .arch-index {
+      background: linear-gradient(135deg, #a65c1b, #854112);
+    }
+
+    .arch-body strong {
+      display: block;
+      font-size: 1.03rem;
+      line-height: 1.4;
+    }
+
+    .arch-body p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.96rem;
+    }
+
+    .capability-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .capability-card {
+      position: relative;
+      padding: 18px 18px 20px;
+      border-radius: 22px;
+      border: 1px solid rgba(22, 34, 53, 0.08);
+      background: rgba(255, 255, 255, 0.84);
+      overflow: hidden;
+    }
+
+    .capability-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: linear-gradient(90deg, rgba(15, 107, 115, 0.85), rgba(49, 74, 114, 0.85), rgba(166, 92, 27, 0.85));
+    }
+
+    .capability-card strong {
+      display: block;
+      margin-bottom: 9px;
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .capability-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 1160px) {
+      .page {
+        margin: 0 20px 0 292px;
+        padding: 36px 20px 56px;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .diagram {
+        grid-template-columns: 1fr;
+      }
+
+      .bridge-arrow {
+        min-height: 78px;
+        padding: 0 24px;
+      }
+
+      .bridge-arrow::before {
+        height: 6px;
+      }
+
+      .bridge-arrow::after {
+        right: 18px;
+        width: 20px;
+        height: 20px;
+        border-top-width: 6px;
+        border-right-width: 6px;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .expansion-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .capability-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        margin: 0;
+        padding: 88px 16px 38px;
+      }
+
+      .top-nav {
+        top: 14px;
+        left: 14px;
+        right: 14px;
+        width: auto;
+        padding: 10px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.96);
+        box-shadow: 0 16px 28px rgba(22, 34, 53, 0.14);
+      }
+
+      .top-nav summary {
+        display: flex !important;
+        padding: 2px 2px 2px 4px;
+      }
+
+      .top-nav-label {
+        padding: 0 0 0 2px;
+        background: none;
+        font-size: 0.82rem;
+        color: var(--accent-bridge);
+      }
+
+      .top-nav-list {
+        display: none !important;
+        margin-top: 12px;
+      }
+
+      .top-nav[open] .top-nav-list {
+        display: grid !important;
+      }
+
+      .lang-switcher {
+        margin-top: 12px;
+      }
+
+      .hero,
+      .panel,
+      .insight-section,
+      .summary {
+        border-radius: 24px;
+      }
+
+      .hero {
+        padding: 30px 22px;
+      }
+
+      .hero-title {
+        font-size: clamp(2.2rem, 10vw, 3.5rem);
+        line-height: 1;
+      }
+
+      .hero-copy {
+        grid-template-rows: auto auto;
+      }
+
+      .hero-transition {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-arrow-card {
+        min-height: 78px;
+      }
+
+      .hero-arrow {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+      }
+
+      .hero-side {
+        padding: 20px 18px;
+      }
+
+      .capability-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        padding: 20px;
+      }
+
+      .node {
+        grid-template-columns: 1fr;
+      }
+
+      .node-badge {
+        width: 48px;
+        height: 48px;
+      }
+
+      .node-list::before {
+        display: none;
+      }
+
+      .bridge-top,
+      .bridge-flow,
+      .formula {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .formula {
+        margin-left: 20px;
+        margin-right: 20px;
+      }
+
+      .summary {
+        padding: 22px 20px;
+      }
+
+      .page-footer {
+        padding: 18px 18px 20px;
+        border-radius: 20px;
+      }
+
+      .language-panel {
+        padding: 20px;
+        border-radius: 24px;
+      }
+
+      .insight-section {
+        padding: 22px 20px;
+      }
+
+      .arch-layer {
+        grid-template-columns: 1fr;
+      }
+
+      .section-anchor {
+        scroll-margin-top: 84px;
+      }
+
+      .page-controls {
+        right: 14px;
+        bottom: 14px;
+      }
+
+      .page-control {
+        width: 46px;
+        height: 46px;
+        border-radius: 16px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      .node {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <details class="top-nav" open>
+      <summary>
+        <span class="top-nav-label">Навигация по странице</span>
+        <span class="top-nav-icon" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </summary>
+      <div class="lang-switcher" aria-label="Выбор языка">
+        <button class="lang-btn" type="button" data-lang="kk">Qazaq</button>
+        <button class="lang-btn" type="button" data-lang="en">Eng</button>
+        <button class="lang-btn" type="button" data-lang="ru">Ru</button>
+      </div>
+      <ul class="top-nav-list">
+        <li><a href="#hero">Main</a></li>
+        <li><a href="#languages">Официальные языковые формы</a></li>
+        <li><a href="#expansion-logic">Логика расширения</a></li>
+        <li><a href="#department-profile">Профиль кафедры</a></li>
+        <li><a href="#architecture">Архитектурные слои</a></li>
+        <li><a href="#capabilities">Интеллектуальные возможности</a></li>
+        <li><a href="#final-positioning">Итоговое позиционирование кафедры</a></li>
+        <li><a href="#about-author">Об авторе этой страницы</a></li>
+      </ul>
+    </details>
+
+    <header class="hero section-anchor" id="hero">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <h1 class="hero-title">
+            <span class="hero-title-lead">Эволюция профиля кафедры</span>
+          </h1>
+          <div class="hero-transition">
+            <div class="hero-stage hero-stage-old">
+              <span class="hero-stage-title">Information Systems</span>
+              <p class="hero-stage-desc">Проектирование, хранение и автоматизация данных.</p>
+            </div>
+
+            <div class="hero-arrow-card" aria-hidden="true">
+              <span class="hero-arrow">→</span>
+            </div>
+
+            <div class="hero-stage hero-stage-new">
+              <span class="hero-stage-title">Information and Intelligent Systems</span>
+              <p class="hero-stage-desc">Проектирование, хранение и автоматизация данных, аналитика, моделирование, машинное обучение, искусственный интеллект и поддержка принятия решений на основе данных.</p>
+            </div>
+          </div>
+        </div>
+
+        <aside class="hero-side" aria-label="Ключевой смысл переименования">
+          <span class="hero-side-label">Ключевой смысл</span>
+          <h2>Новое название расширяет профиль кафедры, а не заменяет его</h2>
+          <p>
+            Информационные системы сохраняются как фундамент, а интеллектуальный контур
+            добавляет аналитику, модели, AI-сервисы и data-driven поддержку решений.
+          </p>
+
+          <div class="hero-points">
+            <div class="hero-point">
+              <div>
+                <strong>Преемственность</strong>
+                <span>ERP, базы данных, приложения, автоматизация и интеграция остаются базой направления.</span>
+              </div>
+            </div>
+
+            <div class="hero-point">
+              <div>
+                <strong>Расширение</strong>
+                <span>Добавляются Data Science, BI, ML, AI, интеллектуальные интерфейсы и цифровые помощники.</span>
+              </div>
+            </div>
+
+            <div class="hero-point">
+              <div>
+                <strong>Практический результат</strong>
+                <span>Фокус смещается от хранения данных к извлечению знаний и усилению качества решений.</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </header>
+
+    <section class="language-panel section-anchor" id="languages" aria-label="Наименование кафедры на трех языках">
+      <span class="language-kicker">Официальные языковые формы</span>
+      <div class="language-grid">
+        <article class="language-card">
+          <span class="language-code">KK</span>
+          <p class="language-old">«Ақпараттық жүйелер»</p>
+          <div class="language-arrow" aria-hidden="true">→</div>
+          <p class="language-new">«Ақпараттық және интеллектуалды жүйелер»</p>
+        </article>
+
+        <article class="language-card">
+          <span class="language-code">EN</span>
+          <p class="language-old">«Information Systems»</p>
+          <div class="language-arrow" aria-hidden="true">→</div>
+          <p class="language-new">«Information and Intelligent Systems»</p>
+        </article>
+
+        <article class="language-card">
+          <span class="language-code">RU</span>
+          <p class="language-old">«Информационные системы»</p>
+          <div class="language-arrow" aria-hidden="true">→</div>
+          <p class="language-new">«Информационные и интеллектуальные системы»</p>
+        </article>
+      </div>
+
+      <div class="language-rationale">
+        <strong>Почему используется формулировка «Information and Intelligent Systems», а не «Intelligent and Information Systems»</strong>
+        <p>
+          Сочетание <b>Information Systems</b> является устоявшимся международным академическим и профессиональным термином,
+          поэтому оно сохраняется как базовая и узнаваемая основа названия. Добавление <b>and Intelligent</b> сразу показывает,
+          что речь идёт уже не о прежнем направлении в его классическом виде, а о его современном развитии и расширении.
+          Вариант <b>Intelligent and Information Systems</b> звучал бы менее естественно, нарушал бы терминологическую преемственность
+          и хуже передавал бы идею эволюции информационных систем в сторону интеллектуальных.
+        </p>
+      </div>
+    </section>
+
+    <main class="diagram">
+      <section class="panel panel-old">
+        <span class="section-label">Было</span>
+        <h2>
+          Information Systems
+          <span class="name-ru">Информационные системы</span>
+        </h2>
+        <p class="subtitle">
+          Классический профиль кафедры, ориентированный на разработку, внедрение,
+          интеграцию и эксплуатацию цифровых решений для организаций и их процессов.
+        </p>
+
+        <div class="node-list">
+          <article class="node">
+            <div class="node-badge">ERP</div>
+            <div>
+              <h3>Корпоративные и прикладные решения</h3>
+              <p>
+                ERP, CRM, веб-порталы, настольные и мобильные приложения,
+                обеспечивающие цифровизацию деятельности организаций и пользователей.
+              </p>
+            </div>
+          </article>
+
+          <article class="node">
+            <div class="node-badge">DB</div>
+            <div>
+              <h3>Базы данных и хранилища</h3>
+              <p>
+                Проектирование структур данных, организация хранения, обеспечение
+                целостности, доступности и управляемости данных и метаданных.
+              </p>
+            </div>
+          </article>
+
+          <article class="node">
+            <div class="node-badge">BPM</div>
+            <div>
+              <h3>Автоматизация и интеграция процессов</h3>
+              <p>
+                Связь программных решений с бизнес-процессами, документооборотом,
+                отчётностью и сервисами предприятия или учреждения.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel bridge section-anchor" id="expansion-logic">
+        <div class="bridge-top">
+          <span class="section-label">Логика расширения</span>
+          <h2>От данных к знаниям и решениям</h2>
+          <p>
+            Информационные системы формируют цифровую основу, а интеллектуальные методы
+            превращают накопленные данные в аналитику, прогнозы, рекомендации и новые сервисы.
+          </p>
+        </div>
+
+        <div class="bridge-arrow" aria-hidden="true"></div>
+
+        <div class="bridge-flow">
+          <div class="flow-chip">
+            <span>Данные и метаданные</span>
+            <span>Base</span>
+          </div>
+          <div class="flow-chip">
+            <span>Аналитика и моделирование</span>
+            <span>Insight</span>
+          </div>
+          <div class="flow-chip">
+            <span>Интеллектуальные функции</span>
+            <span>AI</span>
+          </div>
+          <div class="flow-chip">
+            <span>Поддержка принятия решений</span>
+            <span>Value</span>
+          </div>
+        </div>
+
+        <div class="formula">
+          <small>Формула нового позиционирования</small>
+          <strong>
+            Information and Intelligent Systems = Information Systems +
+            управление данными + аналитика и Data Science + ML/AI +
+            интеллектуальные сервисы и поддержка принятия решений
+          </strong>
+        </div>
+      </section>
+
+      <section class="panel panel-new">
+        <span class="section-label">Будет</span>
+        <h2>
+          Information and Intelligent Systems
+          <span class="name-ru">Информационные и интеллектуальные системы</span>
+        </h2>
+        <p class="subtitle">
+          Расширенный профиль кафедры, в котором информационные системы остаются фундаментом,
+          а данные используются для извлечения знаний, построения интеллектуальных моделей
+          и создания систем поддержки решений.
+        </p>
+
+        <div class="node-list">
+          <article class="node">
+            <div class="node-badge">DE</div>
+            <div>
+              <h3>Data Engineering и управление данными</h3>
+              <p>
+                Подготовка, интеграция, очистка, каталогизация и обеспечение качества
+                данных как основы для аналитических и интеллектуальных решений.
+              </p>
+            </div>
+          </article>
+
+          <article class="node">
+            <div class="node-badge">DS</div>
+            <div>
+              <h3>Аналитика, Data Science и бизнес-анализ</h3>
+              <p>
+                Выявление закономерностей, интерпретация данных, прогнозирование
+                и получение прикладных выводов для управленческих и отраслевых задач.
+              </p>
+            </div>
+          </article>
+
+          <article class="node">
+            <div class="node-badge">AI</div>
+            <div>
+              <h3>Машинное обучение и искусственный интеллект</h3>
+              <p>
+                Построение интеллектуальных моделей, предиктивных, рекомендательных
+                и генеративных механизмов для автоматизации анализа и действий.
+              </p>
+            </div>
+          </article>
+
+          <article class="node">
+            <div class="node-badge">APP</div>
+            <div>
+              <h3>Интеллектуальные приложения и сервисы</h3>
+              <p>
+                Веб-, настольные и мобильные системы нового поколения со встроенной аналитикой,
+                адаптивной логикой, персонализацией и AI-функциями.
+              </p>
+            </div>
+          </article>
+
+          <article class="node">
+            <div class="node-badge">DSS</div>
+            <div>
+              <h3>Поддержка принятия решений</h3>
+              <p>
+                Формирование рекомендаций, сценариев, отчётов, цифровых помощников
+                и инструментов для обоснованного и своевременного выбора решений.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <section class="insight-section section-anchor" id="department-profile">
+      <span class="insight-kicker">Профиль кафедры</span>
+      <h2>Структура современного профиля кафедры</h2>
+      <p class="insight-intro">
+        Направление объединяет классические области информационных систем и современные интеллектуальные контуры:
+        корпоративные платформы, данные и хранилища, прикладные решения, архитектуру и интеграцию,
+        информационную безопасность, BI, Data Science, MLOps и интеллектуальные сервисы.
+      </p>
+
+      <div class="expansion-grid">
+        <article class="expansion-card">
+          <span class="expansion-state">Базовый прикладной контур</span>
+          <strong>ERP и корпоративные платформы</strong>
+          <p>
+            Классические ERP, CRM и отраслевые ИС остаются ядром подготовки, но рассматриваются уже как источник
+            операционных данных для прогнозирования, рекомендаций и интеллектуальной автоматизации.
+          </p>
+        </article>
+
+        <article class="expansion-card">
+          <span class="expansion-state">Контур данных</span>
+          <strong>Базы данных, хранилища и озёра данных</strong>
+          <p>
+            Помимо СУБД и традиционных схем хранения включаются Data Warehouse, Data Lake, каталоги данных,
+            качество данных и сквозные ETL/ELT-конвейеры как фундамент для аналитики и обучения моделей.
+          </p>
+        </article>
+
+        <article class="expansion-card">
+          <span class="expansion-state">Цифровые решения</span>
+          <strong>Веб-, desktop- и мобильные приложения</strong>
+          <p>
+            Разработка прикладных систем дополняется интеллектуальными интерфейсами, персонализацией,
+            AI-ассистентами и встроенной аналитикой внутри пользовательских сценариев.
+          </p>
+        </article>
+
+        <article class="expansion-card">
+          <span class="expansion-state">Архитектурный контур</span>
+          <strong>Архитектура, интеграция и middleware</strong>
+          <p>
+            Профиль кафедры охватывает API-интеграции, микросервисы, шины обмена, orchestration,
+            событийные сценарии и архитектурное проектирование сложных информационных экосистем.
+          </p>
+        </article>
+
+        <article class="expansion-card">
+          <span class="expansion-state">Надежность и governance</span>
+          <strong>Информационная безопасность и governance</strong>
+          <p>
+            Защита данных, политики доступа, криптография, соответствие нормативным требованиям,
+            управление качеством и жизненным циклом данных становятся частью зрелой модели ИИС.
+          </p>
+        </article>
+
+        <article class="expansion-card">
+          <span class="expansion-state">Аналитический контур</span>
+          <strong>BI, Data Science и поддержка решений</strong>
+          <p>
+            Контур охватывает BI-платформы, дашборды, предиктивную и предписывающую
+            аналитику, цифровых помощников и системы поддержки управленческих решений.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="insight-section section-anchor" id="architecture">
+      <span class="insight-kicker">Архитектурные слои</span>
+      <h2>Архитектура направления «Информационные и интеллектуальные системы»</h2>
+      <p class="insight-intro">
+        Новое название отражает не только наличие AI-компонента, но и полную многоуровневую архитектуру направления:
+        от инфраструктуры и интеграции до интеллектуальной обработки, аналитики и поддержки решений
+        на основе данных и метаданных.
+      </p>
+
+      <div class="architecture-stack">
+        <article class="arch-layer">
+          <div class="arch-index">01</div>
+          <div class="arch-body">
+            <strong>Инфраструктура и интеграция</strong>
+            <p>
+              Вычислительная среда, API, микросервисы, ETL/ELT, middleware, облачные и локальные контуры,
+              обеспечивающие связность, масштабируемость и надёжность цифровой экосистемы.
+            </p>
+          </div>
+        </article>
+
+        <article class="arch-layer">
+          <div class="arch-index">02</div>
+          <div class="arch-body">
+            <strong>Слой приложений и цифровых сервисов</strong>
+            <p>
+              ERP, CRM, корпоративные платформы, порталы, веб-, desktop- и мобильные решения,
+              через которые пользователи взаимодействуют с данными, процессами и сервисами.
+            </p>
+          </div>
+        </article>
+
+        <article class="arch-layer">
+          <div class="arch-index">03</div>
+          <div class="arch-body">
+            <strong>Слой данных и метаданных</strong>
+            <p>
+              Базы данных, хранилища, озёра данных, каталоги, качество, семантика и графы знаний,
+              где данные становятся не просто ресурсом хранения, а управляемым интеллектуальным активом.
+            </p>
+          </div>
+        </article>
+
+        <article class="arch-layer">
+          <div class="arch-index">04</div>
+          <div class="arch-body">
+            <strong>Слой аналитики, BI и бизнес-анализа</strong>
+            <p>
+              Отчётность, dashboards, OLAP, feature engineering, исследовательский анализ,
+              прогнозная и предписывающая аналитика для понимания ситуации и выработки сценариев.
+            </p>
+          </div>
+        </article>
+
+        <article class="arch-layer">
+          <div class="arch-index">05</div>
+          <div class="arch-body">
+            <strong>Слой интеллектуальной обработки и поддержки решений</strong>
+            <p>
+              Machine Learning, рекомендательные модели, NLP, LLM, RAG, агентные системы,
+              генерация отчётов, AI-ассистенты и цифровые советники для практического использования знаний.
+            </p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="insight-section section-anchor" id="capabilities">
+      <span class="insight-kicker">Интеллектуальные возможности</span>
+      <h2>Ключевые интеллектуальные возможности направления</h2>
+      <p class="insight-intro">
+        Современные информационные и интеллектуальные системы выходят за пределы хранения данных и отчётности:
+        они поддерживают прогнозирование, рекомендации, обучение моделей, интеллектуальную автоматизацию
+        и сопровождение пользователя в прикладной цифровой среде.
+      </p>
+
+      <div class="capability-grid">
+        <article class="capability-card">
+          <strong>От описательной к предиктивной и предписывающей аналитике</strong>
+          <p>
+            Если классические ИС в основном отвечают на вопрос «что произошло?», то ИИС добавляют
+            ответы на вопросы «что произойдёт?» и «что следует сделать?».
+          </p>
+        </article>
+
+        <article class="capability-card">
+          <strong>Метаданные, семантика и графы знаний</strong>
+          <p>
+            Метаданные используются не только для описания структуры хранения, но и как источник контекста
+            для моделей, семантических слоёв и интеллектуального поиска по корпоративным данным.
+          </p>
+        </article>
+
+        <article class="capability-card">
+          <strong>MLOps и жизненный цикл моделей</strong>
+          <p>
+            Направление включает не только построение моделей, но и их внедрение,
+            контроль качества, переобучение, мониторинг и эксплуатацию в составе реальных систем.
+          </p>
+        </article>
+
+        <article class="capability-card">
+          <strong>LLM, RAG и агентные системы</strong>
+          <p>
+            Генеративный AI расширяет профиль кафедры в сторону интеллектуальных помощников,
+            поиска по знаниям организации, анализа документов и диалоговых прикладных систем.
+          </p>
+        </article>
+
+        <article class="capability-card">
+          <strong>Гибридная автоматизация процессов</strong>
+          <p>
+            BPM и RPA дополняются ML-моделями и аналитикой, что позволяет не только автоматизировать
+            регламентные операции, но и адаптировать workflow по данным, событиям и прогнозам.
+          </p>
+        </article>
+
+        <article class="capability-card">
+          <strong>AI-ассистенты и цифровые советники</strong>
+          <p>
+            В прикладных системах появляются сервисы, которые формируют отчёты, объясняют тенденции,
+            предлагают сценарии действий и помогают пользователю принимать решения быстрее и точнее.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="summary section-anchor" id="final-positioning">
+      <div class="summary-grid">
+        <div>
+          <span class="insight-kicker">Итоговое позиционирование кафедры</span>
+          <h2>Итоговое позиционирование кафедры</h2>
+          <p>
+            Наименование «Information and Intelligent Systems» отражает естественное развитие кафедры:
+            от проектирования и автоматизации информационных систем к построению среды, где данные,
+            аналитика и интеллектуальные методы работают как единый академический и прикладной контур.
+          </p>
+          <div class="note">
+            Такое позиционирование одновременно сохраняет профессиональную преемственность,
+            соответствует современному технологическому контексту и подчёркивает ориентацию кафедры
+            на подготовку специалистов для цифровых и интеллектуальных систем нового поколения.
+          </div>
+        </div>
+
+        <div class="pillars">
+          <div class="pillar">
+            <strong>Академическая ясность</strong>
+            <span>Название точно описывает как фундамент направления, так и его современное расширение.</span>
+          </div>
+          <div class="pillar">
+            <strong>Технологическая релевантность</strong>
+            <span>Подчёркивается связь ИС с аналитикой, AI, Data Science и интеллектуальными сервисами.</span>
+          </div>
+          <div class="pillar">
+            <strong>Стратегическая подача</strong>
+            <span>Формулировка выглядит убедительно и для академической среды, и для управленческого уровня.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="page-footer section-anchor" id="about-author">
+      <div class="footer-grid">
+        <div class="footer-block">
+          <strong>Автор и реализация</strong>
+          <p>
+            Автор HTML-страницы: JustAidyn. Материал подготовлен в 2026 году как свободно распространяемая
+            (`free to share`) концептуальная веб-страница для академической и презентационной коммуникации.
+          </p>
+          <div class="footer-links">
+            <a class="footer-link" href="https://justaidyn.vercel.app/" target="_blank" rel="noopener noreferrer">justaidyn.vercel.app</a>
+          </div>
+        </div>
+
+        <div class="footer-block">
+          <strong>Университет</strong>
+          <p>
+            Satbayev University, официальный сайт университета:
+            «Қазақ ұлттық техникалық зерттеу университеті / Satbayev University».
+          </p>
+          <div class="footer-links">
+            <a class="footer-link" href="https://satbayev.university/" target="_blank" rel="noopener noreferrer">satbayev.university</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        Страница реализована с использованием AI-инструментов: Qwen Code, OpenAI Codex, OpenAI ChatGPT и Claude.
+        Автор рекомендует их к практическому использованию в учебной, исследовательской и проектной работе 😉
+      </div>
+    </footer>
+
+    <div class="page-controls" aria-label="Навигация по странице">
+      <button class="page-control" type="button" id="next-section" aria-label="Перейти к следующему разделу">↓</button>
+      <button class="page-control" type="button" id="prev-section" aria-label="Перейти к предыдущему разделу">↑</button>
+      <a class="page-control" href="#hero" aria-label="Вернуться к началу страницы">⇑</a>
+    </div>
+  </div>
+  <script>
+    (() => {
+      const sectionIds = [
+        "hero",
+        "languages",
+        "expansion-logic",
+        "department-profile",
+        "architecture",
+        "capabilities",
+        "final-positioning",
+        "about-author"
+      ];
+
+      const sections = sectionIds
+        .map((id) => document.getElementById(id))
+        .filter(Boolean);
+
+      const nextBtn = document.getElementById("next-section");
+      const prevBtn = document.getElementById("prev-section");
+      const topNav = document.querySelector(".top-nav");
+      const topNavLinks = document.querySelectorAll(".top-nav a");
+      const syncTopNavState = () => {
+        if (!topNav) return;
+
+        if (window.innerWidth <= 720) {
+          topNav.removeAttribute("open");
+        } else {
+          topNav.setAttribute("open", "");
+        }
+      };
+
+      const currentSectionIndex = () => {
+        const offset = window.scrollY + window.innerHeight * 0.35;
+        let active = 0;
+
+        sections.forEach((section, index) => {
+          if (section.offsetTop <= offset) {
+            active = index;
+          }
+        });
+
+        return active;
+      };
+
+      nextBtn?.addEventListener("click", () => {
+        const current = currentSectionIndex();
+        const target = sections[Math.min(current + 1, sections.length - 1)];
+        target?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      prevBtn?.addEventListener("click", () => {
+        const current = currentSectionIndex();
+        const target = sections[Math.max(current - 1, 0)];
+        target?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      topNavLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+          if (window.innerWidth <= 720) {
+            topNav?.removeAttribute("open");
+          }
+        });
+      });
+
+      syncTopNavState();
+      window.addEventListener("resize", syncTopNavState);
+    })();
+  </script>
+  <script>
+    (() => {
+      const buttons = document.querySelectorAll(".lang-btn");
+      const pageControls = document.querySelector(".page-controls");
+      const nextBtn = document.getElementById("next-section");
+      const prevBtn = document.getElementById("prev-section");
+      const topBtn = document.querySelector('.page-controls a[href="#hero"]');
+      const switcher = document.querySelector(".lang-switcher");
+
+      const textTargets = [
+        ".top-nav-label",
+        ".top-nav-list li:nth-child(1) a",
+        ".top-nav-list li:nth-child(2) a",
+        ".top-nav-list li:nth-child(3) a",
+        ".top-nav-list li:nth-child(4) a",
+        ".top-nav-list li:nth-child(5) a",
+        ".top-nav-list li:nth-child(6) a",
+        ".top-nav-list li:nth-child(7) a",
+        ".top-nav-list li:nth-child(8) a",
+        ".hero-title-lead",
+        ".hero-stage-old .hero-stage-desc",
+        ".hero-stage-new .hero-stage-desc",
+        ".hero-side-label",
+        ".hero-side h2",
+        ".hero-side > p",
+        ".hero-point:nth-child(1) strong",
+        ".hero-point:nth-child(1) span",
+        ".hero-point:nth-child(2) strong",
+        ".hero-point:nth-child(2) span",
+        ".hero-point:nth-child(3) strong",
+        ".hero-point:nth-child(3) span",
+        ".language-kicker",
+        ".language-rationale strong",
+        ".language-rationale p",
+        ".panel-old .section-label",
+        ".panel-old .name-ru",
+        ".panel-old .subtitle",
+        ".panel-old .node:nth-child(1) h3",
+        ".panel-old .node:nth-child(1) p",
+        ".panel-old .node:nth-child(2) h3",
+        ".panel-old .node:nth-child(2) p",
+        ".panel-old .node:nth-child(3) h3",
+        ".panel-old .node:nth-child(3) p",
+        ".bridge .section-label",
+        ".bridge h2",
+        ".bridge .bridge-top p",
+        ".flow-chip:nth-child(1) span:first-child",
+        ".flow-chip:nth-child(2) span:first-child",
+        ".flow-chip:nth-child(3) span:first-child",
+        ".flow-chip:nth-child(4) span:first-child",
+        ".formula small",
+        ".formula strong",
+        ".panel-new .section-label",
+        ".panel-new .name-ru",
+        ".panel-new .subtitle",
+        ".panel-new .node:nth-child(1) h3",
+        ".panel-new .node:nth-child(1) p",
+        ".panel-new .node:nth-child(2) h3",
+        ".panel-new .node:nth-child(2) p",
+        ".panel-new .node:nth-child(3) h3",
+        ".panel-new .node:nth-child(3) p",
+        ".panel-new .node:nth-child(4) h3",
+        ".panel-new .node:nth-child(4) p",
+        ".panel-new .node:nth-child(5) h3",
+        ".panel-new .node:nth-child(5) p",
+        "#department-profile .insight-kicker",
+        "#department-profile h2",
+        "#department-profile .insight-intro",
+        "#department-profile .expansion-card:nth-child(1) .expansion-state",
+        "#department-profile .expansion-card:nth-child(1) strong",
+        "#department-profile .expansion-card:nth-child(1) p",
+        "#department-profile .expansion-card:nth-child(2) .expansion-state",
+        "#department-profile .expansion-card:nth-child(2) strong",
+        "#department-profile .expansion-card:nth-child(2) p",
+        "#department-profile .expansion-card:nth-child(3) .expansion-state",
+        "#department-profile .expansion-card:nth-child(3) strong",
+        "#department-profile .expansion-card:nth-child(3) p",
+        "#department-profile .expansion-card:nth-child(4) .expansion-state",
+        "#department-profile .expansion-card:nth-child(4) strong",
+        "#department-profile .expansion-card:nth-child(4) p",
+        "#department-profile .expansion-card:nth-child(5) .expansion-state",
+        "#department-profile .expansion-card:nth-child(5) strong",
+        "#department-profile .expansion-card:nth-child(5) p",
+        "#department-profile .expansion-card:nth-child(6) .expansion-state",
+        "#department-profile .expansion-card:nth-child(6) strong",
+        "#department-profile .expansion-card:nth-child(6) p",
+        "#architecture .insight-kicker",
+        "#architecture h2",
+        "#architecture .insight-intro",
+        "#architecture .arch-layer:nth-child(1) strong",
+        "#architecture .arch-layer:nth-child(1) p",
+        "#architecture .arch-layer:nth-child(2) strong",
+        "#architecture .arch-layer:nth-child(2) p",
+        "#architecture .arch-layer:nth-child(3) strong",
+        "#architecture .arch-layer:nth-child(3) p",
+        "#architecture .arch-layer:nth-child(4) strong",
+        "#architecture .arch-layer:nth-child(4) p",
+        "#architecture .arch-layer:nth-child(5) strong",
+        "#architecture .arch-layer:nth-child(5) p",
+        "#capabilities .insight-kicker",
+        "#capabilities h2",
+        "#capabilities .insight-intro",
+        "#capabilities .capability-card:nth-child(1) strong",
+        "#capabilities .capability-card:nth-child(1) p",
+        "#capabilities .capability-card:nth-child(2) strong",
+        "#capabilities .capability-card:nth-child(2) p",
+        "#capabilities .capability-card:nth-child(3) strong",
+        "#capabilities .capability-card:nth-child(3) p",
+        "#capabilities .capability-card:nth-child(4) strong",
+        "#capabilities .capability-card:nth-child(4) p",
+        "#capabilities .capability-card:nth-child(5) strong",
+        "#capabilities .capability-card:nth-child(5) p",
+        "#capabilities .capability-card:nth-child(6) strong",
+        "#capabilities .capability-card:nth-child(6) p",
+        "#final-positioning .insight-kicker",
+        "#final-positioning h2",
+        "#final-positioning .summary-grid > div:first-child > p",
+        "#final-positioning .note",
+        ".pillar:nth-child(1) strong",
+        ".pillar:nth-child(1) span",
+        ".pillar:nth-child(2) strong",
+        ".pillar:nth-child(2) span",
+        ".pillar:nth-child(3) strong",
+        ".pillar:nth-child(3) span",
+        "#about-author .footer-block:nth-child(1) strong",
+        "#about-author .footer-block:nth-child(1) p",
+        "#about-author .footer-block:nth-child(2) strong",
+        "#about-author .footer-block:nth-child(2) p",
+        ".footer-note"
+      ];
+
+      const original = {
+        title: document.title,
+        text: Object.fromEntries(textTargets.map((selector) => [selector, document.querySelector(selector)?.textContent || ""])),
+        heroAria: document.querySelector(".hero-side")?.getAttribute("aria-label") || "",
+        languagesAria: document.querySelector("#languages")?.getAttribute("aria-label") || "",
+        switcherAria: switcher?.getAttribute("aria-label") || "",
+        pageAria: pageControls?.getAttribute("aria-label") || "",
+        nextAria: nextBtn?.getAttribute("aria-label") || "",
+        prevAria: prevBtn?.getAttribute("aria-label") || "",
+        topAria: topBtn?.getAttribute("aria-label") || ""
+      };
+
+      const translations = {
+        kk: [
+          "Бет бойынша навигация","Басты бет","Ресми тілдік нұсқалар","Кеңею логикасы","Кафедра профилі","Архитектуралық қабаттар","Интеллектуалды мүмкіндіктер","Кафедраның қорытынды позициясы","Осы беттің авторы туралы",
+          "Кафедра профилінің эволюциясы","Деректерді жобалау, сақтау және автоматтандыру.","Деректерді жобалау, сақтау және автоматтандыру, аналитика, модельдеу, машиналық оқыту, жасанды интеллект және деректерге негізделген шешім қабылдауды қолдау.","Негізгі мәні","Жаңа атау кафедра профилін ауыстырмайды, оны кеңейтеді","Ақпараттық жүйелер іргетас ретінде сақталады, ал интеллектуалды контур аналитиканы, модельдерді, AI-сервистерді және data-driven шешім қабылдауды қолдауды қосады.","Сабақтастық","ERP, деректер базалары, қосымшалар, автоматтандыру және интеграция бағыттың негізі болып қалады.","Кеңею","Data Science, BI, ML, AI, интеллектуалды интерфейстер және цифрлық көмекшілер қосылады.","Практикалық нәтиже","Назар деректерді сақтаудан білім алуға және шешім сапасын күшейтуге ауысады.",
+          "Ресми тілдік нұсқалар","Неліктен «Information and Intelligent Systems» қолданылады, ал «Intelligent and Information Systems» емес","«Information Systems» тіркесі халықаралық академиялық және кәсіби ортада орныққан термин, сондықтан ол атаудың негізгі әрі танымал бөлігі ретінде сақталады. «and Intelligent» қосымшасы бағыттың классикалық түрі емес, оның заманауи дамуы мен кеңеюі туралы айтып тұрғанын бірден көрсетеді. «Intelligent and Information Systems» нұсқасы табиғи естілмес еді, терминологиялық сабақтастықты әлсіретер еді және ақпараттық жүйелердің интеллектуалды жүйелерге қарай эволюциясын нашар жеткізер еді.",
+          "Бұрын","Информационные системы","Ұйымдар мен олардың процестері үшін цифрлық шешімдерді әзірлеуге, енгізуге, интеграциялауға және пайдалануға бағытталған кафедраның классикалық профилі.","Корпоративтік және қолданбалы шешімдер","Ұйымдар мен пайдаланушылардың қызметін цифрландыруды қамтамасыз ететін ERP, CRM, веб-порталдар, desktop және мобильді қосымшалар.","Деректер базалары және қоймалар","Деректер құрылымдарын жобалау, сақтауды ұйымдастыру, деректер мен метадеректердің тұтастығын, қолжетімділігін және басқарылуын қамтамасыз ету.","Процестерді автоматтандыру және интеграциялау","Бағдарламалық шешімдерді бизнес-процестермен, құжат айналымымен, есептілікпен және кәсіпорын немесе мекеме сервистерімен байланыстыру.",
+          "Кеңею логикасы","Деректерден білім мен шешімдерге","Ақпараттық жүйелер цифрлық негізді қалыптастырады, ал интеллектуалды әдістер жинақталған деректерді аналитикаға, болжамдарға, ұсыныстарға және жаңа сервистерге айналдырады.","Деректер және метадеректер","Аналитика және модельдеу","Интеллектуалды функциялар","Шешім қабылдауды қолдау","Жаңа позициялаудың формуласы","Information and Intelligent Systems = Information Systems + деректерді басқару + аналитика және Data Science + ML/AI + интеллектуалды сервистер және шешім қабылдауды қолдау",
+          "Болады","Информационные и интеллектуальные системы","Ақпараттық жүйелер іргетас болып қалатын, ал деректер білім алуға, интеллектуалды модельдер құруға және шешімдерді қолдау жүйелерін жасауға пайдаланылатын кафедраның кеңейтілген профилі.","Data Engineering және деректерді басқару","Аналитикалық және интеллектуалды шешімдердің негізі ретінде деректерді дайындау, интеграциялау, тазалау, каталогтау және сапасын қамтамасыз ету.","Аналитика, Data Science және бизнес-талдау","Басқарушылық және салалық міндеттер үшін заңдылықтарды анықтау, деректерді түсіндіру, болжау және қолданбалы қорытындылар алу.","Машиналық оқыту және жасанды интеллект","Талдау мен әрекеттерді автоматтандыру үшін интеллектуалды, предиктивті, ұсынымдық және генеративті модельдер құру.","Интеллектуалды қосымшалар мен сервистер","Кіріктірілген аналитикасы, бейімделгіш логикасы, дербестендіруі және AI-функциялары бар жаңа буын веб, desktop және мобильді жүйелер.","Шешім қабылдауды қолдау","Негізделген әрі уақтылы шешім қабылдау үшін ұсыныстар, сценарийлер, есептер, цифрлық көмекшілер және құралдар қалыптастыру.",
+          "Кафедра профилі","Кафедраның заманауи профилінің құрылымы","Бағыт ақпараттық жүйелердің классикалық салаларын және заманауи интеллектуалды контурларды біріктіреді: корпоративтік платформалар, деректер мен қоймалар, қолданбалы шешімдер, архитектура мен интеграция, ақпараттық қауіпсіздік, BI, Data Science, MLOps және интеллектуалды сервистер.","Негізгі қолданбалы контур","ERP және корпоративтік платформалар","Классикалық ERP, CRM және салалық АЖ дайындықтың өзегі болып қалады, бірақ енді болжам, ұсыныс және интеллектуалды автоматтандыру үшін операциялық деректер көзі ретінде қарастырылады.","Деректер контуры","Деректер базалары, қоймалар және деректер көлдері","ДҚБЖ мен дәстүрлі сақтау схемаларынан бөлек Data Warehouse, Data Lake, деректер каталогтары, деректер сапасы және ETL/ELT құбырлары аналитика мен модельдерді оқытудың іргетасы ретінде қамтылады.","Цифрлық шешімдер","Веб, desktop және мобильді қосымшалар","Қолданбалы жүйелерді әзірлеу интеллектуалды интерфейстермен, дербестендірумен, AI-ассистенттермен және пайдаланушы сценарийлеріне кіріктірілген аналитикамен толықтырылады.","Архитектуралық контур","Архитектура, интеграция және middleware","Кафедра профилі API-интеграцияларды, микросервистерді, алмасу шиналарын, orchestration-ды, оқиғалық сценарийлерді және күрделі ақпараттық экожүйелердің архитектурасын қамтиды.","Сенімділік және governance","Ақпараттық қауіпсіздік және governance","Деректерді қорғау, қолжетімділік саясаттары, криптография, нормативтік талаптарға сәйкестік, сапаны және деректердің өмірлік циклін басқару ИИЖ-дің жетілген моделінің бөлігіне айналады.","Аналитикалық контур","BI, Data Science және шешім қабылдауды қолдау","Бұл контур BI-платформаларды, дашбордтарды, предиктивті және prescriptive аналитиканы, цифрлық көмекшілерді және басқарушылық шешімдерді қолдау жүйелерін қамтиды.",
+          "Архитектуралық қабаттар","«Информационные и интеллектуальные системы» бағытының архитектурасы","Жаңа атау тек AI-компоненттің барын емес, бағыттың толық көпдеңгейлі архитектурасын да көрсетеді: инфрақұрылым мен интеграциядан бастап интеллектуалды өңдеуге, аналитикаға және деректер мен метадеректерге негізделген шешім қабылдауды қолдауға дейін.","Инфрақұрылым және интеграция","Байланыстылықты, масштабталуды және цифрлық экожүйенің сенімділігін қамтамасыз ететін есептеу ортасы, API, микросервистер, ETL/ELT, middleware, бұлтты және жергілікті контурлар.","Қосымшалар мен цифрлық сервистер қабаты","Пайдаланушылар деректермен, процестермен және сервистермен әрекеттесетін ERP, CRM, корпоративтік платформалар, порталдар, веб, desktop және мобильді шешімдер.","Деректер және метадеректер қабаты","Деректер жай ғана сақтау ресурсы емес, басқарылатын интеллектуалды активке айналатын деректер базалары, қоймалар, деректер көлдері, каталогтар, сапа, семантика және білім графтары.","Аналитика, BI және бизнес-талдау қабаты","Жағдайды түсінуге және сценарийлерді әзірлеуге арналған есептілік, dashboard-тар, OLAP, feature engineering, зерттеушілік талдау, болжамдық және prescriptive аналитика.","Интеллектуалды өңдеу және шешім қолдау қабаты","Білімді практикалық қолдануға арналған Machine Learning, ұсынымдық модельдер, NLP, LLM, RAG, агенттік жүйелер, есеп генерациясы, AI-ассистенттер және цифрлық кеңесшілер.",
+          "Интеллектуалды мүмкіндіктер","Бағыттың негізгі интеллектуалды мүмкіндіктері","Заманауи ақпараттық және интеллектуалды жүйелер деректерді сақтау мен есептіліктен асып түседі: олар болжауды, ұсынымдарды, модельдерді оқытуды, интеллектуалды автоматтандыруды және қолданбалы цифрлық ортада пайдаланушыны сүйемелдеуді қамтамасыз етеді.","Сипаттамалық аналитикадан предиктивті және prescriptive аналитикаға","Егер классикалық АЖ негізінен «не болды?» деген сұраққа жауап берсе, ИИЖ «не болады?» және «не істеу керек?» деген сұрақтарға да жауап береді.","Метадеректер, семантика және білім графтары","Метадеректер сақтау құрылымын сипаттау үшін ғана емес, модельдер, семантикалық қабаттар және корпоративтік деректер бойынша интеллектуалды іздеу үшін контекст көзі ретінде де қолданылады.","MLOps және модельдердің өмірлік циклі","Бағыт тек модель құруды ғана емес, оларды енгізуді, сапасын бақылауды, қайта оқытуды, мониторингті және нақты жүйелер құрамында пайдалануды да қамтиды.","LLM, RAG және агенттік жүйелер","Генеративті AI кафедра профилін интеллектуалды көмекшілерге, ұйым білімдері бойынша іздеуге, құжаттарды талдауға және диалогтық қолданбалы жүйелерге қарай кеңейтеді.","Процестердің гибридті автоматтандырылуы","BPM және RPA ML-модельдермен және аналитикамен толықтырылады, бұл регламенттелген операцияларды ғана емес, workflow-ды деректерге, оқиғаларға және болжамдарға қарай бейімдеуге мүмкіндік береді.","AI-ассистенттер және цифрлық кеңесшілер","Қолданбалы жүйелерде есептерді қалыптастыратын, трендтерді түсіндіретін, әрекет сценарийлерін ұсынатын және пайдаланушыға тезірек әрі дәлірек шешім қабылдауға көмектесетін сервистер пайда болады.",
+          "Кафедраның қорытынды позициясы","Кафедраның қорытынды позициясы","«Information and Intelligent Systems» атауы кафедраның табиғи дамуын көрсетеді: ақпараттық жүйелерді жобалау мен автоматтандырудан деректер, аналитика және интеллектуалды әдістер біртұтас академиялық әрі қолданбалы контур ретінде жұмыс істейтін орта құруға дейін.","Мұндай позициялау кәсіби сабақтастықты сақтайды, заманауи технологиялық контекске сай келеді және кафедраның жаңа буын цифрлық және интеллектуалды жүйелер үшін мамандар даярлауға бағытталғанын айқындайды.","Академиялық айқындық","Атау бағыттың іргетасын да, оның заманауи кеңеюін де дәл сипаттайды.","Технологиялық өзектілік","АЖ-дің аналитикамен, AI-мен, Data Science-пен және интеллектуалды сервистермен байланысы айқын көрсетіледі.","Стратегиялық ұсыну","Тұжырым академиялық орта үшін де, басқарушылық деңгей үшін де сенімді естіледі.","Автор және жүзеге асыру","Автор HTML-беттің: JustAidyn. Материал 2026 жылы академиялық және презентациялық коммуникацияға арналған еркін таратылатын (free to share) концептуал веб-бет ретінде дайындалды.","Университет","Satbayev University, университеттің ресми сайты: «Қазақ ұлттық техникалық зерттеу университеті / Satbayev University».","Бет AI-құралдарын пайдаланып жасалды: Qwen Code, OpenAI Codex, OpenAI ChatGPT және Claude. Автор оларды оқу, зерттеу және жобалық жұмыста практикалық қолдануға ұсынады."
+        ],
+        en: [
+          "Page Navigation","Main","Official language forms","Expansion logic","Department profile","Architectural layers","Intelligent capabilities","Final positioning","About the author",
+          "Evolution of the Department Profile","Design, storage, and automation of data.","Design, storage, and automation of data, plus analytics, modeling, machine learning, artificial intelligence, and data-driven decision support.","Core meaning","The new name expands the department profile instead of replacing it","Information Systems remains the foundation, while the intelligent layer adds analytics, models, AI services, and data-driven decision support.","Continuity","ERP, databases, applications, automation, and integration remain the core of the field.","Expansion","Data Science, BI, ML, AI, intelligent interfaces, and digital assistants are added.","Practical outcome","The focus shifts from storing data to extracting knowledge and improving decision quality.",
+          "Official language forms","Why “Information and Intelligent Systems” is used instead of “Intelligent and Information Systems”","The phrase “Information Systems” is an established international academic and professional term, so it remains the core and recognizable base of the name. Adding “and Intelligent” immediately shows that this is not the former field in its classical form anymore, but its contemporary development and expansion. The variant “Intelligent and Information Systems” would sound less natural, weaken terminological continuity, and communicate the evolution of information systems toward intelligent systems less clearly.",
+          "Before","Информационные системы","The classic department profile focused on the development, implementation, integration, and operation of digital solutions for organizations and their processes.","Enterprise and applied solutions","ERP, CRM, web portals, desktop and mobile applications that support the digitalization of organizations and users.","Databases and repositories","Design of data structures, organization of storage, and ensuring the integrity, availability, and manageability of data and metadata.","Process automation and integration","Connecting software solutions with business processes, document flow, reporting, and enterprise or institutional services.",
+          "Expansion logic","From data to knowledge and decisions","Information Systems creates the digital foundation, while intelligent methods transform accumulated data into analytics, forecasts, recommendations, and new services.","Data and metadata","Analytics and modeling","Intelligent functions","Decision support","Formula of the new positioning","Information and Intelligent Systems = Information Systems + data management + analytics and Data Science + ML/AI + intelligent services and decision support",
+          "After","Информационные и интеллектуальные системы","An expanded department profile in which Information Systems remains the foundation, while data is used to extract knowledge, build intelligent models, and create decision-support systems.","Data Engineering and data management","Preparation, integration, cleaning, cataloging, and quality assurance of data as the basis for analytical and intelligent solutions.","Analytics, Data Science, and business analysis","Discovering patterns, interpreting data, forecasting, and producing applied insights for managerial and domain-specific tasks.","Machine learning and artificial intelligence","Building intelligent, predictive, recommendation, and generative models to automate analysis and actions.","Intelligent applications and services","A new generation of web, desktop, and mobile systems with embedded analytics, adaptive logic, personalization, and AI functions.","Decision support","Generating recommendations, scenarios, reports, digital assistants, and tools for well-grounded and timely decisions.",
+          "Department profile","Structure of the modern department profile","The field combines the classical areas of Information Systems with modern intelligent layers: enterprise platforms, data and repositories, applied solutions, architecture and integration, information security, BI, Data Science, MLOps, and intelligent services.","Core applied layer","ERP and enterprise platforms","Classic ERP, CRM, and industry information systems remain the core of training, but are now also viewed as sources of operational data for forecasting, recommendations, and intelligent automation.","Data layer","Databases, warehouses, and data lakes","Alongside DBMS and traditional storage schemes, the profile includes Data Warehouse, Data Lake, data catalogs, data quality, and end-to-end ETL/ELT pipelines as the foundation for analytics and model training.","Digital solutions","Web, desktop, and mobile applications","Application development is extended with intelligent interfaces, personalization, AI assistants, and embedded analytics inside user scenarios.","Architectural layer","Architecture, integration, and middleware","The department profile covers API integrations, microservices, service buses, orchestration, event-driven scenarios, and the architecture of complex information ecosystems.","Reliability and governance","Information security and governance","Data protection, access policies, cryptography, regulatory compliance, quality management, and data lifecycle management become part of a mature IIIS model.","Analytical layer","BI, Data Science, and decision support","This layer includes BI platforms, dashboards, predictive and prescriptive analytics, digital assistants, and systems for supporting managerial decisions.",
+          "Architectural layers","Architecture of the “Information and Intelligent Systems” field","The new name reflects not only the presence of AI components, but also the full multi-layer architecture of the field: from infrastructure and integration to intelligent processing, analytics, and data-driven decision support based on data and metadata.","Infrastructure and integration","Computing environment, APIs, microservices, ETL/ELT, middleware, cloud and on-premise layers that provide connectivity, scalability, and reliability for the digital ecosystem.","Application and digital services layer","ERP, CRM, enterprise platforms, portals, and web, desktop, and mobile solutions through which users interact with data, processes, and services.","Data and metadata layer","Databases, warehouses, data lakes, catalogs, quality, semantics, and knowledge graphs where data becomes not just a storage resource but a managed intelligent asset.","Analytics, BI, and business analysis layer","Reporting, dashboards, OLAP, feature engineering, exploratory analysis, predictive and prescriptive analytics for understanding situations and developing scenarios.","Intelligent processing and decision-support layer","Machine Learning, recommendation models, NLP, LLM, RAG, agent systems, report generation, AI assistants, and digital advisors for practical use of knowledge.",
+          "Intelligent capabilities","Key intelligent capabilities of the field","Modern information and intelligent systems go beyond data storage and reporting: they support forecasting, recommendations, model training, intelligent automation, and user guidance in applied digital environments.","From descriptive to predictive and prescriptive analytics","If classical IS mainly answers “what happened?”, IIIS also answers “what will happen?” and “what should be done?”.","Metadata, semantics, and knowledge graphs","Metadata is used not only to describe storage structures, but also as a source of context for models, semantic layers, and intelligent search across enterprise data.","MLOps and the model lifecycle","The field includes not only model building, but also deployment, quality control, retraining, monitoring, and operation within real systems.","LLM, RAG, and agent systems","Generative AI extends the department profile toward intelligent assistants, organizational knowledge search, document analysis, and conversational applications.","Hybrid process automation","BPM and RPA are complemented by ML models and analytics, enabling not only the automation of regulated operations but also workflow adaptation based on data, events, and forecasts.","AI assistants and digital advisors","Applied systems increasingly include services that generate reports, explain trends, suggest action scenarios, and help users make faster and more accurate decisions.",
+          "Final positioning","Final positioning of the department","The name “Information and Intelligent Systems” reflects the natural evolution of the department: from designing and automating information systems to building an environment where data, analytics, and intelligent methods work as a unified academic and applied framework.","This positioning preserves professional continuity, matches the modern technological context, and highlights the department’s orientation toward training specialists for a new generation of digital and intelligent systems.","Academic clarity","The name accurately describes both the foundation of the field and its modern expansion.","Technological relevance","It emphasizes the connection of IS with analytics, AI, Data Science, and intelligent services.","Strategic presentation","The wording sounds convincing both for the academic environment and for management-level communication.","Author and implementation","Author of the HTML page: JustAidyn. The material was prepared in 2026 as a freely shared conceptual web page for academic and presentation communication.","University","Satbayev University, the university’s official website: “Kazakh National Research Technical University / Satbayev University”.","The page was created using AI tools: Qwen Code, OpenAI Codex, OpenAI ChatGPT, and Claude. The author recommends their practical use in academic, research, and project work."
+        ]
+      };
+
+      const extraTranslations = {
+        kk: {
+          title: "Ақпараттық жүйелер -> Ақпараттық және интеллектуалды жүйелер",
+          heroOldTitle: "Ақпараттық жүйелер",
+          heroNewTitle: "Ақпараттық және интеллектуалды жүйелер",
+          panelOldHeading: 'Ақпараттық жүйелер <span class="name-ru">Ақпараттық жүйелер</span>',
+          panelNewHeading: 'Ақпараттық және интеллектуалды жүйелер <span class="name-ru">Ақпараттық және интеллектуалды жүйелер</span>',
+          formulaStrong: "Ақпараттық және интеллектуалды жүйелер = ақпараттық жүйелер + деректерді басқару + аналитика және Data Science + ML/AI + интеллектуалды сервистер және шешім қабылдауды қолдау",
+          architectureHeading: "«Ақпараттық және интеллектуалды жүйелер» бағытының архитектурасы",
+          footerAuthorBody: "HTML-беттің Авторы: JustAidyn. Материал 2026 жылы академиялық және презентациялық коммуникацияға арналған еркін таратылатын (free to share) концептуал веб-бет ретінде дайындалды.",
+          footerNote: "HTML-бет келесі AI-құралдарын пайдаланып жасалды: Qwen Code, OpenAI Codex, OpenAI ChatGPT және Claude. Автор оларды оқу, зерттеу және жобалық жұмыста практикалық қолдануға ұсынады."
+        },
+        en: {
+          title: "Information Systems -> Information and Intelligent Systems",
+          heroOldTitle: "Information Systems",
+          heroNewTitle: "Information and Intelligent Systems",
+          panelOldHeading: 'Information Systems <span class="name-ru">Information Systems</span>',
+          panelNewHeading: 'Information and Intelligent Systems <span class="name-ru">Information and Intelligent Systems</span>',
+          formulaStrong: "Information and Intelligent Systems = Information Systems + data management + analytics and Data Science + ML/AI + intelligent services and decision support",
+          architectureHeading: 'Architecture of the "Information and Intelligent Systems" Field'
+        },
+        ru: {
+          title: original.title,
+          heroOldTitle: "Информационные системы",
+          heroNewTitle: "Информационные и интеллектуальные системы",
+          panelOldHeading: 'Информационные системы <span class="name-ru">Информационные системы</span>',
+          panelNewHeading: 'Информационные и интеллектуальные системы <span class="name-ru">Информационные и интеллектуальные системы</span>',
+          formulaStrong: "Информационные и интеллектуальные системы = информационные системы + управление данными + аналитика и Data Science + ML/AI + интеллектуальные сервисы и поддержка принятия решений",
+          architectureHeading: "Архитектура направления «Информационные и интеллектуальные системы»"
+        }
+      };
+
+      const applyExtraTranslations = (lang) => {
+        const dict = extraTranslations[lang];
+        if (!dict) return;
+
+        document.title = dict.title;
+
+        const heroOldTitle = document.querySelector(".hero-stage-old .hero-stage-title");
+        const heroNewTitle = document.querySelector(".hero-stage-new .hero-stage-title");
+        const panelOldHeading = document.querySelector(".panel-old h2");
+        const panelNewHeading = document.querySelector(".panel-new h2");
+        const formulaStrong = document.querySelector(".formula strong");
+        const architectureHeading = document.querySelector("#architecture h2");
+        const footerAuthorBody = document.querySelector("#about-author .footer-block:nth-child(1) p");
+        const footerNote = document.querySelector(".footer-note");
+
+        if (heroOldTitle) heroOldTitle.textContent = dict.heroOldTitle;
+        if (heroNewTitle) heroNewTitle.textContent = dict.heroNewTitle;
+        if (panelOldHeading) panelOldHeading.innerHTML = dict.panelOldHeading;
+        if (panelNewHeading) panelNewHeading.innerHTML = dict.panelNewHeading;
+        if (formulaStrong) formulaStrong.textContent = dict.formulaStrong;
+        if (architectureHeading) architectureHeading.textContent = dict.architectureHeading;
+        if (footerAuthorBody && dict.footerAuthorBody) footerAuthorBody.textContent = dict.footerAuthorBody;
+        if (footerNote && dict.footerNote) footerNote.textContent = dict.footerNote;
+      };
+
+      const applyTextSet = (lang) => {
+        const values = translations[lang];
+        if (!values || values.length !== textTargets.length) return false;
+        textTargets.forEach((selector, index) => {
+          const node = document.querySelector(selector);
+          if (node) node.textContent = values[index];
+        });
+        return true;
+      };
+
+      const restoreRussian = () => {
+        textTargets.forEach((selector) => {
+          const node = document.querySelector(selector);
+          if (node) node.textContent = original.text[selector];
+        });
+        document.title = original.title;
+        document.documentElement.lang = "ru";
+        document.querySelector(".hero-side")?.setAttribute("aria-label", original.heroAria);
+        document.querySelector("#languages")?.setAttribute("aria-label", original.languagesAria);
+        switcher?.setAttribute("aria-label", original.switcherAria);
+        pageControls?.setAttribute("aria-label", original.pageAria);
+        nextBtn?.setAttribute("aria-label", original.nextAria);
+        prevBtn?.setAttribute("aria-label", original.prevAria);
+        topBtn?.setAttribute("aria-label", original.topAria);
+        applyExtraTranslations("ru");
+      };
+
+      const applyLanguage = (lang) => {
+        if (lang === "ru") {
+          restoreRussian();
+        } else if (applyTextSet(lang)) {
+          document.title = original.title;
+          document.documentElement.lang = lang;
+          switcher?.setAttribute("aria-label", lang === "kk" ? "Тілді таңдау" : "Language selection");
+          document.querySelector(".hero-side")?.setAttribute("aria-label", lang === "kk" ? "Атауды өзгертудің негізгі мәні" : "Core meaning of the renaming");
+          document.querySelector("#languages")?.setAttribute("aria-label", lang === "kk" ? "Ресми тілдік нұсқалар" : "Official language forms");
+          pageControls?.setAttribute("aria-label", lang === "kk" ? "Бет навигациясы" : "Page navigation");
+          nextBtn?.setAttribute("aria-label", lang === "kk" ? "Келесі бөлімге өту" : "Go to the next section");
+          prevBtn?.setAttribute("aria-label", lang === "kk" ? "Алдыңғы бөлімге өту" : "Go to the previous section");
+          topBtn?.setAttribute("aria-label", lang === "kk" ? "Беттің басына оралу" : "Return to the top of the page");
+          applyExtraTranslations(lang);
+        }
+
+        buttons.forEach((button) => {
+          const active = button.dataset.lang === lang;
+          button.classList.toggle("is-active", active);
+          button.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+
+        localStorage.setItem("su-is-language", lang);
+      };
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          applyLanguage(button.dataset.lang || "ru");
+        });
+      });
+
+      applyLanguage("kk");
+    })();
+  </script>
+</body>
+</html>

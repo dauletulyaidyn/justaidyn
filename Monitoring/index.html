@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/Monitoring/">
+  <title>Мониторинг проекта AP22686112</title>
+  <style>
+    :root {
+      --bg: #f2ede3;
+      --bg-soft: #e2eadf;
+      --text: #1f2a1f;
+      --muted: #5a655b;
+      --line: rgba(31, 64, 43, 0.14);
+      --accent: #1f6f4a;
+      --accent-2: #a63f27;
+      --accent-soft: rgba(31, 111, 74, 0.1);
+      --shadow: 0 24px 60px rgba(33, 56, 38, 0.12);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.75), transparent 28%),
+        linear-gradient(135deg, var(--bg), var(--bg-soft));
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 24px auto 56px;
+    }
+
+    .passport {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.78fr);
+      gap: 14px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(circle at top right, rgba(166, 63, 39, 0.08), transparent 26%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 250, 245, 0.92));
+      box-shadow: var(--shadow);
+    }
+
+    .passport::before {
+      content: "";
+      position: absolute;
+      inset: auto auto -120px -60px;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(31, 111, 74, 0.08), transparent 72%);
+      pointer-events: none;
+    }
+
+    .passport-main,
+    .passport-side {
+      position: relative;
+      z-index: 1;
+    }
+
+    .passport-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .passport-title {
+      margin: 0;
+      max-width: 760px;
+      font-size: clamp(24px, 2.9vw, 34px);
+      line-height: 1.12;
+    }
+
+    .passport-note {
+      margin: 10px 0 0;
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .passport-highlights {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .passport-highlight {
+      padding: 12px 14px;
+      border: 1px solid rgba(31, 64, 43, 0.14);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .passport-highlight strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 16px;
+    }
+
+    .passport-highlight span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .passport-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .passport-link {
+      display: block;
+      min-width: 220px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.94);
+      transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .passport-link.file-link {
+      background: rgba(166, 63, 39, 0.1);
+      border-color: rgba(166, 63, 39, 0.24);
+    }
+
+    .file-badge {
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 8px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(166, 63, 39, 0.16);
+      color: var(--accent-2);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .passport-link:hover,
+    .passport-item:hover {
+      transform: translateY(-2px);
+    }
+
+    .passport-link strong,
+    .passport-side strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .passport-link span,
+    .passport-side span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .passport-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .passport-item {
+      padding: 12px 14px;
+      border: 1px solid rgba(31, 64, 43, 0.14);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.72);
+      transition: transform 0.18s ease, background 0.18s ease;
+    }
+
+    .passport-item b {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      margin-bottom: 8px;
+      border-radius: 50%;
+      background: rgba(31, 111, 74, 0.1);
+      color: var(--accent);
+      font-size: 13px;
+    }
+
+    .passport-item h3 {
+      margin: 0 0 6px;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .passport-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .passport-side {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .passport-side-card {
+      padding: 14px 16px;
+      border: 1px solid rgba(31, 64, 43, 0.14);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    .passport-side-card h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+    }
+
+    .passport-side-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .team-list,
+    .result-links,
+    .result-facts {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.55;
+    }
+
+    .team-list li + li,
+    .result-links li + li,
+    .result-facts li + li {
+      margin-top: 6px;
+    }
+
+    .section-title {
+      margin: 28px 0 16px;
+      font-size: 26px;
+    }
+
+    .timeline {
+      position: relative;
+      display: grid;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 26px;
+      top: 12px;
+      bottom: 12px;
+      width: 2px;
+      background: linear-gradient(to bottom, rgba(31, 111, 74, 0.35), rgba(31, 111, 74, 0.1));
+    }
+
+    .entry {
+      position: relative;
+      display: grid;
+      grid-template-columns: 64px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .dot {
+      position: relative;
+      z-index: 1;
+      width: 40px;
+      height: 40px;
+      margin: 12px 0 0 6px;
+      border: 7px solid rgba(31, 111, 74, 0.12);
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.92);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: var(--shadow);
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .date {
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .tag {
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--accent-2);
+    }
+
+    .entry h3 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      line-height: 1.2;
+    }
+
+    .entry p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .facts {
+      margin: 14px 0 0;
+      padding-left: 18px;
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .facts li + li {
+      margin-top: 6px;
+    }
+
+    .results-grid {
+      display: grid;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .result-card {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: var(--shadow);
+    }
+
+    .result-card h3 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      line-height: 1.25;
+    }
+
+    .result-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .result-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(31, 111, 74, 0.1);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .result-card p {
+      margin: 0 0 10px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .result-alert {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border: 1px solid rgba(166, 63, 39, 0.28);
+      border-radius: 16px;
+      background: rgba(166, 63, 39, 0.1);
+      color: #8c2d1b;
+      font-weight: 800;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1080px) {
+      .passport {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        width: min(100% - 20px, 1180px);
+        margin-top: 10px;
+      }
+
+      .passport {
+        padding: 20px;
+      }
+
+      .passport-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .passport-highlights {
+        grid-template-columns: 1fr;
+      }
+
+      .passport-note {
+        font-size: 16px;
+      }
+
+      .entry {
+        grid-template-columns: 54px minmax(0, 1fr);
+        gap: 10px;
+      }
+
+      .timeline::before {
+        left: 22px;
+      }
+
+      .dot {
+        width: 34px;
+        height: 34px;
+        border-width: 6px;
+      }
+
+      .entry h3 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="passport">
+      <div class="passport-main">
+        <div class="passport-kicker">AP22686112 • Паспорт мониторинга</div>
+        <h1 class="passport-title">Проект AP22686112: соматические мутации и анализ scRNA-seq методами машинного обучения</h1>
+        <p class="passport-note">Короткий паспорт проекта с реквизитами, финансированием, датой мониторинга и быстрым доступом к основным документам.</p>
+
+        <div class="passport-highlights">
+          <div class="passport-highlight">
+            <strong>09.04.2026</strong>
+            <span>Дата проведения мониторинга</span>
+          </div>
+          <div class="passport-highlight">
+            <strong>2024-2025</strong>
+            <span>Отчетный период</span>
+          </div>
+          <div class="passport-highlight">
+            <strong>29 816 820 тг</strong>
+            <span>Общая сумма финансирования</span>
+          </div>
+        </div>
+
+        <div class="passport-links">
+          <a class="passport-link file-link" href="Акт мониторинга 2026 - Kunikeyev Aidyn.docx" target="_blank" rel="noopener">
+            <span class="file-badge">File</span>
+            <strong>Акт мониторинга</strong>
+            <span>Основной Word-документ</span>
+          </a>
+          <a class="passport-link file-link" href="131997__3650418_1762922610.pdf" target="_blank" rel="noopener">
+            <span class="file-badge">File</span>
+            <strong>Календарный план</strong>
+            <span>Основной PDF-документ</span>
+          </a>
+        </div>
+
+        <div class="passport-grid">
+          <article class="passport-item">
+            <b>1</b>
+            <h3>Номер проекта</h3>
+            <p>AP22686112</p>
+          </article>
+          <article class="passport-item">
+            <b>2</b>
+            <h3>Приоритетное направление</h3>
+            <p>Передовое производство, цифровые и космические технологии. Биоинформатика.</p>
+          </article>
+          <article class="passport-item">
+            <b>3</b>
+            <h3>Заказчик</h3>
+            <p>Министерство науки и высшего образования Республики Казахстан.</p>
+          </article>
+          <article class="passport-item">
+            <b>4</b>
+            <h3>Исполнитель</h3>
+            <p>НАО "КазНИТУ имени К.И. Сатпаева".</p>
+          </article>
+          <article class="passport-item">
+            <b>5</b>
+            <h3>Научный руководитель</h3>
+            <p>Куникеев Айдын Даулетович. Руководитель проекта: Жас Галим.</p>
+          </article>
+          <article class="passport-item">
+            <b>6</b>
+            <h3>Договор</h3>
+            <p>№ 73/ЖҒ5-24-26 от 20 июня 2024 года.</p>
+          </article>
+          <article class="passport-item">
+            <b>7</b>
+            <h3>Адрес исполнителя</h3>
+            <p>ул. Сатпаева, 22, 050013, Алматы, Республика Казахстан.</p>
+          </article>
+          <article class="passport-item">
+            <b>8</b>
+            <h3>Место мониторинга</h3>
+            <p>ул. Сатпаева, 22, 050013, Алматы, Республика Казахстан.</p>
+          </article>
+          <article class="passport-item">
+            <b>9</b>
+            <h3>Контактные данные научного руководителя/ответственного лица проекта/программы</h3>
+            <p>+7 776 988 988 9</p>
+          </article>
+        </div>
+      </div>
+
+      <aside class="passport-side">
+        <section class="passport-side-card">
+          <h3>Финансирование</h3>
+          <div class="passport-side-list">
+            <div>
+              <strong>Общая сумма</strong>
+              <span>29 816 820 тг</span>
+            </div>
+            <div>
+              <strong>По годам</strong>
+              <span>1 год: 9 938 660 тг. 2 год: 9 944 000 тг. 3 год: 9 934 160 тг.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="passport-side-card">
+          <h3>Мониторинг</h3>
+          <div class="passport-side-list">
+            <div>
+              <strong>Дата проведения</strong>
+              <span>09.04.2026</span>
+            </div>
+            <div>
+              <strong>Отчетный период</strong>
+              <span>2024-2025</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="passport-side-card">
+          <h3>Полное название проекта</h3>
+          <span>Исследование соматических мутаций по данным одноклеточной РНК с использованием методов машинного обучения у пациентов с заболеванием периферических артерий.</span>
+        </section>
+
+        <section class="passport-side-card">
+          <h3>Список исполнителей</h3>
+          <ul class="team-list">
+            <li>Куникеев Айдын Даулетович, магистр техники и технологии.</li>
+            <li>Еримбетова Айгерим Сембековна, доктор философии (PhD), ассоциированный профессор.</li>
+          </ul>
+        </section>
+      </aside>
+    </section>
+
+    <h2 class="section-title">2. Мониторинг исполнения мероприятий согласно календарному плану</h2>
+    <section class="timeline">
+      <article class="entry">
+        <div class="dot">1</div>
+        <div class="card">
+          <div class="meta">
+            <span class="date">01.06-30.06.2024</span>
+            <span class="tag">Сроки исполнения</span>
+          </div>
+          <h3>Литературный анализ методов автоматизированной обработки одноклеточных данных</h3>
+          <p>Фактическое исполнение мероприятий пунктов календарного плана:</p>
+          <ul class="facts">
+            <li>Проведен обзор литературы по автоматизированной обработке одноклеточных данных, кластеризации и снижению размерности.</li>
+            <li>По итогам анализа выбраны инструменты `Trimmomatic`, `FastQC`, `featureCounts`, `HISAT2` и методы `UMAP`, `K-Means`, `Hierarchical Clustering`, `GMM`.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="dot">2</div>
+        <div class="card">
+          <div class="meta">
+            <span class="date">01.06-30.06.2024</span>
+            <span class="tag">Сроки исполнения</span>
+          </div>
+          <h3>Расширение текущего набора данных</h3>
+          <p>Фактическое исполнение мероприятий пунктов календарного плана:</p>
+          <ul class="facts">
+            <li>В качестве основного источника использован набор данных по заболеванию периферических артерий из NCBI.</li>
+            <li>Дополнительно собраны данные по японским пациентам с сердечно-сосудистыми заболеваниями для расширения выборки.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="dot">3</div>
+        <div class="card">
+          <div class="meta">
+            <span class="date">01.06-30.06.2024</span>
+            <span class="tag">Сроки исполнения</span>
+          </div>
+          <h3>Предварительная обработка всех наборов данных</h3>
+          <p>Фактическое исполнение мероприятий пунктов календарного плана:</p>
+          <ul class="facts">
+            <li>Предварительная обработка данных пациентов с CVD выполнена через `GalaxyProject`.</li>
+            <li>Для обработки использованы `Trimmomatic`, `FastQC`, `featureCounts`, `HISAT2` и `DESeq2`.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="dot">4</div>
+        <div class="card">
+          <div class="meta">
+            <span class="date">01.07-15.11.2024</span>
+            <span class="tag">Сроки исполнения</span>
+          </div>
+          <h3>Подготовка и публикация обзорной статьи по инструментам обработки генетических данных</h3>
+          <p>Фактическое исполнение мероприятий пунктов календарного плана:</p>
+          <ul class="facts">
+            <li>Подготовлена обзорная статья по инструментам и методам обработки и предобработки генетических данных.</li>
+            <li>В статье рассмотрены `Trimmomatic`, `FastQC`, `featureCounts`, `HISAT2`, `DESeq2`, а также подходы к кластеризации и визуализации.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="dot">5</div>
+        <div class="card">
+          <div class="meta">
+            <span class="date">01.01-01.06.2025</span>
+            <span class="tag">Сроки исполнения</span>
+          </div>
+          <h3>Кластерный анализ для поиска типов клеток в обработанном наборе данных</h3>
+          <p>Фактическое исполнение мероприятий пунктов календарного плана:</p>
+          <ul class="facts">
+            <li>Внедрен воспроизводимый `scRNA-seq` pipeline на данных `PRJNA736095`.</li>
+            <li>Подготовлены 10x-матрицы, выполнены QC, нормализация, кластеризация и расчет маркеров.</li>
+            <li>Проведены аннотация клеток и унифицированная UMAP-визуализация обработанных образцов.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="dot">6</div>
+        <div class="card">
+          <div class="meta">
+            <span class="date">01.05-15.11.2025</span>
+            <span class="tag">Сроки исполнения</span>
+          </div>
+          <h3>Написание и публикация научных статей по полученным результатам</h3>
+          <p>Фактическое исполнение мероприятий пунктов календарного плана:</p>
+          <ul class="facts">
+            <li>Рукопись по `scRNA-seq` pipeline принята и опубликована в материалах конференции.</li>
+            <li>В акте указаны ссылка на публикацию, сертификат публикации и документы проверки на плагиат.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="dot">7</div>
+        <div class="card">
+          <div class="meta">
+            <span class="date">01.01-01.04.2026</span>
+            <span class="tag">Сроки исполнения</span>
+          </div>
+          <h3>Выявление соматических мутаций и pathway-анализ у нелеченых пациентов</h3>
+          <p>Фактическое исполнение мероприятий пунктов календарного плана:</p>
+          <ul class="facts">
+            <li>У нелеченых пациентов выявлены не классические соматические мутации, а somatic-like изменения.</li>
+            <li>Проведен pathway-анализ затронутых биологических путей, связанных с заболеванием и возможным ответом на терапию.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="dot">8</div>
+        <div class="card">
+          <div class="meta">
+            <span class="date">01.04-30.05.2026</span>
+            <span class="tag">Сроки исполнения</span>
+          </div>
+          <h3>Разработка pipeline для выявления соматических мутаций и pathway-анализа</h3>
+          <p>Фактическое исполнение мероприятий пунктов календарного плана:</p>
+          <ul class="facts">
+            <li>Разработан полный pipeline для связи мутационного анализа с экспрессионными данными и pathway-анализом.</li>
+            <li>В акте отдельно указано внедрение `AI agentic pipeline` для автоматизации процесса.</li>
+            <li>На базе этой работы подготовлена статья для повторной отправки в AI/IT-журнал 13-17 апреля 2026 года.</li>
+            <li>&#1055;&#1083;&#1072;&#1085;&#1086;&#1074;&#1072;&#1103; &#1076;&#1072;&#1090;&#1072; &#1087;&#1086;&#1076;&#1072;&#1095;&#1080;: 14.04.2026.</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <h2 class="section-title">3. Полученные результаты и их достоверность</h2>
+    <section class="results-grid">
+      <article class="result-card">
+        <div class="result-meta">
+          <span class="result-badge">1. Количество: 1</span>
+          <span class="result-badge">SCI Expanded / Scopus</span>
+        </div>
+        <h3>Статья или обзор в рецензируемых научных изданиях, индексируемых в Science Citation Index Expanded базы данных Web of Science, и (или) в рецензируемых научных изданиях, имеющих процентиль по CiteScore в базе Scopus</h3>
+        <p>Достоверность результатов (ссылки):</p>
+        <ul class="result-facts">
+          <li>Статья подавалась в BioMedInformatics.</li>
+          <li>Название: Reproducibility-First Machine Learning Pipeline for Single-Cell RNA-Seq Variant-Derived Classification: Systematic Evaluation of Split Sensitivity, Cohort-Frequency Filtering, and Expression-Mutation Correlation in Wound Healing.</li>
+          <li>Авторы: Aidyn Kunikeyev, Amangeldi Salybekov, Aigerim Yerimbetova, Batyrkhan Omarov.</li>
+        </ul>
+        <ul class="result-links">
+          <li><a href="Gmail - [BioMedInformatics] Manuscript ID_ biomedinformatics-4255963 - New Submission.pdf" target="_blank" rel="noopener">FILE: New Submission</a></li>
+          <li><a href="Gmail - [BioMedInformatics] Manuscript ID_ biomedinformatics-4255963 - Submission Received.pdf" target="_blank" rel="noopener">FILE: Submission Received</a></li>
+          <li><a href="Gmail - [BioMedInformatics] Manuscript ID_ biomedinformatics-4255963 - Declined for Publication.pdf" target="_blank" rel="noopener">FILE: Declined for Publication</a></li>
+          <li><a href="biomedinformatics-4255963 (1).docx" target="_blank" rel="noopener">FILE: manuscript draft</a></li>
+          <li><a href="131997_object_3650422_1762922610.jpg" target="_blank" rel="noopener">FILE: подтверждающий сертификат</a></li>
+        </ul>
+        <div class="result-alert">
+          &#1055;&#1083;&#1072;&#1085;&#1086;&#1074;&#1072;&#1103; &#1076;&#1072;&#1090;&#1072; &#1087;&#1086;&#1076;&#1072;&#1095;&#1080; &#1101;&#1090;&#1086;&#1081; &#1087;&#1091;&#1073;&#1083;&#1080;&#1082;&#1072;&#1094;&#1080;&#1080;: 14.04.2026.
+          После прохождения данной публикации планируется выход на защиту диссертации, так как тема публикации тесно связана с темой диссертационного исследования.
+        </div>
+      </article>
+
+      <article class="result-card">
+        <div class="result-meta">
+          <span class="result-badge">2. Количество: 1</span>
+          <span class="result-badge">Рекомендованное издание</span>
+        </div>
+        <h3>Статья или обзор в рецензируемом зарубежном или отечественном издании, рекомендованном Комитетом по обеспечению качества в сфере науки и высшего образования Министерства науки и высшего образования Республики Казахстан</h3>
+        <p>Достоверность результатов (ссылки):</p>
+        <ul class="result-facts">
+          <li>UDC: 004.9. IRSTI: 28.23.25.</li>
+          <li>DOI: https://doi.org/10.55452/1998-6688-2024-21-4-45-57</li>
+          <li>Название: A REVIEW OF TOOLS, METHODOLOGIES, AND TECHNIQUES FOR PROCESSING, PRE-PROCESSING, AND CLUSTERING ANALYSIS OF GENETIC DATA.</li>
+          <li>Авторы: Kunikeyev A., Master of Engineering Sciences, ORCID ID: 0000-0003-3716-0895, e-mail: aidyn.daulet@gmail.com.</li>
+          <li>Авторы: Yerimbetova A., PhD, Candidate of Technical Sciences, Associate Professor, ORCID ID: 0000-0002-2013-1513, e-mail: aigerian8888@gmail.com.</li>
+          <li>Авторы: Satybaldiyeva R., Candidate of Technical Sciences, Professor, ORCID ID: 0000-0002-0678-7583, e-mail: r.satybaldiyeva@satbayev.university.</li>
+          <li>Аффилиация: Satbayev University, Almaty, Kazakhstan.</li>
+          <li>Аффилиация: Institute of Information and Computational Technologies of the Committee of Science of the Ministry of Science and Higher Education of the Republic of Kazakhstan, Almaty, Kazakhstan.</li>
+        </ul>
+        <ul class="result-links">
+          <li><a href="1538-3813-1-SM.pdf" target="_blank" rel="noopener">FILE: статья 2024</a></li>
+        </ul>
+      </article>
+
+      <article class="result-card">
+        <div class="result-meta">
+          <span class="result-badge">3. Количество: 1</span>
+          <span class="result-badge">Монография</span>
+        </div>
+        <h3>Монография</h3>
+        <p>Достоверность результатов (ссылки):</p>
+        <ul class="result-facts">
+          <li>Название: REPRO-DS: ВОСПРОИЗВОДИМЫЙ КРОСС ПЛАТФОРМЕННЫЙ ML-КОНВЕЙЕР ДЛЯ SCRNA-SEQ С WEAK-SUPERVISION АННОТАЦИЕЙ И ТАРГЕТНЫМ МУТАЦИОННЫМ СЛОЕМ.</li>
+          <li>Талантбек Бекзат, студент, Сатбаев Университет, Алматы, Казахстан.</li>
+          <li>Еримбетова Айгерим, доктор Ph.D., кандидат технических наук, ассоциированный профессор, Сатбаев Университет, Алматы, Казахстан; Институт информационных и вычислительных технологий Комитета науки Министерства науки и высшего образования Республики Казахстан, Алматы, Казахстан.</li>
+          <li>Научный руководитель: Куникеев Айдын Даулетович, магистр технических наук, Сатбаев Университет, Алматы, Казахстан.</li>
+        </ul>
+        <ul class="result-links">
+          <li><a href="131997__3651742_1762935710.pdf" target="_blank" rel="noopener">FILE: монография</a></li>
+          <li><a href="131997_object_3650422_1762922610.jpg" target="_blank" rel="noopener">FILE: подтверждающий сертификат</a></li>
+        </ul>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

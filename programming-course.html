@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/png" href="favicon.png?v=20260331c">
+        <link rel="shortcut icon" type="image/png" href="favicon.png?v=20260331c">
+        <link rel="apple-touch-icon" href="favicon.png?v=20260331c">
+
+        <meta name="description" content="Programming course by JustAidyn Courses: fundamentals, algorithms, clean code, web development, and databases.">
+        <meta name="author" content="Dauletuly Aidyn">
+
+        <meta name="robots" content="index,follow,max-image-preview:large">
+
+        <title>JustAidyn Courses - Programming</title>
+
+        <link rel="canonical" href="https://justaidyn.vercel.app/programming-course.html">
+
+        <!-- CSS FILES -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Roboto+Slab:wght@400;500;700&display=swap" rel="stylesheet">
+
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap-icons.css" rel="stylesheet">
+        <link href="css/templatemo-first-portfolio-style.css" rel="stylesheet">
+    </head>
+
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-split">
+            <div class="container">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <a href="index.html" class="navbar-brand mx-auto mx-lg-0">Aidyn</a>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <div class="navbar-split-layout w-100">
+                    <div class="navbar-top-contact d-none d-lg-flex">
+                        <div class="navbar-top-contact-left">
+                            <a class="navbar-top-contact-link" href="mailto:aidyn.daulet@gmail.com"><i class="bi bi-envelope"></i><span>aidyn.daulet@gmail.com</span></a>
+                            <a class="navbar-top-contact-link" href="tel:+77769889889"><i class="bi bi-telephone"></i><span>+7 776 988 9889</span></a>
+                        </div>
+                        <div class="navbar-top-tools">
+                            <div class="language-selector navbar-top-lang language-flags" role="group" aria-label="Language selector">
+                                <button type="button" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')" aria-label="English" title="English">&#x1F1EC;&#x1F1E7;</button>
+                                <button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')" aria-label="Russian" title="Russian">&#x1F1F7;&#x1F1FA;</button>
+                                <button type="button" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')" aria-label="Kazakh" title="Kazakh">&#x1F1F0;&#x1F1FF;</button>
+                            </div>
+                            <a href="index.html?dl=pdf" class="navbar-top-tool-btn">
+                                <i class="bi bi-download me-1"></i>
+                                <span data-en="Download CV (PDF)" data-ru="Скачать CV (PDF)" data-kk="CV жүктеу (PDF)">Download CV (PDF)</span>
+                            </a>
+                            <a class="navbar-top-tool-icon" href="https://wa.me/77769889889" target="_blank" rel="noopener" aria-label="WhatsApp">
+                                <i class="bi bi-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <ul class="navbar-nav ms-lg-0 nav-row-primary">
+                        <li class="nav-item"><a class="nav-link" href="index.html#section_1" data-en="Home" data-ru="Главная" data-kk="Басты">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="index.html#section_2" data-en="About" data-ru="Обо мне" data-kk="Мен туралы">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="index.html#section_3" data-en="Skills" data-ru="Навыки" data-kk="Дағдылар">Skills</a></li>
+                        <li class="nav-item"><a class="nav-link" href="index.html#section_4" data-en="Projects" data-ru="Проекты" data-kk="Жобалар">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link" href="index.html#section_5" data-en="Contact" data-ru="Контакты" data-kk="Байланыс">Contact</a></li>
+                        <li class="nav-item"><a class="nav-link" href="articles/index.html" data-en="Posts and Articles" data-ru="Посты и статьи" data-kk="Жазбалар мен мақалалар">Posts and Articles</a></li>
+                        <li class="nav-item dropdown" data-show-langs="ru,kk">
+                            <a class="nav-link dropdown-toggle" href="#" id="coursesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-en="JustAidyn Courses" data-ru="Курсы JustAidyn" data-kk="JustAidyn курстары">JustAidyn Courses</a>
+                            <ul class="dropdown-menu" aria-labelledby="coursesDropdown">
+                                <li><a class="dropdown-item" href="ai-agents-course.html" data-en="Applied AI agents" data-ru="AI-агенты" data-kk="AI агенттер">Applied AI agents</a></li>
+                                <li><a class="dropdown-item dropdown-subitem" href="faq.html" data-en="FAQ" data-ru="FAQ" data-kk="ЖҚС">FAQ</a></li>
+                                <li><a class="dropdown-item dropdown-subitem disabled" href="#" tabindex="-1" aria-disabled="true" data-en="List of students who completed this course" data-ru="Список слушателей, окончивших данный курс" data-kk="Осы курсты аяқтаған тыңдаушылар тізімі">List of students who completed this course</a></li>
+                                <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true" data-en="Programming" data-ru="Программирование" data-kk="Бағдарламалау">Programming</a></li>
+                                <li><a class="dropdown-item" href="non-standard-math-logic.html" data-en="Non-standard math and logic" data-ru="Нестандартная математика и логика" data-kk="Стандарттан тыс математика және логика">Non-standard math and logic</a></li>
+                                <li><a class="dropdown-item" href="motivational-letter.html" data-en="Motivational letter" data-ru="Мотивационное письмо" data-kk="Мотивациялық хат">Motivational letter</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div class="nav-row-secondary d-none"></div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <main>
+            <section class="subpage-hero">
+                <div class="container">
+                    <div class="subpage-back mb-3">
+                        <a href="index.html" data-en="<- Back to Home" data-ru="<- Назад на главную" data-kk="<- Басты бетке"><- Back to Home</a>
+                    </div>
+
+                    <h1 class="subpage-title" data-en="JustAidyn Course - Programming" data-ru="Курс JustAidyn - Программирование" data-kk="JustAidyn курсы - Бағдарламалау">JustAidyn Course - Programming</h1>
+                    <p class="subpage-lead" data-en="From fundamentals to production: algorithms, clean code, web, and databases."
+                       data-ru="От основ до production: алгоритмы, чистый код, веб и базы данных."
+                       data-kk="Негіздерден production-ға дейін: алгоритмдер, таза код, веб және дерекқор.">
+                       From fundamentals to production: algorithms, clean code, web, and databases.
+                    </p>
+                </div>
+            </section>
+
+            <section class="section-padding">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-10 col-12 mx-auto">
+                            <h2 class="mb-4" data-en="Course Modules" data-ru="Модули курса" data-kk="Курс модульдері">Course Modules</h2>
+
+                            <div class="row g-4">
+                                <div class="col-lg-6 col-12">
+                                    <div class="services-thumb">
+                                        <div class="d-flex flex-wrap align-items-center border-bottom mb-4 pb-3">
+                                            <h3 class="mb-0"><i class="bi bi-code-slash me-2"></i><span data-en="Programming Foundations" data-ru="Основы программирования" data-kk="Бағдарламалау негіздері">Programming Foundations</span></h3>
+                                        </div>
+                                        <p data-en="Focus: syntax, control flow, functions, and debugging."
+                                           data-ru="Фокус: синтаксис, управляющие конструкции, функции и отладка."
+                                           data-kk="Фокус: синтаксис, басқару құрылымдары, функциялар және отладка.">
+                                           Focus: syntax, control flow, functions, and debugging.
+                                        </p>
+                                        <p data-en="Hands-on: build small utilities and CLI tools."
+                                           data-ru="Практика: небольшие утилиты и CLI-инструменты."
+                                           data-kk="Практика: шағын утилиталар және CLI құралдар.">
+                                           Hands-on: build small utilities and CLI tools.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 col-12">
+                                    <div class="services-thumb services-thumb-up">
+                                        <div class="d-flex flex-wrap align-items-center border-bottom mb-4 pb-3">
+                                            <h3 class="mb-0"><i class="bi bi-diagram-2 me-2"></i><span data-en="Algorithms & Data Structures" data-ru="Алгоритмы и структуры данных" data-kk="Алгоритмдер және деректер құрылымы">Algorithms & Data Structures</span></h3>
+                                        </div>
+                                        <p data-en="Focus: complexity, arrays, stacks, queues, trees, and graphs."
+                                           data-ru="Фокус: сложность, массивы, стеки, очереди, деревья и графы."
+                                           data-kk="Фокус: күрделілік, массивтер, стек, кезек, ағаш және граф.">
+                                           Focus: complexity, arrays, stacks, queues, trees, and graphs.
+                                        </p>
+                                        <p data-en="Hands-on: solve problems and optimize solutions."
+                                           data-ru="Практика: решать задачи и оптимизировать решения."
+                                           data-kk="Практика: есептер шығару және шешімдерді оңтайландыру.">
+                                           Hands-on: solve problems and optimize solutions.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 col-12">
+                                    <div class="services-thumb">
+                                        <div class="d-flex flex-wrap align-items-center border-bottom mb-4 pb-3">
+                                            <h3 class="mb-0"><i class="bi bi-globe me-2"></i><span data-en="Web Development" data-ru="Веб-разработка" data-kk="Веб әзірлеу">Web Development</span></h3>
+                                        </div>
+                                        <p data-en="Focus: HTML/CSS, JavaScript basics, and client-server concepts."
+                                           data-ru="Фокус: HTML/CSS, основы JavaScript и клиент-сервер."
+                                           data-kk="Фокус: HTML/CSS, JavaScript негіздері және клиент-сервер.">
+                                           Focus: HTML/CSS, JavaScript basics, and client-server concepts.
+                                        </p>
+                                        <p data-en="Hands-on: build a small responsive website."
+                                           data-ru="Практика: создать небольшой адаптивный сайт."
+                                           data-kk="Практика: шағын бейімделетін сайт жасау.">
+                                           Hands-on: build a small responsive website.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 col-12">
+                                    <div class="services-thumb services-thumb-up">
+                                        <div class="d-flex flex-wrap align-items-center border-bottom mb-4 pb-3">
+                                            <h3 class="mb-0"><i class="bi bi-database me-2"></i><span data-en="Databases & APIs" data-ru="Базы данных и API" data-kk="Дерекқор және API">Databases & APIs</span></h3>
+                                        </div>
+                                        <p data-en="Focus: SQL basics, data modeling, and REST APIs."
+                                           data-ru="Фокус: основы SQL, моделирование данных и REST API."
+                                           data-kk="Фокус: SQL негіздері, деректер моделдеу және REST API.">
+                                           Focus: SQL basics, data modeling, and REST APIs.
+                                        </p>
+                                        <p data-en="Hands-on: create a small CRUD API."
+                                           data-ru="Практика: создать небольшой CRUD API."
+                                           data-kk="Практика: шағын CRUD API жасау.">
+                                           Hands-on: create a small CRUD API.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 col-12">
+                                    <div class="services-thumb">
+                                        <div class="d-flex flex-wrap align-items-center border-bottom mb-4 pb-3">
+                                            <h3 class="mb-0"><i class="bi bi-kanban me-2"></i><span data-en="Software Engineering" data-ru="Инженерия ПО" data-kk="Бағдарламалық инженерия">Software Engineering</span></h3>
+                                        </div>
+                                        <p data-en="Focus: clean code, version control, and testing basics."
+                                           data-ru="Фокус: чистый код, контроль версий и основы тестирования."
+                                           data-kk="Фокус: таза код, нұсқаны бақылау және тест негіздері.">
+                                           Focus: clean code, version control, and testing basics.
+                                        </p>
+                                        <p data-en="Hands-on: build a small project with Git workflow."
+                                           data-ru="Практика: сделать небольшой проект с Git-воркфлоу."
+                                           data-kk="Практика: Git workflow-пен шағын жоба жасау.">
+                                           Hands-on: build a small project with Git workflow.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 col-12">
+                                    <div class="services-thumb services-thumb-up">
+                                        <div class="d-flex flex-wrap align-items-center border-bottom mb-4 pb-3">
+                                            <h3 class="mb-0"><i class="bi bi-award me-2"></i><span data-en="Capstone Project" data-ru="Итоговый проект" data-kk="Қорытынды жоба">Capstone Project</span></h3>
+                                        </div>
+                                        <p data-en="Focus: a complete application with real-world constraints."
+                                           data-ru="Фокус: полноценное приложение с реальными ограничениями."
+                                           data-kk="Фокус: нақты шектеулері бар толық қосымша.">
+                                           Focus: a complete application with real-world constraints.
+                                        </p>
+                                        <p data-en="Hands-on: design, build, and present your final project."
+                                           data-ru="Практика: спроектировать, собрать и презентовать итоговый проект."
+                                           data-kk="Практика: қорытынды жобаны жобалау, жасау және қорғау.">
+                                           Hands-on: design, build, and present your final project.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="mt-4 text-muted" data-en="Syllabus and schedule will be shared soon."
+                               data-ru="Программа и расписание будут опубликованы скоро."
+                               data-kk="Бағдарлама мен кесте жақын арада жарияланады.">
+                               Syllabus and schedule will be shared soon.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+<footer class="site-footer">
+    <div class="container"><div class="row"><div class="col-lg-12 col-12"><div class="copyright-text-wrap"><p class="mb-0"><span class="copyright-text" data-en="Copyright © Dauletuly Aidyn" data-ru="Copyright © Dauletuly Aidyn" data-kk="Copyright © Dauletuly Aidyn">Copyright © Dauletuly Aidyn</span> <span data-en="All rights reserved." data-ru="All rights reserved." data-kk="All rights reserved.">All rights reserved.</span> <span class="ms-2"><span data-en="Designed by" data-ru="Designed by" data-kk="Designed by">Designed by</span> <a href="https://templatemo.com/" target="_blank" rel="noopener">TemplateMo</a></span></p></div></div></div></div>
+</footer>
+
+        <script src="js/jquery.min.js"></script>
+        <script src="js/jquery.sticky.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+
+        <script>
+            var languageStorageKey = 'site_lang';
+            document.addEventListener('DOMContentLoaded', function() {
+                var activeLang = localStorage.getItem(languageStorageKey) || 'kk';
+                var availableLangs = Array.prototype.map.call(document.querySelectorAll('[data-lang-option]'), function(btn) {
+                    return btn.getAttribute('data-lang-option');
+                });
+                if (!availableLangs.length) {
+                    availableLangs = ['kk'];
+                }
+                if (availableLangs.indexOf(activeLang) === -1) {
+                    activeLang = availableLangs.indexOf('kk') !== -1 ? 'kk' : availableLangs[0];
+                }
+                changeLanguage(activeLang);
+            });
+
+            function changeLanguage(lang) {
+                if (['en', 'ru', 'kk'].indexOf(lang) === -1) {
+                    lang = 'kk';
+                }
+                document.documentElement.lang = lang;
+                localStorage.setItem(languageStorageKey, lang);
+
+                document.querySelectorAll('[data-lang-option]').forEach(function(btn) {
+                    var isActive = btn.getAttribute('data-lang-option') === lang;
+                    btn.classList.toggle('active', isActive);
+                    btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                });
+
+                document.querySelectorAll('[data-en][data-ru][data-kk]').forEach(function(el) {
+                    var value = el.getAttribute('data-' + lang);
+                    if (value && value.indexOf('<br>') !== -1) {
+                        el.innerHTML = value;
+                    } else {
+                        el.textContent = value;
+                    }
+                });
+            }
+        </script>
+</body>
+</html>

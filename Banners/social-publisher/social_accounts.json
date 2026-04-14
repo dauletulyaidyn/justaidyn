@@ -1,0 +1,70 @@
+{
+  "owner": "Aidyn Dauletuly",
+  "phone": "+7 776 9889889",
+  "accounts": {
+    "tiktok": {
+      "url": "https://www.tiktok.com/@dauletuly.aidyn",
+      "username": "dauletuly.aidyn",
+      "type": "content"
+    },
+    "whatsapp": {
+      "phone": "+7 776 9889889",
+      "channel": {
+        "url": "https://chat.whatsapp.com/KQ9lqgydLS750BS4PX9fJL",
+        "type": "content"
+      },
+      "community": {
+        "url": "https://chat.whatsapp.com/BcHGNPw2ZuYFR5OC14hdWt",
+        "type": "content"
+      },
+      "status": {
+        "phone": "+7 776 9889889",
+        "type": "status"
+      }
+    },
+    "youtube": {
+      "url": "https://www.youtube.com/@justaidyncourses",
+      "channel_id": "@justaidyncourses",
+      "type": "shorts"
+    },
+    "telegram": {
+      "channel": {
+        "url": "https://t.me/justaidyncourses",
+        "username": "@justaidyncourses",
+        "type": "content"
+      },
+      "status": {
+        "phone": "+7 776 9889889",
+        "type": "status"
+      }
+    },
+    "instagram": {
+      "url": "https://www.instagram.com/dauletuly.justaidyn/",
+      "username": "dauletuly.justaidyn",
+      "content": {
+        "type": "content"
+      },
+      "status": {
+        "type": "status"
+      }
+    },
+    "threads": {
+      "url": "https://www.threads.com/@dauletuly.justaidyn.daulet",
+      "username": "dauletuly.justaidyn.daulet",
+      "type": "content"
+    },
+    "facebook": {
+      "url": "https://web.facebook.com/profile.php?id=61583794767700",
+      "profile_id": "100011147295518",
+      "content": {
+        "type": "content"
+      },
+      "reels": {
+        "type": "reels"
+      },
+      "status": {
+        "type": "status"
+      }
+    }
+  }
+}

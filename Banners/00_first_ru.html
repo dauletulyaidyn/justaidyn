@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JustAidyn courses — Прикладные AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100;300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #eef0f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: 'Roboto Slab', serif; }
+
+  .banner { width: 450px; height: 800px; background: #535da1; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 52px 44px; }
+
+  .diag { position: absolute; width: 2px; height: 320px; background: linear-gradient(to bottom, transparent, rgba(20,183,137,0.2), transparent); top: 100px; right: 120px; transform: rotate(20deg); pointer-events: none; }
+
+  .bg-circle { position: absolute; border-radius: 50%; pointer-events: none; }
+  .bg-circle-1 { width: 380px; height: 380px; top: -80px; right: -100px; border: 1px solid rgba(83,93,161,0.28); }
+  .bg-circle-2 { width: 240px; height: 240px; top: 20px; right: -40px; border: 1px solid rgba(20,183,137,0.2); }
+  .bg-circle-3 { width: 500px; height: 500px; bottom: -200px; left: -160px; border: 1px solid rgba(83,93,161,0.18); }
+
+  .accent-dot { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #14B789; top: 54px; right: 44px; }
+  .vertical-line { position: absolute; left: 44px; top: 0; width: 1px; height: 100%; background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.18) 30%, rgba(255,255,255,0.1) 70%, transparent); }
+  .corner-tr { position: absolute; top: 0; right: 0; width: 48px; height: 48px; border-top: 1.5px solid rgba(255,255,255,0.25); border-right: 1.5px solid rgba(255,255,255,0.25); }
+  .corner-bl { position: absolute; bottom: 0; left: 0; width: 48px; height: 48px; border-bottom: 1.5px solid rgba(20,183,137,0.4); border-left: 1.5px solid rgba(20,183,137,0.4); }
+
+  .content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 24px; }
+  .brand-title { font-size: 56px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.15; color: #ffffff; }
+  .subtitle { font-size: 20px; font-weight: 500; color: rgba(255,255,255,0.95); line-height: 1.3; }
+  .tagline { font-size: 14px; font-weight: 400; color: rgba(255,255,255,0.7); line-height: 1.4; max-width: 360px; }
+</style>
+</head>
+<body>
+<div class="banner">
+  <svg class="site-wave" style="position:absolute;bottom:0;left:0;width:100%;pointer-events:none;z-index:0;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 200" preserveAspectRatio="none">
+    <path fill="#14B789" d="M0,130 C40,105 88,92 138,108 C188,124 236,158 288,162 C330,165 385,144 450,122 L450,200 L0,200 Z"/>
+    <path fill="rgba(255,255,255,0.07)" d="M0,155 C45,138 95,128 148,142 C200,156 248,178 300,179 C340,180 395,162 450,145 L450,200 L0,200 Z"/>
+  </svg>
+  <div class="diag"></div>
+  <div class="bg-circle bg-circle-1"></div>
+  <div class="bg-circle bg-circle-2"></div>
+  <div class="bg-circle bg-circle-3"></div>
+  <div class="accent-dot"></div>
+  <div class="vertical-line"></div>
+  <div class="corner-tr"></div>
+  <div class="corner-bl"></div>
+
+  <div class="content">
+    <h1 class="brand-title">JustAidyn courses</h1>
+    <div class="subtitle">Прикладные AI</div>
+    <div class="tagline">Агенты в жизни, работе, саморазвитии и исследованиях</div>
+  </div>
+</div>
+</body>
+</html>

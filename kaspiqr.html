@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+<link rel="shortcut icon" type="image/png" href="favicon.png?v=20260331c">
+<title>Kaspi QR Payment</title>
+  <style>
+    :root {
+      --bg-start: #4f62ae;
+      --bg-end: #20c997;
+      --text: #11203b;
+      --card-bg: rgba(255, 255, 255, 0.96);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      align-items: center;
+      background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+      color: var(--text);
+      display: flex;
+      font-family: Georgia, "Times New Roman", serif;
+      justify-content: center;
+      margin: 0;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .payment-card {
+      background: var(--card-bg);
+      border-radius: 28px;
+      box-shadow: 0 24px 70px rgba(17, 32, 59, 0.22);
+      max-width: 720px;
+      padding: 32px;
+      text-align: center;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: clamp(32px, 5vw, 52px);
+      line-height: 1.05;
+      margin: 0 0 14px;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.5;
+      margin: 0 0 24px;
+    }
+
+    .qr-link {
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    .qr-image {
+      border-radius: 24px;
+      display: block;
+      margin: 0 auto 22px;
+      max-width: 100%;
+      width: 420px;
+    }
+
+    .pay-link {
+      background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+      border-radius: 999px;
+      color: #fff;
+      display: inline-block;
+      font-size: 18px;
+      font-weight: 700;
+      padding: 14px 24px;
+      text-decoration: none;
+    }
+  </style>
+  <script>
+    (function () {
+      var payUrl = 'https://pay.kaspi.kz/pay/hhjp0zvj';
+      var ua = navigator.userAgent || '';
+      var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)
+        || (navigator.maxTouchPoints > 1 && window.innerWidth <= 1024);
+
+      if (isMobile) {
+        window.location.replace(payUrl);
+      }
+    }());
+  </script>
+</head>
+<body>
+  <main class="payment-card">
+    <h1>Pay with Kaspi QR</h1>
+    <p>If you opened this page on desktop, scan the QR code with your phone. You can also open Kaspi Pay with the button below.</p>
+    <a class="qr-link" href="https://pay.kaspi.kz/pay/hhjp0zvj">
+      <img class="qr-image" src="images/kaspi-qr.jpeg" alt="Kaspi QR payment code">
+    </a>
+    <a class="pay-link" href="https://pay.kaspi.kz/pay/hhjp0zvj">Open Kaspi Pay</a>
+  </main>
+</body>
+</html>

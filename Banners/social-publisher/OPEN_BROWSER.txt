@@ -1,0 +1,18 @@
+ЗАПУСТИ ЭТО НА СВОЕМ КОМПЬЮТЕРЕ:
+
+1. Открой командную строку (cmd) или PowerShell
+2. Перейди в папку:
+   cd "C:\Users\JustAidyn\Desktop\No face thinker and NOESIS projects\CV-Portfolio\Banners\social-publisher"
+
+3. Выполни команду:
+   python whatsapp_manual.py
+
+4. Откроется браузер с WhatsApp Web
+5. Отсканируй QR-код телефоном:
+   WhatsApp → Настройки → Связанные устройства → Привязать устройство
+
+6. Нажми ENTER в терминале
+
+7. Сессия сохранится автоматически
+
+ПОСЛЕ ЭТОГО публикация в WhatsApp будет работать автоматически!

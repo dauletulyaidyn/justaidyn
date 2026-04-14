@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="26" height="18" viewBox="0 0 26 18">
+  <rect width="26" height="18" fill="#fff"/>
+  <!-- stripes -->
+  <g fill="#b22234">
+    <rect y="0" width="26" height="2"/>
+    <rect y="4" width="26" height="2"/>
+    <rect y="8" width="26" height="2"/>
+    <rect y="12" width="26" height="2"/>
+    <rect y="16" width="26" height="2"/>
+  </g>
+  <!-- canton -->
+  <rect width="11.5" height="8" fill="#3c3b6e"/>
+  <!-- simplified stars -->
+  <g fill="#fff" opacity="0.95">
+    <circle cx="2.0" cy="1.5" r="0.45"/>
+    <circle cx="4.0" cy="1.5" r="0.45"/>
+    <circle cx="6.0" cy="1.5" r="0.45"/>
+    <circle cx="8.0" cy="1.5" r="0.45"/>
+    <circle cx="10.0" cy="1.5" r="0.45"/>
+
+    <circle cx="3.0" cy="3.2" r="0.45"/>
+    <circle cx="5.0" cy="3.2" r="0.45"/>
+    <circle cx="7.0" cy="3.2" r="0.45"/>
+    <circle cx="9.0" cy="3.2" r="0.45"/>
+
+    <circle cx="2.0" cy="5.0" r="0.45"/>
+    <circle cx="4.0" cy="5.0" r="0.45"/>
+    <circle cx="6.0" cy="5.0" r="0.45"/>
+    <circle cx="8.0" cy="5.0" r="0.45"/>
+    <circle cx="10.0" cy="5.0" r="0.45"/>
+
+    <circle cx="3.0" cy="6.7" r="0.45"/>
+    <circle cx="5.0" cy="6.7" r="0.45"/>
+    <circle cx="7.0" cy="6.7" r="0.45"/>
+    <circle cx="9.0" cy="6.7" r="0.45"/>
+  </g>
+</svg>
+

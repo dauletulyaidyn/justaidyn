@@ -1,0 +1,292 @@
+﻿<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AP22686112 | Project and Research Results</title>
+<style>
+    :root{--bg:#f3f7fb;--card:#ffffff;--soft:#edf4fa;--line:#d7e4f0;--ink:#163a63;--muted:#5d7ea1;--accent:#0f5fa6;--accent2:#2c8fd6}
+    *{box-sizing:border-box} body{margin:0;font-family:"Segoe UI",Tahoma,sans-serif;background:linear-gradient(180deg,#f8fbfe 0%,var(--bg) 100%);color:var(--ink)}
+    a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+    .page{max-width:1320px;margin:0 auto;padding:32px 22px 48px}
+    .hero{background:linear-gradient(135deg,#0f4f8d 0%,#2d89cc 55%,#66b2e6 100%);color:#fff;border-radius:32px;padding:34px 38px;box-shadow:0 20px 50px rgba(15,79,141,.2)}
+    .hero .eyebrow{display:inline-block;padding:8px 14px;border:1px solid rgba(255,255,255,.28);border-radius:999px;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+    .hero h1{margin:18px 0 12px;font-size:42px;line-height:1.08;max-width:980px}
+    .hero p{max-width:920px;font-size:18px;line-height:1.65;margin:0;color:rgba(255,255,255,.92)}
+    .lang-switch{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;align-items:center}
+    .lang-switch a,.lang-switch button{display:inline-block;padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.25);color:#fff;background:rgba(255,255,255,.08);font:inherit;cursor:pointer}
+    .lang-switch a.active,.lang-switch button.active{background:#fff;color:var(--accent);font-weight:700}
+    .lang-switch button:hover{text-decoration:none;background:rgba(255,255,255,.16)}
+    .lang-switch button.active:hover{background:#fff}
+    .meta{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:22px 0 28px}
+    .meta .item,.card{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:0 12px 32px rgba(21,59,99,.08)}
+    .meta .item{padding:18px 20px}
+    .meta .label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px}
+    .meta .value{font-size:18px;font-weight:700;color:var(--ink);line-height:1.35}
+    .section{margin-top:26px}
+    .section-title{font-size:30px;line-height:1.1;margin:0 0 16px;color:var(--ink)}
+    .grid-2{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
+    .card{padding:22px}
+    .card h3{margin:0 0 14px;font-size:22px}
+    .card p{margin:0 0 12px;font-size:15px;line-height:1.7;color:#426584}
+    .note{background:var(--soft);border:1px solid var(--line);border-radius:18px;padding:16px 18px}
+    .mono{font-family:Consolas,"Courier New",monospace}
+    .list{margin:0;padding-left:20px;color:#426584;line-height:1.75}
+    .pub-list{display:grid;gap:16px}
+    .pub{border:1px solid var(--line);border-radius:20px;overflow:hidden;background:#fff}
+    .pub-head{padding:18px 20px;background:linear-gradient(180deg,#f7fbfe 0%,#eff5fb 100%);font-weight:800;font-size:17px;line-height:1.35}
+    .pub-body{padding:18px 20px}
+    .pub-body p{margin:0 0 6px;font-size:15px;color:#426584}
+    .pub-body .doi{font-weight:700}
+    .results{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .figure{border:1px solid var(--line);border-radius:20px;background:var(--soft);overflow:hidden}
+    .figure img{display:block;width:100%;height:260px;object-fit:contain;background:#f8fbfe}
+    .figure h4{margin:0;padding:16px 18px 8px;font-size:20px}
+    .figure p{padding:0 18px 18px;margin:0;font-size:14px;line-height:1.65;color:#486a89}
+    .wide{grid-column:1/-1}
+    .wide .figure-wrap{border:1px solid var(--line);border-radius:22px;background:var(--soft);overflow:hidden}
+    .wide img{display:block;width:100%;height:auto;max-height:760px;object-fit:contain;background:#f8fbfe}
+    .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+    .summary .box{background:#f7fbfe;border:1px solid var(--line);border-radius:18px;padding:16px}
+    .summary .box strong{display:block;font-size:26px;color:var(--accent);margin-bottom:6px}
+    .lang-stage{position:relative}
+    .lang-panel{opacity:0;transform:translateY(18px);max-height:0;overflow:hidden;pointer-events:none;transition:opacity .32s ease,transform .32s ease,max-height .32s ease}
+    .lang-panel.active{opacity:1;transform:translateY(0);max-height:20000px;overflow:visible;pointer-events:auto}
+    @media (max-width:1100px){.meta,.results,.summary{grid-template-columns:1fr 1fr}.grid-2{grid-template-columns:1fr}}
+    @media (max-width:760px){.page{padding:18px 14px 36px}.hero{padding:24px 20px;border-radius:24px}.hero h1{font-size:30px}.hero p{font-size:16px}.meta,.results,.summary{grid-template-columns:1fr}.section-title{font-size:25px}}
+</style>
+</head>
+<body>
+<div class="lang-stage">
+  <section class="lang-panel active" data-lang="kz">
+    <main class="page">
+<section class="hero">
+<div class="eyebrow">AP22686112 ғылыми жобасы</div>
+<h1>Перифериялық артерия ауруы бар науқастарда машиналық оқыту әдістерін қолдана отырып, бір жасушалы РНҚ деректерінен соматикалық мутацияларды зерттеу</h1>
+<p>Бұл бетте жоба туралы негізгі мәліметтер, ғылыми жетекшінің жарияланымдары және зерттеудің қазіргі кезеңіндегі нәтижелер біріктірілген. Мұнда классикалық pipeline-нан агенттік тәсілге көшу де жеке көрсетілген.</p>
+<div class="lang-switch"><button type="button" class="lang-tab active" data-lang="kz">KZ</button><button type="button" class="lang-tab" data-lang="ru">RU</button><button type="button" class="lang-tab" data-lang="en">EN</button></div>
+</section>
+<section class="meta"><div class="item"><div class="label">IRN</div><div class="value">AP22686112</div></div><div class="item"><div class="label">Іске асыру кезеңі</div><div class="value">2024-2026</div></div><div class="item"><div class="label">Мәртебе</div><div class="value">ҰҒК мақұлдаған<br/>27.06.2024 09:48:06</div></div><div class="item"><div class="label">Ғылыми жетекшісі</div><div class="value">Aidyn D. Kunikeyev</div></div></section>
+<section class="grid-2 section">
+<article class="card">
+<h3>Жоба туралы</h3>
+<p>Перифериялық артерия ауруы (ПАА) - аяқ, табан, қол, ми және ішкі ағзалар сияқты коронарлық емес аймақтарға қан ағымына әсер ететін артериялардың қалыптан тыс тарылуымен немесе бітелуімен сипатталатын тамыр ауру. Дүние жүзінде шамамен 202 миллион адам перифериялық артерия ауруымен (ПАА) зардап шегеді деп саналады, бұл бүкіл әлем халқының шамамен 12-14% құрайды. Бұл жағдайдың жиілігі жасы ұлғайған сайын артып, 55 жастан асқан адамдардың шамамен 10-25% әсер етеді, ал 80 жастан асқандар арасында 40% жетеді.. Ол аурушаңдықтың, өлімнің және өмір сапасының төмендеуінің елеулі деңгейлерімен байланысты. Қазақстанда ПАА таралуы жалпы халықтың 5%-дан азын құрайды және өсу тенденциясына ие, бұл ≈0,9 миллион ересек адамның ПАА бар екенін көрсетеді. Егер науқасты емдеу мүмкін болмаса, ампутация ықтимал салдары болып табылады. Соматикалық жасушалар индивидтің өмір бойы бірте-бірте өздігінен пайда болатын мутацияларды жинақтайды. ПАА-дағы соматикалық мутациялардың көп факторлы этиологиясы бірнеше қауіп факторларымен, соның ішінде қартаю, қоршаған ортаның токсиндерінің әсері, созылмалы қабыну, сәулелену және тотығу стресстерімен негізделеді, олардың барлығы ДНҚ-ның зақымдалуын тудыруы және соматикалық мутациялардың жинақталуына әкелуі мүмкін.</p><p>Жобаның бастапқы кезеңінде деректерді классикалық өңдеу құралы ретінде жалпыға қолжетімді PRJNA736095 жиынтығы, FASTQ файлдарын жинау, сапаны бақылау, <span class="mono">Hisat2</span> арқылы туралау, <span class="mono">FeatureCounts</span> арқылы сандық бағалау және GalaxyProject ортасында <span class="mono">DESeq2</span> көмегімен дифференциалды экспрессия талдауы пайдаланылды.</p><p>Қазіргі кезеңде бұл негіз кеңейтіліп, соматикалық мутацияларды анықтау, pathway analysis, жасушалық күйлерді түсіндіру және machine learning элементтерін біріктіретін агенттік pipeline іске асырылды.</p>
+<div class="note">
+<strong>Тапсырыс беруші:</strong> Қазақстан Республикасының Ғылым және жоғары білім министрлігі.<br/>
+<strong>Өтінім беруші:</strong> «Қ.И. Сәтбаев атындағы Қазақ ұлттық техникалық зерттеу университеті» КЕАҚ.
+        </div>
+</article>
+<article class="card">
+<h3>Жобаның мақсаты</h3>
+<p>Бұл зерттеудің негізгі мақсаты - Gemini, Cosmic және Monocle сияқты құралдар және әртүрлі машиналық оқыту әдістерін пайдалана отырып, перифериялық артерия ауруы (ПАА) бар пациенттеріндегі соматикалық мутацияларды анықтау үшін инклюзивті pipeline құру.</p>
+<ul class="list"><li>біржасушалы деректерді өңдеудің қазіргі әдістеріне шолу жасау;</li><li>қолдағы деректер жиынтығын кеңейту;</li><li>барлық жиынтықтарға бірлескен алдын ала өңдеу жүргізу;</li><li>кластерлік талдау орындау;</li><li>соматикалық мутацияларды және pathway-level өзгерістерді анықтау;</li><li>деректерді кеңейтуден қорытынды талдауға дейінгі толық pipeline құру;</li></ul>
+<p>Күтілетін нәтижелер қатарына Scopus мақалалары, шолу жарияланымы және PAD жағдайында соматикалық мутацияларды іздеуге арналған генетикалық pipeline кіреді.</p>
+</article>
+</section>
+<section class="section">
+<h2 class="section-title">Ғылыми жетекшінің жарияланымдары</h2>
+<div class="pub-list">
+<article class="pub">
+<div class="pub-head">A REVIEW OF TOOLS, METHODOLOGIES, AND TECHNIQUES FOR PROCESSING, PRE-PROCESSING, AND CLUSTERING ANALYSIS OF GENETIC DATA</div>
+<div class="pub-body">
+<p><strong>Журнал:</strong> Herald of the Kazakh-British technical university</p>
+<p><strong>Күні:</strong> 2024-12-22</p>
+<p class="doi"><strong>DOI:</strong> <a href="https://doi.org/10.55452/1998-6688-2024-21-4-45-57">10.55452/1998-6688-2024-21-4-45-57</a></p>
+<p><strong>Авторлар:</strong> A. Kunikeyev; A. Yerimbetova; R. Satybaldiyeva</p>
+<p><strong>Профильдегі дереккөз:</strong> Aidyn D. Kunikeyev</p>
+</div>
+</article>
+<article class="pub">
+<div class="pub-head">Latest Advances in Endothelial Progenitor Cell-Derived Extracellular Vesicles Translation to the Clinic</div>
+<div class="pub-body">
+<p><strong>Журнал:</strong> Frontiers in Cardiovascular Medicine</p>
+<p><strong>Күні:</strong> 2021-10-04</p>
+<p class="doi"><strong>DOI:</strong> <a href="https://doi.org/10.3389/fcvm.2021.734562">10.3389/fcvm.2021.734562</a></p>
+<p><strong>Профильдегі дереккөз:</strong> Aidyn D. Kunikeyev</p>
+</div>
+</article></div>
+</section>
+<section class="section">
+<h2 class="section-title">Зерттеудің қазіргі кезеңіндегі нәтижелер</h2>
+<article class="card wide">
+<h3>Жасушалық күйлер мен мутациялық жүктеменің картасы</h3>
+<div class="figure-wrap"><img alt="Жасушалық күйлер мен мутациялық жүктеменің картасы" src="/PAD_agentic_pipeline/figures/fig10_umap_overview.png"/></div>
+<p>UMAP-көрінісі жасушалық күйлердің кеңістіктік құрылымын және олардың мутациялық жүктемемен байланысын көрсетті. Бұл блок экспрессия кластерлеуінен биологиялық тұрғыдан түсіндірілетін жасушалық популяцияларға көшуге мүмкіндік береді.</p>
+</article>
+<div class="summary"><div class="box"><strong>14</strong>үлгі ағымдағы талдауға біріктірілді.</div><div class="box"><strong>20,634</strong>белгі сүзгіден өткен кеңістікте пайдаланылды.</div><div class="box"><strong>0.98</strong>ең жоғары balanced accuracy көрсеткіші алынды.</div></div>
+<div class="results section"><article class="figure"><h4>Когорталық сүзгілеуден кейінгі варианттар</h4><img alt="Когорталық сүзгілеуден кейінгі варианттар" src="/PAD_agentic_pipeline/figures/fig3_variant_counts_cohort.png"/><p>Когорталық сүзгілеуден кейін де әрі қарайғы талдауға жеткілікті варианттық сигнал сақталғанын көрсетеді.</p></article>
+<article class="figure"><h4>Модельдердің сапасы</h4><img alt="Модельдердің сапасы" src="/PAD_agentic_pipeline/figures/fig7_ml_repeatedcv_cohort.png"/><p>Қайталанған кросс-валидация кезінде сызықтық модельдер тұрақты нәтижелер көрсетеді.</p></article>
+<article class="figure"><h4>Жара шетіне тән enrichment</h4><img alt="Жара шетіне тән enrichment" src="/PAD_agentic_pipeline/figures/fig9_enrichment_wound_edge_higher_mutation_burden.png"/><p>Жара шеті аймағында mutation burden жоғары гендер үшін pathway-level enrichment сигналдары байқалады.</p></article></div>
+</section>
+<section class="grid-2 section">
+<article class="card">
+<h3>Алдыңғы кезеңмен салыстырғандағы өзгерістер</h3>
+<p>Егер жобаның ертерек кезеңі single-cell деректерін классикалық өңдеуге және базалық экспрессия талдауына сүйенсе, қазіргі кезең somatic mutation analysis, cell-state interpretation және machine learning байланысын күшейтеді.</p><p>Агенттік pipeline есептеу қадамдарын, аралық нәтижелерді бақылауды, кестелер мен суреттерді дайындауды және қорытынды интерпретацияны біртұтас үдеріске біріктіреді.</p>
+</article>
+
+</section>
+    </main>
+  </section>
+  <section class="lang-panel" data-lang="ru">
+    <main class="page">
+<section class="hero">
+<div class="eyebrow">Научный проект AP22686112</div>
+<h1>Исследование соматических мутаций по данным одноклеточной РНК с использованием методов машинного обучения у пациентов с заболеванием периферических артерий</h1>
+<p>Страница объединяет основные сведения о проекте, публикации научного руководителя и результаты текущего этапа исследования. Отдельно показан переход от классического пайплайна к агентному подходу.</p>
+<div class="lang-switch"><button type="button" class="lang-tab" data-lang="kz">KZ</button><button type="button" class="lang-tab active" data-lang="ru">RU</button><button type="button" class="lang-tab" data-lang="en">EN</button></div>
+</section>
+<section class="meta"><div class="item"><div class="label">ИРН</div><div class="value">AP22686112</div></div><div class="item"><div class="label">Период реализации</div><div class="value">2024-2026</div></div><div class="item"><div class="label">Статус</div><div class="value">Одобрено ННС<br/>27.06.2024 09:48:06</div></div><div class="item"><div class="label">Научный руководитель</div><div class="value">Aidyn D. Kunikeyev</div></div></section>
+<section class="grid-2 section">
+<article class="card">
+<h3>О проекте</h3>
+<p>Заболевание периферических артерий (ЗПА) — это сосудистое заболевание, характеризующееся аномальным сужением или закупоркой артерий, влияющее на приток крови к некоронарным областям, таким как ноги, ступни, руки, мозг и внутренние органы. Считается, что около 202 миллионов человек во всем мире страдают от заболеваний периферических артерий (ЗПА), что составляет примерно 12-14% мирового населения. Частота этого состояния увеличивается с возрастом, поражая примерно 10-25% людей старше 55 лет и достигая 40% среди людей старше 80 лет. Это связано со значительным уровнем заболеваемости, смертности и снижением качества медицинской помощи. Распространенность ЗПА в Казахстане составляет менее 5% от общей численности населения и имеет тенденцию к росту, что указывает на то, что ≈0,9 миллиона взрослых живут с ЗПА. Ампутация является потенциальным последствием, если пациента невозможно вылечить. Соматические клетки постепенно накапливают спонтанные мутации в течение жизни человека. Многофакторная этиология соматических мутаций при ЗПА обусловлена несколькими факторами риска, включая старение, воздействие токсинов окружающей среды, хроническое воспаление, радиацию и окислительный стресс, все из которых могут вызывать повреждение ДНК и приводить к накоплению соматических мутаций.</p><p>На раннем этапе проекта использовался классический набор инструментов: общедоступный набор PRJNA736095, сбор FASTQ-файлов, контроль качества, выравнивание с помощью <span class="mono">Hisat2</span>, количественная оценка через <span class="mono">FeatureCounts</span> и анализ дифференциальной экспрессии через <span class="mono">DESeq2</span> на платформе GalaxyProject.</p><p>На текущем этапе эта основа расширена до агентного пайплайна, который объединяет поиск соматических мутаций, pathway analysis, интерпретацию клеточных состояний и методы машинного обучения.</p>
+<div class="note">
+<strong>Заказчик:</strong> Министерство науки и высшего образования Республики Казахстан.<br/>
+<strong>Заявитель:</strong> НАО «Казахский национальный исследовательский технический университет имени К.И. Сатпаева».
+        </div>
+</article>
+<article class="card">
+<h3>Цель проекта</h3>
+<p>Основная цель этого исследования — создать инклюзивный pipline выявления соматических мутаций у пациентов с заболеваниями периферических артерий (ЗПА) с использованием различных методов машинного обучения и инструментов, таких как Gemini, Cosmic и Monocle.</p>
+<ul class="list"><li>провести обзор существующих методов обработки одноклеточных данных;</li><li>расширить текущий набор данных;</li><li>выполнить совместную предварительную обработку всех наборов;</li><li>провести кластерный анализ;</li><li>обнаружить соматические мутации и выполнить pathway analysis;</li><li>построить полный пайплайн от расширения данных до итогового анализа;</li></ul>
+<p>Ожидаемые результаты проекта включают публикации уровня Scopus, обзорную статью и генетический пайплайн для поиска соматических мутаций при заболевании периферических артерий.</p>
+</article>
+</section>
+<section class="section">
+<h2 class="section-title">Публикации научного руководителя</h2>
+<div class="pub-list">
+<article class="pub">
+<div class="pub-head">A REVIEW OF TOOLS, METHODOLOGIES, AND TECHNIQUES FOR PROCESSING, PRE-PROCESSING, AND CLUSTERING ANALYSIS OF GENETIC DATA</div>
+<div class="pub-body">
+<p><strong>Журнал:</strong> Herald of the Kazakh-British technical university</p>
+<p><strong>Дата:</strong> 2024-12-22</p>
+<p class="doi"><strong>DOI:</strong> <a href="https://doi.org/10.55452/1998-6688-2024-21-4-45-57">10.55452/1998-6688-2024-21-4-45-57</a></p>
+<p><strong>Авторы:</strong> A. Kunikeyev; A. Yerimbetova; R. Satybaldiyeva</p>
+<p><strong>Источник в профиле:</strong> Aidyn D. Kunikeyev</p>
+</div>
+</article>
+<article class="pub">
+<div class="pub-head">Latest Advances in Endothelial Progenitor Cell-Derived Extracellular Vesicles Translation to the Clinic</div>
+<div class="pub-body">
+<p><strong>Журнал:</strong> Frontiers in Cardiovascular Medicine</p>
+<p><strong>Дата:</strong> 2021-10-04</p>
+<p class="doi"><strong>DOI:</strong> <a href="https://doi.org/10.3389/fcvm.2021.734562">10.3389/fcvm.2021.734562</a></p>
+<p><strong>Источник в профиле:</strong> Aidyn D. Kunikeyev</p>
+</div>
+</article></div>
+</section>
+<section class="section">
+<h2 class="section-title">Результаты текущего этапа исследования</h2>
+<article class="card wide">
+<h3>Карта клеточных состояний и мутационной нагрузки</h3>
+<div class="figure-wrap"><img alt="Карта клеточных состояний и мутационной нагрузки" src="/PAD_agentic_pipeline/figures/fig10_umap_overview.png"/></div>
+<p>UMAP-представление показывает пространственную структуру клеточных состояний и их связь с мутационной нагрузкой. Этот блок отражает переход от общей кластеризации экспрессии к интерпретируемому анализу клеточных популяций.</p>
+</article>
+<div class="summary"><div class="box"><strong>14</strong>образцов было интегрировано в текущий анализ.</div><div class="box"><strong>20,634</strong>признака использовано в отфильтрованном пространстве признаков.</div><div class="box"><strong>0.98</strong>составило лучшее значение balanced accuracy.</div></div>
+<div class="results section"><article class="figure"><h4>Фильтрация вариантов по когорте</h4><img alt="Фильтрация вариантов по когорте" src="/PAD_agentic_pipeline/figures/fig3_variant_counts_cohort.png"/><p>После когортной фильтрации сохраняется значимый вариантный сигнал для дальнейшего анализа.</p></article>
+<article class="figure"><h4>Качество моделей</h4><img alt="Качество моделей" src="/PAD_agentic_pipeline/figures/fig7_ml_repeatedcv_cohort.png"/><p>Линейные модели демонстрируют устойчивое качество при повторной перекрестной проверке.</p></article>
+<article class="figure"><h4>Обогащение по краю раны</h4><img alt="Обогащение по краю раны" src="/PAD_agentic_pipeline/figures/fig9_enrichment_wound_edge_higher_mutation_burden.png"/><p>Для области края раны выявлены pathway-level сигналы обогащения у генов с повышенной мутационной нагрузкой.</p></article></div>
+</section>
+<section class="grid-2 section">
+<article class="card">
+<h3>Что изменилось по сравнению с ранним этапом</h3>
+<p>Если ранний этап проекта опирался на классический набор инструментов для обработки single-cell данных и базового анализа экспрессии, то текущий этап уже ориентирован на связку somatic mutation analysis, cell-state interpretation и machine learning.</p><p>Агентный пайплайн связывает вычислительные этапы, контроль промежуточных результатов, подготовку таблиц и фигур, а также итоговую интерпретацию в едином процессе.</p>
+</article>
+
+</section>
+    </main>
+  </section>
+  <section class="lang-panel" data-lang="en">
+    <main class="page">
+<section class="hero">
+<div class="eyebrow">Research Project AP22686112</div>
+<h1>Study of somatic mutations from single-cell RNA data using machine learning methods in patients with peripheral artery disease</h1>
+<p>This page combines the core project information, the supervisor's publications, and the results obtained at the current stage of the study. It also shows the transition from a classical pipeline to an agentic workflow.</p>
+<div class="lang-switch"><button type="button" class="lang-tab" data-lang="kz">KZ</button><button type="button" class="lang-tab" data-lang="ru">RU</button><button type="button" class="lang-tab active" data-lang="en">EN</button></div>
+</section>
+<section class="meta"><div class="item"><div class="label">IRN</div><div class="value">AP22686112</div></div><div class="item"><div class="label">Implementation Period</div><div class="value">2024-2026</div></div><div class="item"><div class="label">Status</div><div class="value">Approved by the National Scientific Council<br/>2024-06-27 09:48:06</div></div><div class="item"><div class="label">Scientific Supervisor</div><div class="value">Aidyn D. Kunikeyev</div></div></section>
+<section class="grid-2 section">
+<article class="card">
+<h3>About the Project</h3>
+<p>Peripheral Arterial Disease (PAD) is a vascular condition marked by abnormal narrowing or blockage of arteries, affecting blood flow to non-coronary areas such as the legs, feet, arms, brain, and visceral organs. Approximately 202 million individuals worldwide are believed to be affected by peripheral artery disease (PAD), which accounts for roughly 12-14% of the global population. The frequency of this condition rises with advancing age, impacting approximately 10-25% of individuals aged over 55, and reaching 40% among those aged over 80. It is linked to notable levels of morbidity, mortality, and a reduction in the quality of life. The prevalence of PAD in Kazakhstan is less than 5% of the total population and is trending upward, indicating that ≈0.9 million adults are living with PAD. Amputation is a potential consequence if a patient cannot be healed. Somatic cells gradually accumulate spontaneous mutations over the course of an individual's life. The multifactorial etiology of somatic mutations in PADs is driven by several risk factors, including aging, exposure to environmental toxins, chronic inflammation, radiation, and oxidative stress, all of which can induce DNA damage and lead to the accumulation of somatic mutations.</p><p>At the earlier stage, the project relied on a classical processing stack: the public PRJNA736095 dataset, FASTQ collection, quality control, alignment with <span class="mono">Hisat2</span>, quantification with <span class="mono">FeatureCounts</span>, and differential expression analysis with <span class="mono">DESeq2</span> on GalaxyProject.</p><p>The current stage extends this foundation into an agentic pipeline that integrates somatic mutation discovery, pathway analysis, cell-state interpretation, and machine learning.</p>
+<div class="note">
+<strong>Customer:</strong> Ministry of Science and Higher Education of the Republic of Kazakhstan.<br/>
+<strong>Applicant:</strong> NJSC K.I. Satbayev Kazakh National Research Technical University.
+        </div>
+</article>
+<article class="card">
+<h3>Project Goal</h3>
+<p>This study's main goal is to create an inclusive pipeline for identifying somatic mutations in peripheral arterial disease (PAD) patients, making use of diverse machine learning techniques and tools like Gemini, Cosmic, and Monocle</p>
+<ul class="list"><li>review current methods for processing single-cell data;</li><li>expand the available dataset;</li><li>perform joint preprocessing across all datasets;</li><li>carry out cluster analysis;</li><li>detect somatic mutations and perform pathway analysis;</li><li>build a full pipeline from data expansion to final interpretation;</li></ul>
+<p>Expected project outputs include Scopus-indexed articles, a review paper, and a genetic pipeline for detecting somatic mutations in peripheral artery disease.</p>
+</article>
+</section>
+<section class="section">
+<h2 class="section-title">Scientific Supervisor Publications</h2>
+<div class="pub-list">
+<article class="pub">
+<div class="pub-head">A REVIEW OF TOOLS, METHODOLOGIES, AND TECHNIQUES FOR PROCESSING, PRE-PROCESSING, AND CLUSTERING ANALYSIS OF GENETIC DATA</div>
+<div class="pub-body">
+<p><strong>Journal:</strong> Herald of the Kazakh-British technical university</p>
+<p><strong>Date:</strong> 2024-12-22</p>
+<p class="doi"><strong>DOI:</strong> <a href="https://doi.org/10.55452/1998-6688-2024-21-4-45-57">10.55452/1998-6688-2024-21-4-45-57</a></p>
+<p><strong>Authors:</strong> A. Kunikeyev; A. Yerimbetova; R. Satybaldiyeva</p>
+<p><strong>Profile source:</strong> Aidyn D. Kunikeyev</p>
+</div>
+</article>
+<article class="pub">
+<div class="pub-head">Latest Advances in Endothelial Progenitor Cell-Derived Extracellular Vesicles Translation to the Clinic</div>
+<div class="pub-body">
+<p><strong>Journal:</strong> Frontiers in Cardiovascular Medicine</p>
+<p><strong>Date:</strong> 2021-10-04</p>
+<p class="doi"><strong>DOI:</strong> <a href="https://doi.org/10.3389/fcvm.2021.734562">10.3389/fcvm.2021.734562</a></p>
+<p><strong>Profile source:</strong> Aidyn D. Kunikeyev</p>
+</div>
+</article></div>
+</section>
+<section class="section">
+<h2 class="section-title">Results of the Current Study Stage</h2>
+<article class="card wide">
+<h3>Map of Cell States and Mutational Burden</h3>
+<div class="figure-wrap"><img alt="Map of Cell States and Mutational Burden" src="/PAD_agentic_pipeline/figures/fig10_umap_overview.png"/></div>
+<p>The UMAP view highlights the spatial organization of cell states and their relationship to mutational burden. This block reflects the transition from generic expression clustering to interpretable cell-population analysis.</p>
+</article>
+<div class="summary"><div class="box"><strong>14</strong>samples were integrated into the current analysis.</div><div class="box"><strong>20,634</strong>features were retained in the filtered feature space.</div><div class="box"><strong>0.98</strong>was the best balanced accuracy achieved.</div></div>
+<div class="results section"><article class="figure"><h4>Cohort-Level Variant Filtering</h4><img alt="Cohort-Level Variant Filtering" src="/PAD_agentic_pipeline/figures/fig3_variant_counts_cohort.png"/><p>The chart shows that a substantial variant signal remains after cohort-level filtering.</p></article>
+<article class="figure"><h4>Model Performance</h4><img alt="Model Performance" src="/PAD_agentic_pipeline/figures/fig7_ml_repeatedcv_cohort.png"/><p>Linear models show stable performance under repeated cross-validation.</p></article>
+<article class="figure"><h4>Wound-Edge Enrichment</h4><img alt="Wound-Edge Enrichment" src="/PAD_agentic_pipeline/figures/fig9_enrichment_wound_edge_higher_mutation_burden.png"/><p>Pathway-level enrichment signals were detected for genes with higher mutational burden at the wound edge.</p></article></div>
+</section>
+<section class="grid-2 section">
+<article class="card">
+<h3>What Changed Compared with the Earlier Stage</h3>
+<p>While the earlier stage focused on a classical toolkit for single-cell processing and baseline expression analysis, the current stage is centered on the connection between somatic mutation analysis, cell-state interpretation, and machine learning.</p><p>The agentic pipeline links computational stages, intermediate-result control, table and figure preparation, and final interpretation into a single workflow.</p>
+</article>
+</section>
+    </main>
+  </section>
+</div>
+<script>
+(() => {
+  const panels = Array.from(document.querySelectorAll('.lang-panel'));
+  const buttons = Array.from(document.querySelectorAll('.lang-tab'));
+  const valid = new Set(panels.map(p => p.dataset.lang));
+
+  function setLang(lang, pushHash = true) {
+    if (!valid.has(lang)) return;
+    document.documentElement.lang = lang === 'kz' ? 'kk' : lang;
+    panels.forEach(panel => panel.classList.toggle('active', panel.dataset.lang === lang));
+    buttons.forEach(button => button.classList.toggle('active', button.dataset.lang === lang));
+    if (pushHash) history.replaceState(null, '', '#' + lang);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  buttons.forEach(button => {
+    button.addEventListener('click', () => setLang(button.dataset.lang));
+  });
+
+  const initial = location.hash.replace('#', '');
+  if (valid.has(initial)) setLang(initial, false);
+})();
+</script>
+</body>
+</html>
