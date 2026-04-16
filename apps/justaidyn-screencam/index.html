@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JustAidyn ScreenCam</title>
+  <meta name="description" content="JustAidyn ScreenCam application page.">
+  <style>
+    :root {
+      color-scheme: light;
+      --text: #18232c;
+      --muted: #54606a;
+      --accent: #0f6b73;
+      --accent-2: #0a5258;
+      --panel: rgba(255, 255, 255, 0.92);
+      --border: rgba(24, 35, 44, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 24px;
+      font-family: Arial, sans-serif;
+      background:
+        linear-gradient(rgba(238, 244, 244, 0.88), rgba(238, 244, 244, 0.94)),
+        url("../../images/aerial-view-man-using-computer-laptop-wooden-table.jpg") center / cover no-repeat;
+      color: var(--text);
+    }
+
+    main {
+      width: min(960px, 100%);
+      margin: 0 auto;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 40px 32px;
+      backdrop-filter: blur(4px);
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 4vw, 3.3rem);
+      line-height: 1.05;
+    }
+
+    h2 {
+      margin: 28px 0 10px;
+      font-size: 1.2rem;
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--accent);
+      color: #fff;
+      background: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .btn.secondary {
+      background: transparent;
+      color: var(--accent);
+    }
+
+    .panel {
+      margin-top: 24px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    code {
+      font-family: Consolas, monospace;
+      font-size: 0.95em;
+    }
+
+    a {
+      color: var(--accent-2);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>JustAidyn ScreenCam</h1>
+    <p>This page is prepared for the desktop application download flow. The application file should be stored in its own public folder and linked directly from this page.</p>
+
+    <div class="actions">
+      <a class="btn" href="/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam.exe">Download EXE</a>
+      <a class="btn secondary" href="/downloads/apps/justaidyn-screencam/">Open Storage Folder Page</a>
+      <a class="btn secondary" href="/apps/">Back to Apps</a>
+    </div>
+
+    <div class="panel">
+      <h2>Storage Settings</h2>
+      <p><strong>Application page:</strong> <a href="/apps/justaidyn-screencam/">/apps/justaidyn-screencam/</a></p>
+      <p><strong>Storage folder page:</strong> <a href="/downloads/apps/justaidyn-screencam/">/downloads/apps/justaidyn-screencam/</a></p>
+      <p><strong>Expected EXE path:</strong> <code>/downloads/apps/justaidyn-screencam/JustAidyn ScreenCam.exe</code></p>
+      <p><strong>Server folder:</strong> <code>D:\JustAidyn\justaidyn.com\downloads\apps\justaidyn-screencam\</code></p>
+    </div>
+
+    <div class="panel">
+      <h2>What To Upload</h2>
+      <ul>
+        <li>Windows installer file: <code>JustAidyn ScreenCam.exe</code></li>
+        <li>Optional release notes or version manifest later</li>
+        <li>No subscription checks yet</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h2>Future Admin Panel</h2>
+      <p>When the FastAPI backend is added, the admin panel should manage users, subscriptions, and downloadable app builds from one place. For now this page uses a direct static file link.</p>
+    </div>
+  </main>
+</body>
+</html>
