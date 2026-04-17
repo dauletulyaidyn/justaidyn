@@ -83,6 +83,15 @@ server {{
     index index.html;
 {COMMON_LOCATIONS}
 }}
+
+server {{
+    listen 80;
+    server_name shop.justaidyn.com;
+
+    root /var/www/justaidyn.com/shop;
+    index index.html;
+{COMMON_LOCATIONS}
+}}
 """
 
 # Write Nginx config
