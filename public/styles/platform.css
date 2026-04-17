@@ -22,25 +22,12 @@ body.platform-body {
   font-family: 'DM Sans', Arial, sans-serif;
 }
 
-.platform-nav {
-  padding: 16px 0;
-  background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--platform-border);
-}
-
-.platform-brand {
-  font-family: 'Roboto Slab', serif;
-  font-size: 1.6rem;
-  color: var(--platform-text);
-}
-
 .platform-main {
-  min-height: calc(100vh - 180px);
+  min-height: calc(100vh - 120px);
 }
 
 .platform-hero {
-  padding: 56px 0 20px;
+  padding: 0;
 }
 
 .platform-hero-shell,
@@ -66,11 +53,8 @@ body.platform-body {
   font-weight: 700;
 }
 
-.platform-title {
-  margin: 0 0 12px;
-  font-family: 'Roboto Slab', serif;
-  font-size: clamp(2.25rem, 5vw, 4.1rem);
-  line-height: 1.02;
+.platform-subtitle {
+  color: #1b2752;
 }
 
 .platform-copy {
@@ -88,40 +72,14 @@ body.platform-body {
   margin-top: 24px;
 }
 
-.platform-btn {
-  min-height: 46px;
-  padding: 10px 18px;
-  border-radius: 8px;
-  background: var(--platform-primary);
-  border-color: var(--platform-primary);
-  color: #fff;
-  font-weight: 700;
-}
-
-.platform-btn:hover,
-.platform-btn:focus {
-  background: var(--platform-primary-dark);
-  border-color: var(--platform-primary-dark);
-  color: #fff;
-}
-
-.platform-btn-secondary {
-  background: transparent;
-  color: var(--platform-primary-dark);
-}
-
-.platform-btn-secondary:hover,
-.platform-btn-secondary:focus {
-  color: #fff;
-}
-
 .platform-section {
-  padding: 12px 0 56px;
+  padding: 40px 0 56px;
 }
 
 .platform-card {
   height: 100%;
   padding: 24px;
+  background: rgba(255, 255, 255, 0.96);
 }
 
 .platform-card h2 {
@@ -148,46 +106,15 @@ body.platform-body {
   text-decoration: underline;
 }
 
-.platform-footer {
-  padding: 36px 0 20px;
-  background: rgba(17, 31, 44, 0.94);
-  color: rgba(255, 255, 255, 0.88);
-}
-
-.platform-footer-title {
-  margin: 0 0 14px;
-  color: #fff;
-  font-size: 1.05rem;
-}
-
-.platform-footer-copy,
-.platform-footer-list {
-  margin: 0;
-  padding: 0;
-  color: rgba(255, 255, 255, 0.72);
-  list-style: none;
-  line-height: 1.9;
-}
-
-.platform-footer a {
-  color: rgba(255, 255, 255, 0.88);
-  text-decoration: none;
-}
-
-.platform-footer a:hover {
-  text-decoration: underline;
-}
-
-.platform-footer-bottom {
-  margin-top: 24px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.62);
+.project-footer-shell .contact-info p,
+.project-footer-shell .footer-menu-link,
+.project-footer-shell .contact-info a {
+  word-break: break-word;
 }
 
 @media (max-width: 767px) {
   .platform-hero {
-    padding-top: 28px;
+    padding-top: 0;
   }
 
   .platform-hero-shell {

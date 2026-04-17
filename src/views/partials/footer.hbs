@@ -1,30 +1,67 @@
-<footer class="site-footer platform-footer">
+<section class="contact section-padding project-footer-shell">
   <div class="container">
-    <div class="row g-4">
-      <div class="col-lg-4 col-md-6">
-        <h3 class="platform-footer-title">JustAidyn</h3>
-        <p class="platform-footer-copy">AI engineering, products, courses, desktop apps, and experimental tools in one platform shell.</p>
+    <div class="row">
+      <div class="col-lg-6 col-md-8 col-12">
+        <div class="section-title-wrap d-flex justify-content-center align-items-center mb-5">
+          <img src="/images/aerial-view-man-using-computer-laptop-wooden-table.jpg" class="avatar-image img-fluid" alt="JustAidyn contact">
+          <h2 class="text-white ms-4 mb-0">Stay Connected</h2>
+        </div>
       </div>
-      <div class="col-lg-4 col-md-6">
-        <h3 class="platform-footer-title">Core Links</h3>
-        <ul class="platform-footer-list">
-          <li><a href="{{mainSiteUrl}}">Home</a></li>
-          <li><a href="{{projectsUrl}}">Projects</a></li>
-          <li><a href="{{articlesUrl}}">Articles</a></li>
-          <li><a href="{{downloadsUrl}}">Downloads</a></li>
-        </ul>
+
+      <div class="clearfix"></div>
+
+      <div class="col-lg-3 col-md-6 col-12 pe-lg-0">
+        <div class="contact-info contact-info-border-start d-flex flex-column">
+          <strong class="site-footer-title d-block mb-3">Projects</strong>
+          <ul class="footer-menu">
+            {{#each projectLinks}}
+              <li class="footer-menu-item"><a class="footer-menu-link" href="{{this.url}}">{{this.label}}</a></li>
+            {{/each}}
+          </ul>
+
+          <strong class="site-footer-title d-block mt-4 mb-3">Downloads</strong>
+          <p class="mb-0"><a href="{{downloadsUrl}}">Open downloads</a></p>
+        </div>
       </div>
-      <div class="col-lg-4 col-md-12">
-        <h3 class="platform-footer-title">Contact</h3>
-        <ul class="platform-footer-list">
-          <li><a href="mailto:aidyn.daulet@gmail.com">aidyn.daulet@gmail.com</a></li>
-          <li><a href="tel:+77769889889">+7 776 988 9889</a></li>
-          <li><a href="https://wa.me/77769889889" target="_blank" rel="noopener">WhatsApp</a></li>
-        </ul>
+
+      <div class="col-lg-3 col-md-6 col-12 ps-lg-0">
+        <div class="contact-info d-flex flex-column">
+          <strong class="site-footer-title d-block mb-3">About</strong>
+          <p class="mb-2">Shared platform shell for JustAidyn products, courses, apps, shop, API, and future dashboards.</p>
+
+          <strong class="site-footer-title d-block mt-4 mb-3">Email</strong>
+          <p><a href="mailto:aidyn.daulet@gmail.com">aidyn.daulet@gmail.com</a></p>
+
+          <strong class="site-footer-title d-block mt-4 mb-3">Call</strong>
+          <p class="mb-0"><a href="tel:+77769889889">+7 776 988 9889</a></p>
+        </div>
+      </div>
+
+      <div class="col-lg-6 col-12 mt-5 mt-lg-0">
+        <div class="contact-info contact-info-border-start d-flex flex-column">
+          <strong class="site-footer-title d-block mb-3">Quick Links</strong>
+          <ul class="footer-menu">
+            <li class="footer-menu-item"><a class="footer-menu-link" href="{{mainSiteUrl}}">Home</a></li>
+            <li class="footer-menu-item"><a class="footer-menu-link" href="{{projectsUrl}}">Projects</a></li>
+            <li class="footer-menu-item"><a class="footer-menu-link" href="{{articlesUrl}}">Articles</a></li>
+            <li class="footer-menu-item"><a class="footer-menu-link" href="https://wa.me/77769889889" target="_blank" rel="noopener">WhatsApp</a></li>
+          </ul>
+        </div>
       </div>
     </div>
-    <div class="platform-footer-bottom">
-      <span>Copyright {{year}} JustAidyn</span>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 col-12">
+        <div class="copyright-text-wrap">
+          <p class="mb-0">
+            <span class="copyright-text">Copyright © {{year}} JustAidyn. All rights reserved.</span>
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </footer>
