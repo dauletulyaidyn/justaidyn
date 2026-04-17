@@ -1,0 +1,26 @@
+<header class="site-header">
+  <nav class="navbar navbar-expand-lg platform-nav">
+    <div class="container platform-nav-inner">
+      <a class="navbar-brand platform-brand" href="{{mainSiteUrl}}">JustAidyn</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#platformNav" aria-controls="platformNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="platformNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item"><a class="nav-link {{#if (eq pageKey 'home')}}active{{/if}}" href="{{mainSiteUrl}}">Home</a></li>
+          <li class="nav-item"><a class="nav-link {{#if (eq pageKey 'projects')}}active{{/if}}" href="{{projectsUrl}}">Projects</a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="projectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">JustAidyn Projects</a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="projectsDropdown">
+              {{#each projectLinks}}
+                <li><a class="dropdown-item" href="{{this.url}}">{{this.label}}</a></li>
+              {{/each}}
+            </ul>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="mailto:aidyn.daulet@gmail.com">Email</a></li>
+          <li class="nav-item"><a class="nav-link" href="https://wa.me/77769889889" target="_blank" rel="noopener">WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>

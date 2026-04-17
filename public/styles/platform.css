@@ -1,0 +1,196 @@
+:root {
+  color-scheme: light;
+  --platform-bg: #f3f7fb;
+  --platform-text: #182432;
+  --platform-muted: #5e6c79;
+  --platform-primary: #127a7f;
+  --platform-primary-dark: #0d5b5f;
+  --platform-surface: rgba(255, 255, 255, 0.94);
+  --platform-border: rgba(24, 36, 50, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body.platform-body {
+  margin: 0;
+  color: var(--platform-text);
+  background:
+    linear-gradient(rgba(243, 247, 251, 0.9), rgba(243, 247, 251, 0.98)),
+    url('/images/portrait-happy-excited-man-holding-laptop-computer.png') center top / cover no-repeat fixed;
+  font-family: 'DM Sans', Arial, sans-serif;
+}
+
+.platform-nav {
+  padding: 16px 0;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--platform-border);
+}
+
+.platform-brand {
+  font-family: 'Roboto Slab', serif;
+  font-size: 1.6rem;
+  color: var(--platform-text);
+}
+
+.platform-main {
+  min-height: calc(100vh - 180px);
+}
+
+.platform-hero {
+  padding: 56px 0 20px;
+}
+
+.platform-hero-shell,
+.platform-card {
+  background: var(--platform-surface);
+  border: 1px solid var(--platform-border);
+  border-radius: 8px;
+  box-shadow: 0 16px 48px rgba(18, 35, 52, 0.08);
+}
+
+.platform-hero-shell {
+  padding: 40px 32px;
+  max-width: 860px;
+}
+
+.platform-eyebrow {
+  display: inline-flex;
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  background: rgba(18, 122, 127, 0.12);
+  border-radius: 8px;
+  color: var(--platform-primary-dark);
+  font-weight: 700;
+}
+
+.platform-title {
+  margin: 0 0 12px;
+  font-family: 'Roboto Slab', serif;
+  font-size: clamp(2.25rem, 5vw, 4.1rem);
+  line-height: 1.02;
+}
+
+.platform-copy {
+  max-width: 720px;
+  margin: 0;
+  color: var(--platform-muted);
+  font-size: 1.08rem;
+  line-height: 1.7;
+}
+
+.platform-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.platform-btn {
+  min-height: 46px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: var(--platform-primary);
+  border-color: var(--platform-primary);
+  color: #fff;
+  font-weight: 700;
+}
+
+.platform-btn:hover,
+.platform-btn:focus {
+  background: var(--platform-primary-dark);
+  border-color: var(--platform-primary-dark);
+  color: #fff;
+}
+
+.platform-btn-secondary {
+  background: transparent;
+  color: var(--platform-primary-dark);
+}
+
+.platform-btn-secondary:hover,
+.platform-btn-secondary:focus {
+  color: #fff;
+}
+
+.platform-section {
+  padding: 12px 0 56px;
+}
+
+.platform-card {
+  height: 100%;
+  padding: 24px;
+}
+
+.platform-card h2 {
+  margin: 0 0 12px;
+  font-size: 1.35rem;
+  font-family: 'Roboto Slab', serif;
+}
+
+.platform-card p {
+  margin: 0;
+  color: var(--platform-muted);
+  line-height: 1.7;
+}
+
+.platform-inline-link {
+  display: inline-block;
+  margin-top: 18px;
+  color: var(--platform-primary-dark);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.platform-inline-link:hover {
+  text-decoration: underline;
+}
+
+.platform-footer {
+  padding: 36px 0 20px;
+  background: rgba(17, 31, 44, 0.94);
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.platform-footer-title {
+  margin: 0 0 14px;
+  color: #fff;
+  font-size: 1.05rem;
+}
+
+.platform-footer-copy,
+.platform-footer-list {
+  margin: 0;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.72);
+  list-style: none;
+  line-height: 1.9;
+}
+
+.platform-footer a {
+  color: rgba(255, 255, 255, 0.88);
+  text-decoration: none;
+}
+
+.platform-footer a:hover {
+  text-decoration: underline;
+}
+
+.platform-footer-bottom {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.62);
+}
+
+@media (max-width: 767px) {
+  .platform-hero {
+    padding-top: 28px;
+  }
+
+  .platform-hero-shell {
+    padding: 28px 20px;
+  }
+}

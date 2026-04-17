@@ -7,27 +7,29 @@ host = "89.207.254.135"
 user = "root"
 pwd = "Allahuakbar1!"
 
-REPO_ROOT = "/var/www/justaidyn.com"
+APP_PORT = 3000
 MAIN_DOMAINS = ["justaidyn.com", "www.justaidyn.com"]
-SUBDOMAIN_ROOTS = {
-    "skillsminds.justaidyn.com": "skillsminds",
-    "nofacethinker.justaidyn.com": "nofacethinker",
-    "courses.justaidyn.com": "courses",
-    "apps.justaidyn.com": "apps",
-    "games.justaidyn.com": "games",
-    "shop.justaidyn.com": "shop",
-    "api.justaidyn.com": "api",
-}
+SUBDOMAINS = [
+    "skillsminds.justaidyn.com",
+    "nofacethinker.justaidyn.com",
+    "courses.justaidyn.com",
+    "apps.justaidyn.com",
+    "games.justaidyn.com",
+    "shop.justaidyn.com",
+    "api.justaidyn.com",
+]
 
-COMMON_LOCATIONS = """
-    location / {
-        try_files $uri $uri/ =404;
-    }
-
-    location ~* \\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot|webp|pdf)$ {
-        expires 30d;
-        add_header Cache-Control "public, immutable";
-    }
+PROXY_LOCATIONS = f"""
+    location / {{
+        proxy_pass http://127.0.0.1:{APP_PORT};
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }}
 """
 
 
@@ -43,24 +45,21 @@ def run(cmd, timeout=60):
     return out or err
 
 
-def build_server_block(server_names, root):
+def build_server_block(server_names):
     names = " ".join(server_names) if isinstance(server_names, (list, tuple)) else server_names
     return f"""server {{
     listen 80;
     server_name {names};
-
-    root {root};
-    index index.html;
-{COMMON_LOCATIONS}
+{PROXY_LOCATIONS}
 }}
 """
 
 
-print("=== Creating nginx config for one-repo multi-subdomain setup ===")
+print("=== Creating nginx reverse proxy config for NestJS ===")
 
-blocks = [build_server_block(MAIN_DOMAINS, REPO_ROOT)]
-for domain, folder in SUBDOMAIN_ROOTS.items():
-    blocks.append(build_server_block(domain, f"{REPO_ROOT}/{folder}"))
+blocks = [build_server_block(MAIN_DOMAINS)]
+for domain in SUBDOMAINS:
+    blocks.append(build_server_block(domain))
 
 nginx_conf = "\n".join(blocks)
 
@@ -75,7 +74,5 @@ print(run("nginx -t 2>&1"))
 print("\n=== Restarting nginx ===")
 print(run("systemctl restart nginx && systemctl is-active nginx"))
 
-print("\n=== One repo routing map ===")
-print(f"Main site: {REPO_ROOT}")
-for domain, folder in SUBDOMAIN_ROOTS.items():
-    print(f"{domain} -> {REPO_ROOT}/{folder}")
+print("\n=== Reverse proxy target ===")
+print(f"All JustAidyn domains -> http://127.0.0.1:{APP_PORT}")
