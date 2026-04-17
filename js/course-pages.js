@@ -137,6 +137,47 @@
     }
   }
 
+  function normalizeCourseRelativeLinks(container) {
+    if (!container) {
+      return;
+    }
+
+    const rootOrigin = 'https://justaidyn.com/';
+    const rootPrefixes = ['articles/', 'downloads/', 'images/', 'data/', 'css/', 'js/', 'fonts/'];
+
+    container.querySelectorAll('[href]').forEach((element) => {
+      const href = element.getAttribute('href');
+      if (!href || /^(?:[a-z]+:|#|\/\/)/i.test(href)) {
+        return;
+      }
+
+      if (rootPrefixes.some((prefix) => href.startsWith(prefix))) {
+        element.setAttribute('href', rootOrigin + href);
+        return;
+      }
+
+      if (href === 'projects.html') {
+        element.setAttribute('href', rootOrigin + href);
+        return;
+      }
+
+      if (href === 'sitemap.xml') {
+        element.setAttribute('href', rootOrigin + href);
+      }
+    });
+
+    container.querySelectorAll('[src]').forEach((element) => {
+      const src = element.getAttribute('src');
+      if (!src || /^(?:[a-z]+:|\/\/)/i.test(src)) {
+        return;
+      }
+
+      if (rootPrefixes.some((prefix) => src.startsWith(prefix))) {
+        element.setAttribute('src', rootOrigin + src);
+      }
+    });
+  }
+
   function applyCurrentCourseNavState() {
     const pageKey = body.getAttribute('data-page-key');
     const map = {
@@ -516,6 +557,9 @@
       navMount.innerHTML = page.navHtml || '';
       mainMount.innerHTML = page.mainHtml || '';
       footerMount.innerHTML = getCourseFooterHtml();
+      normalizeCourseRelativeLinks(navMount);
+      normalizeCourseRelativeLinks(mainMount);
+      normalizeCourseRelativeLinks(footerMount);
       enhanceMobileHeader();
       enhanceMobileComparisonTables();
       applyStandardScheduleShift();
