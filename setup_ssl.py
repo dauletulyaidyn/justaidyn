@@ -99,6 +99,16 @@ server {{
     index index.html;
 {COMMON_LOCATIONS}
 }}
+
+server {{
+    listen 80;
+    listen [::]:80;
+    server_name api.justaidyn.com;
+
+    root /var/www/justaidyn.com/api;
+    index index.html;
+{COMMON_LOCATIONS}
+}}
 """
 
 korkemmath_conf = """server {
@@ -128,7 +138,7 @@ print(run("systemctl restart nginx"))
 
 # Run certbot
 print("\n=== Running Certbot for justaidyn.com ===")
-print(run("certbot --nginx --expand -d justaidyn.com -d www.justaidyn.com -d skillsminds.justaidyn.com -d nofacethinker.justaidyn.com -d courses.justaidyn.com -d apps.justaidyn.com -d games.justaidyn.com -d shop.justaidyn.com --non-interactive --agree-tos --email dauletulyaidyn@gmail.com --redirect 2>&1", timeout=120))
+print(run("certbot --nginx --expand -d justaidyn.com -d www.justaidyn.com -d skillsminds.justaidyn.com -d nofacethinker.justaidyn.com -d courses.justaidyn.com -d apps.justaidyn.com -d games.justaidyn.com -d shop.justaidyn.com -d api.justaidyn.com --non-interactive --agree-tos --email dauletulyaidyn@gmail.com --redirect 2>&1", timeout=120))
 
 print("\n=== Running Certbot for korkemmath.kz ===")
 print(run("certbot --nginx -d korkemmath.kz -d www.korkemmath.kz --non-interactive --agree-tos --email dauletulyaidyn@gmail.com --redirect 2>&1", timeout=120))
