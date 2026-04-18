@@ -1751,6 +1751,10 @@ strong {
   height: 100%;
 }
 
+.main-projects-text-only .projects-thumb .popup-image {
+  display: none;
+}
+
 .projects-image {
   border-radius: var(--border-radius-medium);
   display: block;

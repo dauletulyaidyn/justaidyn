@@ -28,7 +28,14 @@ export interface PageModel {
   cards?: Array<{ title: string; text: string; href?: string; cta?: string }>;
 }
 
-const ROOT_HOSTS = new Set(['justaidyn.com', 'www.justaidyn.com', 'localhost', '127.0.0.1']);
+const ROOT_HOSTS = new Set([
+  'justaidyn.com',
+  'www.justaidyn.com',
+  'justaidyn.local',
+  'www.justaidyn.local',
+  'localhost',
+  '127.0.0.1',
+]);
 
 const PROJECT_LINKS: ProjectLink[] = [
   { label: 'SkillsMinds', url: 'https://skillsminds.justaidyn.com/' },
@@ -49,13 +56,13 @@ export class SiteService {
       return 'main';
     }
 
-    if (host === 'skillsminds.justaidyn.com') return 'skillsminds';
-    if (host === 'nofacethinker.justaidyn.com') return 'nofacethinker';
-    if (host === 'courses.justaidyn.com') return 'courses';
-    if (host === 'apps.justaidyn.com') return 'apps';
-    if (host === 'games.justaidyn.com') return 'games';
-    if (host === 'shop.justaidyn.com') return 'shop';
-    if (host === 'api.justaidyn.com') return 'api';
+    if (host === 'skillsminds.justaidyn.com' || host === 'skillsminds.justaidyn.local') return 'skillsminds';
+    if (host === 'nofacethinker.justaidyn.com' || host === 'nofacethinker.justaidyn.local') return 'nofacethinker';
+    if (host === 'courses.justaidyn.com' || host === 'courses.justaidyn.local') return 'courses';
+    if (host === 'apps.justaidyn.com' || host === 'apps.justaidyn.local') return 'apps';
+    if (host === 'games.justaidyn.com' || host === 'games.justaidyn.local') return 'games';
+    if (host === 'shop.justaidyn.com' || host === 'shop.justaidyn.local') return 'shop';
+    if (host === 'api.justaidyn.com' || host === 'api.justaidyn.local') return 'api';
 
     return 'main';
   }

@@ -30,6 +30,10 @@ body.platform-body {
   padding: 0;
 }
 
+.platform-hero .row {
+  justify-content: flex-start;
+}
+
 .platform-hero-shell,
 .platform-card {
   background: var(--platform-surface);
@@ -74,6 +78,10 @@ body.platform-body {
 
 .platform-section {
   padding: 40px 0 56px;
+}
+
+.platform-section .section-title-wrap {
+  gap: 0;
 }
 
 .platform-card {

@@ -39,6 +39,31 @@ export class SiteController {
     return this.withSharedModel(this.siteService.getProjectsPage(), req);
   }
 
+  @Get('/p/:project')
+  @Render('pages/host-router')
+  projectAlias(@Req() req: Request) {
+    const project = Array.isArray(req.params.project) ? req.params.project[0] : req.params.project;
+
+    switch (project) {
+      case 'skillsminds':
+        return this.withSharedModel(this.siteService.getComingSoonPage('skillsminds'), req);
+      case 'nofacethinker':
+        return this.withSharedModel(this.siteService.getComingSoonPage('nofacethinker'), req);
+      case 'courses':
+        return this.withSharedModel(this.siteService.getCoursesLandingPage(), req);
+      case 'apps':
+        return this.withSharedModel(this.siteService.getAppsPage(), req);
+      case 'games':
+        return this.withSharedModel(this.siteService.getComingSoonPage('games'), req);
+      case 'shop':
+        return this.withSharedModel(this.siteService.getComingSoonPage('shop'), req);
+      case 'api':
+        return this.withSharedModel(this.siteService.getComingSoonPage('api'), req);
+      default:
+        throw new NotFoundException();
+    }
+  }
+
   @Get('/justaidyn-screencam')
   @Render('pages/host-router')
   appDetail(@Req() req: Request) {
@@ -47,6 +72,12 @@ export class SiteController {
       throw new NotFoundException();
     }
 
+    return this.withSharedModel(this.siteService.getScreenCamPage(), req);
+  }
+
+  @Get('/p/apps/justaidyn-screencam')
+  @Render('pages/host-router')
+  appDetailAlias(@Req() req: Request) {
     return this.withSharedModel(this.siteService.getScreenCamPage(), req);
   }
 
