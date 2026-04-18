@@ -64,6 +64,71 @@
     body.style.setProperty('--course-header-offset', `${headerHeight}px`);
   }
 
+  function extractCourseMenuItem(navHtml) {
+    if (!navHtml) {
+      return '';
+    }
+
+    const match = navHtml.match(/<li class="nav-item dropdown" data-show-langs="ru,kk">[\s\S]*?<\/li>/);
+    return match ? match[0] : '';
+  }
+
+  function getUnifiedCourseNavHtml(navHtml) {
+    const courseMenuItem = extractCourseMenuItem(navHtml);
+
+    return `
+      <button aria-controls="courseNavbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#courseNavbar" data-bs-toggle="collapse" type="button">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand mx-auto mx-lg-0" href="https://justaidyn.com/">JustAidyn</a>
+      <div class="d-flex align-items-center d-lg-none">
+        <i class="navbar-icon bi-envelope me-3"></i>
+        <a class="custom-btn btn" href="mailto:aidyn.daulet@gmail.com">Email</a>
+      </div>
+      <div class="collapse navbar-collapse" id="courseNavbar">
+        <div class="navbar-split-layout w-100">
+          <div class="navbar-top-contact d-none d-lg-flex">
+            <div class="navbar-top-contact-left">
+              <a class="navbar-top-contact-link" href="mailto:aidyn.daulet@gmail.com" aria-label="Write to me by email" title="Write to me by email"><i class="bi bi-envelope"></i></a>
+              <a class="navbar-top-contact-link" href="tel:+77769889889" aria-label="Call me" title="Call me"><i class="bi bi-telephone"></i></a>
+              <a class="navbar-top-contact-link" href="https://wa.me/77769889889" target="_blank" rel="noopener" aria-label="Write to me on WhatsApp" title="Write to me on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+              <a class="navbar-top-contact-link" href="https://t.me/justaidyn" target="_blank" rel="noopener" aria-label="Write to me on Telegram" title="Write to me on Telegram"><i class="bi bi-telegram"></i></a>
+            </div>
+            <div class="navbar-top-tools">
+              <div aria-label="Language selector" class="language-selector navbar-top-lang language-flags" role="group">
+                <button aria-label="Kazakh" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')" title="Kazakh" type="button">KK</button>
+                <button aria-label="English" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')" title="English" type="button">EN</button>
+                <button aria-label="Russian" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')" title="Russian" type="button">RU</button>
+              </div>
+              <div class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle navbar-top-tool-link" href="#" id="projectsDropdownTop" role="button" data-bs-toggle="dropdown" aria-expanded="false">JustAidyn Projects</a>
+                <ul class="dropdown-menu" aria-labelledby="projectsDropdownTop">
+                  <li><a class="dropdown-item" href="https://justaidyn.com/">JustAidyn Home</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="https://skillsminds.justaidyn.com/">SkillsMinds</a></li>
+                  <li><a class="dropdown-item" href="https://nofacethinker.justaidyn.com/">NoFaceThinker</a></li>
+                  <li><a class="dropdown-item" href="https://courses.justaidyn.com/">Courses</a></li>
+                  <li><a class="dropdown-item" href="https://apps.justaidyn.com/">Apps</a></li>
+                  <li><a class="dropdown-item" href="https://games.justaidyn.com/">Games</a></li>
+                  <li><a class="dropdown-item" href="https://shop.justaidyn.com/">Shop</a></li>
+                  <li><a class="dropdown-item" href="https://api.justaidyn.com/">API</a></li>
+                </ul>
+              </div>
+              <a class="nav-link navbar-top-tool-link" href="https://justaidyn.com/articles/">Posts and Articles</a>
+            </div>
+          </div>
+          <ul class="navbar-nav ms-lg-0 nav-row-primary">
+            <li class="nav-item"><a class="nav-link" href="https://justaidyn.com/">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://justaidyn.com/projects">Projects</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://justaidyn.com/#section_5">Contact</a></li>
+            ${courseMenuItem}
+          </ul>
+          <div class="nav-row-secondary d-none"></div>
+        </div>
+      </div>
+    `;
+  }
+
   function readSavedLanguage() {
     try {
       return localStorage.getItem(storageKey);
@@ -250,7 +315,7 @@
     });
 
     function setLanguage(lang) {
-      const uiLang = lang === 'kk' ? 'kk' : 'ru';
+      const uiLang = lang === 'kk' ? 'kk' : lang === 'en' ? 'en' : 'ru';
       const contentLang = uiLang;
 
       body.classList.add('lang-ready');
@@ -323,8 +388,9 @@
       langGroup.setAttribute('role', 'group');
       langGroup.setAttribute('aria-label', 'Language selector');
       langGroup.innerHTML = `
+        <button aria-label="Kazakh" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')" title="Kazakh" type="button">KK</button>
+        <button aria-label="English" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')" title="English" type="button">EN</button>
         <button aria-label="Russian" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')" title="Russian" type="button">RU</button>
-        <button aria-label="Kazakh" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')" title="Kazakh" type="button">KZ</button>
       `;
       mobileTools.appendChild(langGroup);
     }
@@ -554,7 +620,7 @@
 
       applyHead(page.meta);
       body.setAttribute('data-default-lang', page.defaultLang || body.getAttribute('data-default-lang') || 'ru');
-      navMount.innerHTML = page.navHtml || '';
+      navMount.innerHTML = getUnifiedCourseNavHtml(page.navHtml || '');
       mainMount.innerHTML = page.mainHtml || '';
       footerMount.innerHTML = getCourseFooterHtml();
       normalizeCourseRelativeLinks(navMount);

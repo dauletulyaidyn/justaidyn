@@ -53,7 +53,7 @@
     <div class="spinner"><span class="spinner-rotate"></span></div>
   </section>
 
-  <nav class="navbar navbar-expand-lg">
+  <nav class="navbar navbar-expand-lg navbar-split">
     <div class="container">
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#projectNav" aria-controls="projectNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -62,32 +62,47 @@
       <a class="navbar-brand mx-auto mx-lg-0" href="https://justaidyn.com/">JustAidyn</a>
 
       <div class="d-flex align-items-center d-lg-none">
-        <i class="navbar-icon bi-whatsapp me-3"></i>
-        <a class="custom-btn btn" href="https://wa.me/77769889889" target="_blank" rel="noopener">WhatsApp</a>
+        <i class="navbar-icon bi-envelope me-3"></i>
+        <a class="custom-btn btn" href="mailto:aidyn.daulet@gmail.com">Email</a>
       </div>
 
       <div class="collapse navbar-collapse" id="projectNav">
-        <ul class="navbar-nav ms-lg-5">
-          <li class="nav-item"><a class="nav-link" href="https://justaidyn.com/">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="https://justaidyn.com/projects">Projects</a></li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle active" href="#" id="projectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">JustAidyn Projects</a>
-            <ul class="dropdown-menu" aria-labelledby="projectsDropdown">
-              <li><a class="dropdown-item" href="https://skillsminds.justaidyn.com/">SkillsMinds</a></li>
-              <li><a class="dropdown-item" href="https://nofacethinker.justaidyn.com/">NoFaceThinker</a></li>
-              <li><a class="dropdown-item" href="https://courses.justaidyn.com/">Courses</a></li>
-              <li><a class="dropdown-item" href="https://apps.justaidyn.com/">Apps</a></li>
-              <li><a class="dropdown-item" href="https://games.justaidyn.com/">Games</a></li>
-              <li><a class="dropdown-item" href="https://shop.justaidyn.com/">Shop</a></li>
-              <li><a class="dropdown-item" href="https://api.justaidyn.com/">API</a></li>
-            </ul>
-          </li>
-          <li class="nav-item"><a class="nav-link" href="https://justaidyn.com/articles/">Articles</a></li>
-        </ul>
+        <div class="navbar-split-layout w-100">
+          <div class="navbar-top-contact d-none d-lg-flex">
+            <div class="navbar-top-contact-left">
+              <a class="navbar-top-contact-link" href="mailto:aidyn.daulet@gmail.com" aria-label="Write to me by email" title="Write to me by email"><i class="bi bi-envelope"></i></a>
+              <a class="navbar-top-contact-link" href="tel:+77769889889" aria-label="Call me" title="Call me"><i class="bi bi-telephone"></i></a>
+              <a class="navbar-top-contact-link" href="https://wa.me/77769889889" target="_blank" rel="noopener" aria-label="Write to me on WhatsApp" title="Write to me on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+              <a class="navbar-top-contact-link" href="https://t.me/justaidyn" target="_blank" rel="noopener" aria-label="Write to me on Telegram" title="Write to me on Telegram"><i class="bi bi-telegram"></i></a>
+            </div>
+            <div class="navbar-top-tools">
+              <div class="language-selector navbar-top-lang language-flags" role="group" aria-label="Language selector">
+                <button type="button" class="lang-flag-btn">KK</button>
+                <button type="button" class="lang-flag-btn">EN</button>
+                <button type="button" class="lang-flag-btn">RU</button>
+              </div>
+              <div class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle navbar-top-tool-link active" href="#" id="projectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">JustAidyn Projects</a>
+                <ul class="dropdown-menu" aria-labelledby="projectsDropdown">
+                  <li><a class="dropdown-item" href="https://justaidyn.com/">JustAidyn Home</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="https://skillsminds.justaidyn.com/">SkillsMinds</a></li>
+                  <li><a class="dropdown-item" href="https://nofacethinker.justaidyn.com/">NoFaceThinker</a></li>
+                  <li><a class="dropdown-item" href="https://courses.justaidyn.com/">Courses</a></li>
+                  <li><a class="dropdown-item" href="https://apps.justaidyn.com/">Apps</a></li>
+                  <li><a class="dropdown-item" href="https://games.justaidyn.com/">Games</a></li>
+                  <li><a class="dropdown-item" href="https://shop.justaidyn.com/">Shop</a></li>
+                  <li><a class="dropdown-item" href="https://api.justaidyn.com/">API</a></li>
+                </ul>
+              </div>
+              <a class="nav-link navbar-top-tool-link" href="https://justaidyn.com/articles/">Posts and Articles</a>
+            </div>
+          </div>
 
-        <div class="d-lg-flex align-items-center d-none ms-auto">
-          <i class="navbar-icon bi-envelope me-3"></i>
-          <a class="custom-btn btn" href="mailto:aidyn.daulet@gmail.com">aidyn.daulet@gmail.com</a>
+          <ul class="navbar-nav ms-lg-0 nav-row-primary">
+            <li class="nav-item"><a class="nav-link active" href="https://api.justaidyn.com/">API</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://api.justaidyn.com/#section_2">Status</a></li>
+          </ul>
         </div>
       </div>
     </div>

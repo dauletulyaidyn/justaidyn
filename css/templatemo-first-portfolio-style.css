@@ -485,19 +485,24 @@ strong {
 }
 
 .navbar-top-contact-link {
-  color: #ffffff;
-  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  background: #ffffff;
+  border-radius: 999px;
+  color: #535da1;
+  display: inline-flex;
+  font-size: 16px;
   font-weight: var(--font-weight-medium);
+  height: 36px;
+  justify-content: center;
+  width: 36px;
 }
 
 .navbar-top-contact-link i {
-  color: #14b789;
+  color: inherit;
 }
 
 .navbar-top-contact-link:hover {
+  background: #14b789;
   color: var(--white-color);
 }
 
@@ -507,20 +512,22 @@ strong {
   gap: 10px;
   flex: 1 1 auto;
   margin-left: 12px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 .navbar-top-lang {
-  order: 3;
-  margin-left: auto !important;
+  order: 1;
+  margin-left: 0 !important;
   margin-right: 0 !important;
 }
 
 .navbar-top-tool-btn {
-  order: 1;
+  order: 4;
 }
 
 .navbar-top-tool-icon {
-  order: 2;
+  order: 5;
 }
 
 .navbar-top-tool-btn {
@@ -574,8 +581,38 @@ strong {
   color: var(--secondary-color);
 }
 
+.navbar-top-tools .nav-item.dropdown,
+.navbar-top-tools > .navbar-top-tool-link {
+  order: 2;
+}
+
 .navbar-top-tools .dropdown-toggle::after {
   margin-left: 8px;
+}
+
+.lang-flag-btn {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: var(--font-weight-bold);
+  height: 36px;
+  justify-content: center;
+  line-height: 1;
+  min-width: 36px;
+  padding: 0 10px;
+  text-transform: uppercase;
+}
+
+.lang-flag-btn:hover,
+.lang-flag-btn.active {
+  background: #14b789;
+  border-color: #14b789;
+  color: #ffffff;
 }
 
 .navbar-top-whatsapp-status {
