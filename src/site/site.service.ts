@@ -15,11 +15,18 @@ interface ProjectLink {
   url: string;
 }
 
+interface NavLink {
+  label: string;
+  url: string;
+  active?: boolean;
+}
+
 export interface PageModel {
   view: string;
   title: string;
   description: string;
   pageKey: string;
+  lowerNav: NavLink[];
   heroTitle: string;
   heroText: string;
   eyebrow?: string;
@@ -93,6 +100,10 @@ export class SiteService {
       title: 'JustAidyn',
       description: 'JustAidyn platform: AI engineering, products, courses, apps, and experiments.',
       pageKey: 'home',
+      lowerNav: [
+        { label: 'Home', url: 'https://justaidyn.com/', active: true },
+        { label: 'Projects', url: 'https://justaidyn.com/projects' },
+      ],
       eyebrow: 'JustAidyn',
       heroTitle: 'One platform for AI products, courses, apps, and experiments.',
       heroText:
@@ -122,6 +133,10 @@ export class SiteService {
       title: 'Projects | JustAidyn',
       description: 'Current JustAidyn projects and subdomains.',
       pageKey: 'projects',
+      lowerNav: [
+        { label: 'Home', url: 'https://justaidyn.com/' },
+        { label: 'Projects', url: 'https://justaidyn.com/projects', active: true },
+      ],
       eyebrow: 'Projects',
       heroTitle: 'Current JustAidyn project map.',
       heroText:
@@ -142,6 +157,10 @@ export class SiteService {
       title: 'Apps | JustAidyn',
       description: 'JustAidyn apps hub.',
       pageKey: 'apps',
+      lowerNav: [
+        { label: 'Apps Home', url: 'https://apps.justaidyn.com/', active: true },
+        { label: 'ScreenCam', url: 'https://apps.justaidyn.com/justaidyn-screencam/' },
+      ],
       eyebrow: 'Apps',
       heroTitle: 'JustAidyn application hub.',
       heroText:
@@ -169,6 +188,11 @@ export class SiteService {
       title: 'Courses | JustAidyn',
       description: 'JustAidyn Courses on the new NestJS shell.',
       pageKey: 'courses',
+      lowerNav: [
+        { label: 'Courses Home', url: 'https://courses.justaidyn.com/', active: true },
+        { label: 'AI Agents', url: 'https://courses.justaidyn.com/ai-agents-course.html' },
+        { label: 'FAQ', url: 'https://courses.justaidyn.com/faq.html' },
+      ],
       eyebrow: 'Courses',
       heroTitle: 'JustAidyn Courses is now under the shared platform shell.',
       heroText:
@@ -204,6 +228,10 @@ export class SiteService {
       title: 'JustAidyn ScreenCam',
       description: 'JustAidyn ScreenCam download page.',
       pageKey: 'app-detail',
+      lowerNav: [
+        { label: 'Apps Home', url: 'https://apps.justaidyn.com/' },
+        { label: 'ScreenCam', url: 'https://apps.justaidyn.com/justaidyn-screencam/', active: true },
+      ],
       eyebrow: 'Desktop App',
       heroTitle: 'JustAidyn ScreenCam',
       heroText:
@@ -237,6 +265,10 @@ export class SiteService {
     };
 
     return {
+      lowerNav: [
+        { label: `${titles[site as keyof typeof titles]}`, url: `https://${site}.justaidyn.com/`, active: true },
+        { label: 'Status', url: `https://${site}.justaidyn.com/#section_2` },
+      ],
       view: 'pages/coming-soon',
       title: `${titles[site as keyof typeof titles]} | JustAidyn`,
       description: `${titles[site as keyof typeof titles]} is being rebuilt on the new NestJS platform.`,
