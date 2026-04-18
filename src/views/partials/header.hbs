@@ -19,20 +19,20 @@
         <li class="nav-item">
           <a class="nav-link {{#if (eq pageKey 'projects')}}active{{/if}}" href="{{projectsUrl}}">Projects</a>
         </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="projectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">JustAidyn Projects</a>
+      </ul>
+
+      <div class="d-lg-flex align-items-center d-none ms-auto platform-top-nav">
+        <div class="nav-item dropdown me-3">
+          <a class="nav-link dropdown-toggle platform-top-link" href="#" id="projectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">JustAidyn Projects</a>
           <ul class="dropdown-menu" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="{{mainSiteUrl}}">JustAidyn Home</a></li>
+            <li><hr class="dropdown-divider"></li>
             {{#each projectLinks}}
               <li><a class="dropdown-item" href="{{this.url}}">{{this.label}}</a></li>
             {{/each}}
           </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{articlesUrl}}">Articles</a>
-        </li>
-      </ul>
-
-      <div class="d-lg-flex align-items-center d-none ms-auto">
+        </div>
+        <a class="nav-link platform-top-link me-3" href="{{articlesUrl}}">Posts and Articles</a>
         <i class="navbar-icon bi-envelope me-3"></i>
         <a class="custom-btn btn" href="mailto:aidyn.daulet@gmail.com">aidyn.daulet@gmail.com</a>
       </div>

@@ -120,6 +120,25 @@ body.platform-body {
   word-break: break-word;
 }
 
+.platform-top-nav .platform-top-link {
+  color: var(--white-color);
+  font-size: var(--menu-font-size);
+  font-weight: var(--font-weight-bold);
+  line-height: normal;
+  margin: 0;
+  padding: 0;
+  text-transform: uppercase;
+}
+
+.platform-top-nav .platform-top-link:hover,
+.platform-top-nav .platform-top-link:focus {
+  color: var(--secondary-color);
+}
+
+.platform-top-nav .dropdown-toggle::after {
+  margin-left: 8px;
+}
+
 @media (max-width: 767px) {
   .platform-hero {
     padding-top: 0;
