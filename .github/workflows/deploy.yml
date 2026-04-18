@@ -19,6 +19,9 @@ jobs:
           username: root
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
+            set -e
             cd /var/www/justaidyn.com
-            git pull origin main
+            git fetch --prune origin
+            git reset --hard origin/main
+            git clean -fd
             echo "Deployment complete!"
