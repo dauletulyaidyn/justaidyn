@@ -24,4 +24,7 @@ jobs:
             git fetch --prune origin
             git reset --hard origin/main
             git clean -fd
+            npm install --production
+            npm run build
+            pm2 reload all
             echo "Deployment complete!"
