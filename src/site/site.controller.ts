@@ -218,6 +218,18 @@ export class SiteController {
     return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | VIP Group', 'vip-group'), req);
   }
 
+  @Get('/ai-agents-learning-steps.html')
+  @Render('pages/course-wrapper')
+  aiAgentsLearningSteps(@Req() req: Request) {
+    return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | Три этапа обучения', 'learning-steps'), req);
+  }
+
+  @Get('/ai-agents-learning-principles.html')
+  @Render('pages/course-wrapper')
+  aiAgentsLearningPrinciples(@Req() req: Request) {
+    return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | Три принципа обучения', 'learning-principles'), req);
+  }
+
   @Get('/health')
   apiHealth(@Req() req: Request) {
     const site = this.siteService.resolveHost(req.hostname);
@@ -309,6 +321,14 @@ export class SiteController {
       'ai-agents-vip-group.html': {
         title: 'AI Agents Course | VIP Group',
         key: 'vip-group',
+      },
+      'ai-agents-learning-steps.html': {
+        title: 'AI Agents Course | Три этапа обучения',
+        key: 'learning-steps',
+      },
+      'ai-agents-learning-principles.html': {
+        title: 'AI Agents Course | Три принципа обучения',
+        key: 'learning-principles',
       },
     };
 
