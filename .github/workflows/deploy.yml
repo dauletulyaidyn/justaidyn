@@ -21,8 +21,12 @@ jobs:
           script: |
             set -e
             cd /var/www/justaidyn.com
+            echo "=== git fetch ==="
             git fetch --prune origin
+            echo "=== git clean ==="
             git clean -ffd
+            echo "=== git reset ==="
             git reset --hard origin/main
-            pm2 reload all 2>/dev/null || pm2 restart all 2>/dev/null || (pkill -f "node dist/main" || true; sleep 1; nohup node dist/main.js > /tmp/justaidyn.log 2>&1 & disown)
-            echo "Deployment complete!"
+            echo "=== restart ==="
+            pm2 reload all || pm2 restart all || true
+            echo "=== done ==="
