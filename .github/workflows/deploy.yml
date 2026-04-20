@@ -24,7 +24,6 @@ jobs:
             git fetch --prune origin
             git reset --hard origin/main
             git clean -fd
-            npm install
-            npm run build
+            npm install --omit=dev
             pm2 reload all 2>/dev/null || pm2 restart all 2>/dev/null || (pkill -f "node dist/main" || true; sleep 1; nohup node dist/main.js >> /var/log/justaidyn.log 2>&1 &)
             echo "Deployment complete!"
