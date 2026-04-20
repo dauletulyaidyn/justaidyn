@@ -171,10 +171,10 @@
                   <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle navbar-top-tool-link" href="#" id="projectsDropdownTop" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-en="JustAidyn Projects" data-ru="Проекты JustAidyn" data-kk="JustAidyn жобалары">JustAidyn Projects</a>
                     <ul class="dropdown-menu" aria-labelledby="projectsDropdownTop">
-                      <li><a class="dropdown-item" href="/" data-en="JustAidyn Home" data-ru="Главная JustAidyn" data-kk="JustAidyn басты беті">JustAidyn Home</a></li>
+                      <li><a class="dropdown-item" href="/" data-en="JustAidyn Home" data-ru="Главная JustAidyn" data-kk="Басты бет">JustAidyn Home</a></li>
                       <li><hr class="dropdown-divider"></li>
-                      <li><a class="dropdown-item" href="/skillsminds" data-en="SkillsMinds" data-ru="SkillsMinds" data-kk="SkillsMinds">SkillsMinds</a></li>
-                      <li><a class="dropdown-item" href="/nofacethinker" data-en="NoFaceThinker" data-ru="NoFaceThinker" data-kk="NoFaceThinker">NoFaceThinker</a></li>
+                      <li><a class="dropdown-item" href="/skillsminds" data-en="Skills and Minds Hub" data-ru="Skills and Minds Hub" data-kk="Skills and Minds Hub">Skills and Minds Hub</a></li>
+                      <li><a class="dropdown-item" href="/nofacethinker" data-en="No Face Thinker" data-ru="No Face Thinker" data-kk="No Face Thinker">No Face Thinker</a></li>
                       <li data-show-langs="ru,kk"><a class="dropdown-item" href="/courses" data-en="Courses" data-ru="Курсы" data-kk="Курстар">Courses</a></li>
                       <li><a class="dropdown-item" href="/apps" data-en="Apps" data-ru="Приложения" data-kk="Қосымшалар">Apps</a></li>
                       <li><a class="dropdown-item" href="/games" data-en="Games" data-ru="Игры" data-kk="Ойындар">Games</a></li>
@@ -182,15 +182,14 @@
                       <li><a class="dropdown-item" href="/api" data-en="API" data-ru="API" data-kk="API">API</a></li>
                     </ul>
                   </div>
-                  <a class="nav-link navbar-top-tool-link ${currentSection === 'articles' ? 'active' : ''}" href="/articles/" data-en="Posts and Articles" data-ru="Посты и статьи" data-kk="Жазбалар мен мақалалар">Posts and Articles</a>
-                  <div class="language-selector navbar-top-lang language-flags" role="group" aria-label="Language selector">
+<div class="language-selector navbar-top-lang language-flags" role="group" aria-label="Language selector">
                     <button type="button" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')">KK</button>
                     <button type="button" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')">EN</button>
                     <button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')">RU</button>
                   </div>
                   <div class="navbar-top-auth-links">
-                    <a class="navbar-top-tool-btn" href="/login" data-en="Login" data-ru="Войти" data-kk="Кіру">Login</a>
-                    <a class="navbar-top-tool-btn" href="/register" data-en="Register" data-ru="Регистрация" data-kk="Тіркелу">Register</a>
+                    <a class="navbar-top-tool-btn" href="#" data-en="Login" data-ru="Войти" data-kk="Кіру">Login</a>
+                    <a class="navbar-top-tool-btn" href="#" data-en="Register" data-ru="Регистрация" data-kk="Тіркелу">Register</a>
                   </div>
                 </div>
               </div>
