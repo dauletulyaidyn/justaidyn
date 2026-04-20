@@ -11,14 +11,22 @@ type SiteKey =
   | 'api';
 
 interface ProjectLink {
-  label: string;
+  label?: string;
+  labelEn?: string;
+  labelRu?: string;
+  labelKk?: string;
   url: string;
+  showLangs?: string;
 }
 
 interface NavLink {
-  label: string;
+  labelEn: string;
+  labelRu: string;
+  labelKk: string;
   url: string;
   active?: boolean;
+  extraClass?: string;
+  showLangs?: string;
 }
 
 export interface PageModel {
@@ -26,6 +34,7 @@ export interface PageModel {
   title: string;
   description: string;
   pageKey: string;
+  isAuthPage?: boolean;
   lowerNav: NavLink[];
   heroTitle: string;
   heroText: string;
@@ -33,6 +42,8 @@ export interface PageModel {
   primaryAction?: ProjectLink;
   secondaryAction?: ProjectLink;
   cards?: Array<{ title: string; text: string; href?: string; cta?: string }>;
+  content?: string;
+  coursePageKey?: string;
 }
 
 const ROOT_HOSTS = new Set([
@@ -45,13 +56,13 @@ const ROOT_HOSTS = new Set([
 ]);
 
 const PROJECT_LINKS: ProjectLink[] = [
-  { label: 'SkillsMinds', url: 'https://skillsminds.justaidyn.com/' },
-  { label: 'NoFaceThinker', url: 'https://nofacethinker.justaidyn.com/' },
-  { label: 'Courses', url: 'https://courses.justaidyn.com/' },
-  { label: 'Apps', url: 'https://apps.justaidyn.com/' },
-  { label: 'Games', url: 'https://games.justaidyn.com/' },
-  { label: 'Shop', url: 'https://shop.justaidyn.com/' },
-  { label: 'API', url: 'https://api.justaidyn.com/' },
+  { labelEn: 'SkillsMinds', labelRu: 'SkillsMinds', labelKk: 'SkillsMinds', url: '/skillsminds' },
+  { labelEn: 'NoFaceThinker', labelRu: 'NoFaceThinker', labelKk: 'NoFaceThinker', url: '/nofacethinker' },
+  { labelEn: 'Courses', labelRu: 'Курсы', labelKk: 'Курстар', url: '/courses', showLangs: 'ru,kk' },
+  { labelEn: 'Apps', labelRu: 'Приложения', labelKk: 'Қосымшалар', url: '/apps' },
+  { labelEn: 'Games', labelRu: 'Игры', labelKk: 'Ойындар', url: '/games' },
+  { labelEn: 'Shop', labelRu: 'Магазин', labelKk: 'Дүкен', url: '/shop' },
+  { labelEn: 'API', labelRu: 'API', labelKk: 'API', url: '/api' },
 ];
 
 @Injectable()
@@ -78,6 +89,53 @@ export class SiteService {
     return PROJECT_LINKS;
   }
 
+  getSubPageLowerNav(): NavLink[] {
+    return [
+      { labelEn: 'Home', labelRu: 'Главная', labelKk: 'Басты', url: '/' },
+      { labelEn: 'About', labelRu: 'Обо мне', labelKk: 'Мен туралы', url: '/#section_2' },
+      { labelEn: 'Skills', labelRu: 'Навыки', labelKk: 'Дағдылар', url: '/#section_3' },
+      { labelEn: 'Projects', labelRu: 'Проекты', labelKk: 'Жобалар', url: '/#section_4' },
+      { labelEn: 'Contact', labelRu: 'Контакты', labelKk: 'Байланыс', url: '/#section_5' },
+      { labelEn: 'Posts and Articles', labelRu: 'Посты и статьи', labelKk: 'Жазбалар мен мақалалар', url: '/articles/' },
+    ];
+  }
+
+  getCourseLowerNav(): NavLink[] {
+    return [
+      { labelEn: 'Home', labelRu: 'Главная', labelKk: 'Басты', url: '/' },
+      { labelEn: 'About', labelRu: 'Обо мне', labelKk: 'Мен туралы', url: '/#section_2' },
+      { labelEn: 'Skills', labelRu: 'Навыки', labelKk: 'Дағдылар', url: '/#section_3' },
+      { labelEn: 'Projects', labelRu: 'Проекты', labelKk: 'Жобалар', url: '/#section_4' },
+      { labelEn: 'Contact', labelRu: 'Контакты', labelKk: 'Байланыс', url: '/#section_5' },
+    ];
+  }
+
+  getCoursePageModel(title: string, coursePageKey: string): PageModel {
+    return {
+      view: 'pages/course-wrapper',
+      title,
+      description: '',
+      pageKey: 'course',
+      lowerNav: this.getCourseLowerNav(),
+      heroTitle: '',
+      heroText: '',
+      coursePageKey,
+    };
+  }
+
+  getStaticPageModel(title: string, content: string): PageModel {
+    return {
+      view: 'pages/static-wrapper',
+      title,
+      description: '',
+      pageKey: 'static',
+      lowerNav: this.getSubPageLowerNav(),
+      heroTitle: '',
+      heroText: '',
+      content,
+    };
+  }
+
   getLegacyFolderForSite(site: SiteKey): string | null {
     if (site === 'main') {
       return '';
@@ -101,15 +159,18 @@ export class SiteService {
       description: 'JustAidyn platform: AI engineering, products, courses, apps, and experiments.',
       pageKey: 'home',
       lowerNav: [
-        { label: 'Home', url: 'https://justaidyn.com/', active: true },
-        { label: 'Projects', url: 'https://justaidyn.com/projects' },
+        { labelEn: 'Home', labelRu: 'Главная', labelKk: 'Басты', url: '#section_1', active: true, extraClass: 'click-scroll' },
+        { labelEn: 'About', labelRu: 'Обо мне', labelKk: 'Мен туралы', url: '#section_2', extraClass: 'click-scroll' },
+        { labelEn: 'Skills', labelRu: 'Навыки', labelKk: 'Дағдылар', url: '#section_3', extraClass: 'click-scroll' },
+        { labelEn: 'Projects', labelRu: 'Проекты', labelKk: 'Жобалар', url: '#section_4', extraClass: 'click-scroll' },
+        { labelEn: 'Contact', labelRu: 'Контакты', labelKk: 'Байланыс', url: '#section_5', extraClass: 'click-scroll' },
       ],
       eyebrow: 'JustAidyn',
       heroTitle: 'One platform for AI products, courses, apps, and experiments.',
       heroText:
         'This NestJS baseline becomes the single entry point for justaidyn.com and all current subdomains. Header, footer, and routing are now centralized.',
       primaryAction: { label: 'Open Projects', url: '/projects' },
-      secondaryAction: { label: 'Courses', url: 'https://courses.justaidyn.com/' },
+      secondaryAction: { label: 'Courses', url: '/courses' },
       cards: [
         {
           title: 'Unified Platform',
@@ -134,8 +195,8 @@ export class SiteService {
       description: 'Current JustAidyn projects and subdomains.',
       pageKey: 'projects',
       lowerNav: [
-        { label: 'Home', url: 'https://justaidyn.com/' },
-        { label: 'Projects', url: 'https://justaidyn.com/projects', active: true },
+        { labelEn: 'Home', labelRu: 'Главная', labelKk: 'Басты', url: '/' },
+        { labelEn: 'Projects', labelRu: 'Проекты', labelKk: 'Жобалар', url: '/projects', active: true },
       ],
       eyebrow: 'Projects',
       heroTitle: 'Current JustAidyn project map.',
@@ -143,11 +204,110 @@ export class SiteService {
         'The repo now has a central application layer and separate product surfaces. We will migrate each section incrementally into NestJS.',
       primaryAction: { label: 'Main Site', url: '/' },
       cards: PROJECT_LINKS.map((project) => ({
-        title: project.label,
-        text: `Open ${project.label} on its own subdomain.`,
+        title: project.label || project.labelEn || '',
+        text: `Open ${project.label || project.labelEn || 'this project'} on its own subdomain.`,
         href: project.url,
         cta: 'Open',
       })),
+    };
+  }
+
+  getLoginPage(): PageModel {
+    return {
+      view: 'pages/auth',
+      title: 'Login | JustAidyn',
+      description: 'Sign in to JustAidyn projects and client access.',
+      pageKey: 'login',
+      isAuthPage: true,
+      lowerNav: [
+        { labelEn: 'Home', labelRu: 'Главная', labelKk: 'Басты', url: '/' },
+        { labelEn: 'Login', labelRu: 'Войти', labelKk: 'Кіру', url: '/login', active: true },
+      ],
+      eyebrow: 'Access',
+      heroTitle: 'Login to JustAidyn',
+      heroText:
+        'The auth layer will be shared across all projects. Initial roles are superadmin for JustAidyn and client for registered users.',
+      primaryAction: { label: 'Continue with Google', url: '/login/google' },
+      secondaryAction: { label: 'Continue with Apple', url: '/login/apple' },
+      cards: [
+        {
+          title: 'Role: superadmin',
+          text: 'Reserved for JustAidyn platform administration, project controls, users, billing, and releases.',
+        },
+        {
+          title: 'Role: client',
+          text: 'Default role for customers with access to purchased portals, apps, and future dashboards.',
+        },
+      ],
+    };
+  }
+
+  getRegisterPage(): PageModel {
+    return {
+      view: 'pages/auth',
+      title: 'Register | JustAidyn',
+      description: 'Create a JustAidyn client account.',
+      pageKey: 'register',
+      isAuthPage: true,
+      lowerNav: [
+        { labelEn: 'Home', labelRu: 'Главная', labelKk: 'Басты', url: '/' },
+        { labelEn: 'Register', labelRu: 'Регистрация', labelKk: 'Тіркелу', url: '/register', active: true },
+      ],
+      eyebrow: 'Access',
+      heroTitle: 'Create a JustAidyn account',
+      heroText:
+        'Registration will create a client account. Superadmin remains a restricted internal role for JustAidyn only.',
+      primaryAction: { label: 'Continue with Google', url: '/register/google' },
+      secondaryAction: { label: 'Continue with Apple', url: '/register/apple' },
+      cards: [
+        {
+          title: 'Client onboarding',
+          text: 'Client accounts are intended for portal access, app downloads, subscriptions, and dashboard usage.',
+        },
+        {
+          title: 'Admin boundary',
+          text: 'No public registration path should ever create a superadmin account.',
+        },
+      ],
+    };
+  }
+
+  getAuthProviderPage(mode: 'login' | 'register', provider: 'google' | 'apple'): PageModel {
+    const isLogin = mode === 'login';
+    const providerLabel = provider === 'google' ? 'Google' : 'Apple';
+
+    return {
+      view: 'pages/auth',
+      title: `${providerLabel} ${isLogin ? 'Login' : 'Register'} | JustAidyn`,
+      description: `${providerLabel} ${isLogin ? 'sign in' : 'registration'} setup for JustAidyn.`,
+      pageKey: mode,
+      isAuthPage: true,
+      lowerNav: [
+        { labelEn: 'Home', labelRu: 'Главная', labelKk: 'Басты', url: '/' },
+        {
+          labelEn: isLogin ? 'Login' : 'Register',
+          labelRu: isLogin ? 'Войти' : 'Регистрация',
+          labelKk: isLogin ? 'Кіру' : 'Тіркелу',
+          url: isLogin ? '/login' : '/register',
+          active: true,
+        },
+      ],
+      eyebrow: 'OAuth',
+      heroTitle: `${providerLabel} ${isLogin ? 'sign in' : 'registration'} is the next backend step`,
+      heroText:
+        'The route is now live. The real OAuth flow will be connected after the auth backend, sessions, and provider credentials are added.',
+      primaryAction: { label: isLogin ? 'Back to Login' : 'Back to Register', url: isLogin ? '/login' : '/register' },
+      secondaryAction: { label: 'Main Site', url: '/' },
+      cards: [
+        {
+          title: 'What is missing',
+          text: 'Provider client credentials, callback handlers, token verification, user linking, and session storage are not wired yet.',
+        },
+        {
+          title: 'Planned providers',
+          text: 'Google OAuth and Apple Sign In will both use the central JustAidyn auth backend.',
+        },
+      ],
     };
   }
 
@@ -158,20 +318,20 @@ export class SiteService {
       description: 'JustAidyn apps hub.',
       pageKey: 'apps',
       lowerNav: [
-        { label: 'Apps Home', url: 'https://apps.justaidyn.com/', active: true },
-        { label: 'ScreenCam', url: 'https://apps.justaidyn.com/justaidyn-screencam/' },
+        { labelEn: 'Apps Home', labelRu: 'Главная Apps', labelKk: 'Apps басты беті', url: '/apps', active: true },
+        { labelEn: 'ScreenCam', labelRu: 'ScreenCam', labelKk: 'ScreenCam', url: '/apps/justaidyn-screencam' },
       ],
       eyebrow: 'Apps',
       heroTitle: 'JustAidyn application hub.',
       heroText:
         'Applications will move here one by one. The first route is already wired into the NestJS platform.',
-      primaryAction: { label: 'Open ScreenCam', url: '/justaidyn-screencam' },
-      secondaryAction: { label: 'Back to Main Site', url: 'https://justaidyn.com/' },
+      primaryAction: { label: 'Open ScreenCam', url: '/apps/justaidyn-screencam' },
+      secondaryAction: { label: 'Back to Main Site', url: '/' },
       cards: [
         {
           title: 'JustAidyn ScreenCam',
           text: 'Download page, release routing, and product detail page are now ready to be migrated into the new app shell.',
-          href: '/justaidyn-screencam',
+          href: '/apps/justaidyn-screencam',
           cta: 'Open app page',
         },
         {
@@ -189,33 +349,33 @@ export class SiteService {
       description: 'JustAidyn Courses on the new NestJS shell.',
       pageKey: 'courses',
       lowerNav: [
-        { label: 'Courses Home', url: 'https://courses.justaidyn.com/', active: true },
-        { label: 'AI Agents', url: 'https://courses.justaidyn.com/ai-agents-course.html' },
-        { label: 'FAQ', url: 'https://courses.justaidyn.com/faq.html' },
+        { labelEn: 'Courses Home', labelRu: 'Главная Courses', labelKk: 'Courses басты беті', url: '/courses', active: true },
+        { labelEn: 'AI Agents', labelRu: 'AI-агенты', labelKk: 'AI агенттер', url: '/courses/ai-agents-course.html' },
+        { labelEn: 'FAQ', labelRu: 'FAQ', labelKk: 'ЖҚС', url: '/courses/faq.html' },
       ],
       eyebrow: 'Courses',
       heroTitle: 'JustAidyn Courses is now under the shared platform shell.',
       heroText:
         'Course layout, navigation, and future billing flow will live here. Existing detailed course pages remain available during migration.',
-      primaryAction: { label: 'Open AI Agents Course', url: '/ai-agents-course.html' },
-      secondaryAction: { label: 'Open FAQ', url: '/faq.html' },
+      primaryAction: { label: 'Open AI Agents Course', url: '/courses/ai-agents-course.html' },
+      secondaryAction: { label: 'Open FAQ', url: '/courses/faq.html' },
       cards: [
         {
           title: 'AI Agents Course',
           text: 'Detailed legacy course page is still live and now accessible through the unified NestJS routing layer.',
-          href: '/ai-agents-course.html',
+          href: '/courses/ai-agents-course.html',
           cta: 'Open course',
         },
         {
           title: 'FAQ',
           text: 'Pricing, format, and enrollment details stay reachable while the courses area is being rebuilt.',
-          href: '/faq.html',
+          href: '/courses/faq.html',
           cta: 'Open FAQ',
         },
         {
           title: 'Kaspi QR',
           text: 'The current Kaspi payment page is still wired and available through the new shell.',
-          href: '/kaspiqr.html',
+          href: '/courses/kaspiqr.html',
           cta: 'Open payment page',
         },
       ],
@@ -229,8 +389,8 @@ export class SiteService {
       description: 'JustAidyn ScreenCam download page.',
       pageKey: 'app-detail',
       lowerNav: [
-        { label: 'Apps Home', url: 'https://apps.justaidyn.com/' },
-        { label: 'ScreenCam', url: 'https://apps.justaidyn.com/justaidyn-screencam/', active: true },
+        { labelEn: 'Apps Home', labelRu: 'Главная Apps', labelKk: 'Apps басты беті', url: '/apps' },
+        { labelEn: 'ScreenCam', labelRu: 'ScreenCam', labelKk: 'ScreenCam', url: '/apps/justaidyn-screencam', active: true },
       ],
       eyebrow: 'Desktop App',
       heroTitle: 'JustAidyn ScreenCam',
@@ -254,11 +414,11 @@ export class SiteService {
     };
   }
 
-  getComingSoonPage(site: SiteKey): PageModel {
-    const titles: Record<Exclude<SiteKey, 'main' | 'apps'>, string> = {
+  getComingSoonPage(site: Exclude<SiteKey, 'main' | 'courses'>): PageModel {
+    const titles: Record<Exclude<SiteKey, 'main' | 'courses'>, string> = {
+      apps: 'Apps',
       skillsminds: 'SkillsMinds',
       nofacethinker: 'NoFaceThinker',
-      courses: 'Courses',
       games: 'Games',
       shop: 'Shop',
       api: 'API',
@@ -266,22 +426,21 @@ export class SiteService {
 
     return {
       lowerNav: [
-        { label: `${titles[site as keyof typeof titles]}`, url: `https://${site}.justaidyn.com/`, active: true },
-        { label: 'Status', url: `https://${site}.justaidyn.com/#section_2` },
+        {
+          labelEn: `${titles[site as keyof typeof titles]}`,
+          labelRu: `${titles[site as keyof typeof titles]}`,
+          labelKk: `${titles[site as keyof typeof titles]}`,
+          url: `/${site}`,
+          active: true,
+        },
+        { labelEn: 'Status', labelRu: 'Статус', labelKk: 'Күйі', url: `/${site}#section_2` },
       ],
       view: 'pages/coming-soon',
       title: `${titles[site as keyof typeof titles]} | JustAidyn`,
-      description: `${titles[site as keyof typeof titles]} is being rebuilt on the new NestJS platform.`,
+      description: '',
       pageKey: site,
-      eyebrow: 'Coming Soon',
-      heroTitle: `${titles[site as keyof typeof titles]} is moving to the new platform.`,
-      heroText:
-        'This subdomain is now routed through the shared NestJS baseline. The final product surface will be built incrementally on top of this shell.',
-      primaryAction: { label: 'Back to Main Site', url: 'https://justaidyn.com/' },
-      secondaryAction:
-        site === 'courses'
-          ? { label: 'Legacy course pages', url: 'https://courses.justaidyn.com/ai-agents-course.html' }
-          : undefined,
+      heroTitle: 'Coming Soon',
+      heroText: '',
     };
   }
 }

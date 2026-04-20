@@ -80,6 +80,45 @@ body.platform-body {
   padding: 40px 0 56px;
 }
 
+.platform-auth-section {
+  padding: 72px 0 88px;
+}
+
+.platform-auth-shell {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--platform-border);
+  border-radius: 8px;
+  box-shadow: 0 16px 48px rgba(18, 35, 52, 0.08);
+  padding: 40px 36px;
+}
+
+.platform-auth-copy {
+  max-width: 760px;
+}
+
+.platform-auth-title {
+  margin: 0 0 18px;
+  font-size: clamp(2.2rem, 4vw, 4rem);
+  line-height: 1.05;
+  color: #1b2752;
+  font-family: 'Roboto Slab', serif;
+}
+
+.platform-auth-text {
+  margin: 0;
+  max-width: 720px;
+  color: var(--platform-muted);
+  font-size: 1.08rem;
+  line-height: 1.7;
+}
+
+.platform-auth-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  margin-top: 32px;
+}
+
 .platform-section .section-title-wrap {
   gap: 0;
 }
@@ -123,6 +162,14 @@ body.platform-body {
 @media (max-width: 767px) {
   .platform-hero {
     padding-top: 0;
+  }
+
+  .platform-auth-section {
+    padding: 40px 0 56px;
+  }
+
+  .platform-auth-shell {
+    padding: 28px 20px;
   }
 
   .platform-hero-shell {

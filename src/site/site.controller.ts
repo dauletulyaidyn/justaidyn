@@ -1,6 +1,6 @@
 import { Controller, Get, NotFoundException, Render, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { PageModel, SiteService } from './site.service';
 
@@ -9,23 +9,18 @@ export class SiteController {
   constructor(private readonly siteService: SiteService) {}
 
   @Get('/')
-  @Render('pages/host-router')
-  root(@Req() req: Request) {
+  root(@Req() req: Request, @Res() res: Response) {
     const site = this.siteService.resolveHost(req.hostname);
 
     if (site === 'main') {
-      return this.withSharedModel(this.siteService.getHomePage(), req);
-    }
-
-    if (site === 'apps') {
-      return this.withSharedModel(this.siteService.getAppsPage(), req);
+      return res.render('pages/home', this.withSharedModel(this.siteService.getHomePage(), req));
     }
 
     if (site === 'courses') {
-      return this.withSharedModel(this.siteService.getCoursesLandingPage(), req);
+      return res.sendFile(join(process.cwd(), 'ai-agents-course.html'));
     }
 
-    return this.withSharedModel(this.siteService.getComingSoonPage(site), req);
+    return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage(site), req));
   }
 
   @Get('/projects')
@@ -39,29 +34,135 @@ export class SiteController {
     return this.withSharedModel(this.siteService.getProjectsPage(), req);
   }
 
-  @Get('/p/:project')
+  @Get('/login')
   @Render('pages/host-router')
-  projectAlias(@Req() req: Request) {
+  login(@Req() req: Request) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site !== 'main') {
+      throw new NotFoundException();
+    }
+
+    return this.withSharedModel(this.siteService.getLoginPage(), req);
+  }
+
+  @Get('/register')
+  @Render('pages/host-router')
+  register(@Req() req: Request) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site !== 'main') {
+      throw new NotFoundException();
+    }
+
+    return this.withSharedModel(this.siteService.getRegisterPage(), req);
+  }
+
+  @Get('/login/google')
+  @Render('pages/host-router')
+  loginGoogle(@Req() req: Request) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site !== 'main') {
+      throw new NotFoundException();
+    }
+
+    return this.withSharedModel(this.siteService.getAuthProviderPage('login', 'google'), req);
+  }
+
+  @Get('/login/apple')
+  @Render('pages/host-router')
+  loginApple(@Req() req: Request) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site !== 'main') {
+      throw new NotFoundException();
+    }
+
+    return this.withSharedModel(this.siteService.getAuthProviderPage('login', 'apple'), req);
+  }
+
+  @Get('/register/google')
+  @Render('pages/host-router')
+  registerGoogle(@Req() req: Request) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site !== 'main') {
+      throw new NotFoundException();
+    }
+
+    return this.withSharedModel(this.siteService.getAuthProviderPage('register', 'google'), req);
+  }
+
+  @Get('/register/apple')
+  @Render('pages/host-router')
+  registerApple(@Req() req: Request) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site !== 'main') {
+      throw new NotFoundException();
+    }
+
+    return this.withSharedModel(this.siteService.getAuthProviderPage('register', 'apple'), req);
+  }
+
+  @Get('/p/:project')
+  projectAlias(@Req() req: Request, @Res() res: Response) {
     const project = Array.isArray(req.params.project) ? req.params.project[0] : req.params.project;
 
     switch (project) {
       case 'skillsminds':
-        return this.withSharedModel(this.siteService.getComingSoonPage('skillsminds'), req);
+        return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('skillsminds'), req));
       case 'nofacethinker':
-        return this.withSharedModel(this.siteService.getComingSoonPage('nofacethinker'), req);
+        return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('nofacethinker'), req));
       case 'courses':
-        return this.withSharedModel(this.siteService.getCoursesLandingPage(), req);
+        return res.sendFile(join(process.cwd(), 'ai-agents-course.html'));
       case 'apps':
-        return this.withSharedModel(this.siteService.getAppsPage(), req);
+        return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('apps'), req));
       case 'games':
-        return this.withSharedModel(this.siteService.getComingSoonPage('games'), req);
+        return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('games'), req));
       case 'shop':
-        return this.withSharedModel(this.siteService.getComingSoonPage('shop'), req);
+        return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('shop'), req));
       case 'api':
-        return this.withSharedModel(this.siteService.getComingSoonPage('api'), req);
+        return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('api'), req));
       default:
         throw new NotFoundException();
     }
+  }
+
+  @Get('/skillsminds')
+  @Render('pages/host-router')
+  skillsmindsProject(@Req() req: Request) {
+    return this.withSharedModel(this.siteService.getComingSoonPage('skillsminds'), req);
+  }
+
+  @Get('/nofacethinker')
+  @Render('pages/host-router')
+  nofacethinkerProject(@Req() req: Request) {
+    return this.withSharedModel(this.siteService.getComingSoonPage('nofacethinker'), req);
+  }
+
+  @Get('/courses')
+  coursesProject(@Res() res: Response) {
+    return res.sendFile(join(process.cwd(), 'ai-agents-course.html'));
+  }
+
+  @Get('/apps')
+  @Render('pages/host-router')
+  appsProject(@Req() req: Request) {
+    return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);
+  }
+
+  @Get('/games')
+  @Render('pages/host-router')
+  gamesProject(@Req() req: Request) {
+    return this.withSharedModel(this.siteService.getComingSoonPage('games'), req);
+  }
+
+  @Get('/shop')
+  @Render('pages/host-router')
+  shopProject(@Req() req: Request) {
+    return this.withSharedModel(this.siteService.getComingSoonPage('shop'), req);
+  }
+
+  @Get('/api')
+  @Render('pages/host-router')
+  apiProject(@Req() req: Request) {
+    return this.withSharedModel(this.siteService.getComingSoonPage('api'), req);
   }
 
   @Get('/justaidyn-screencam')
@@ -72,13 +173,49 @@ export class SiteController {
       throw new NotFoundException();
     }
 
-    return this.withSharedModel(this.siteService.getScreenCamPage(), req);
+    return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);
+  }
+
+  @Get('/apps/justaidyn-screencam')
+  @Render('pages/host-router')
+  appDetailPath(@Req() req: Request) {
+    return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);
   }
 
   @Get('/p/apps/justaidyn-screencam')
   @Render('pages/host-router')
   appDetailAlias(@Req() req: Request) {
-    return this.withSharedModel(this.siteService.getScreenCamPage(), req);
+    return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);
+  }
+
+  @Get('/ai-agents-course.html')
+  @Render('pages/course-wrapper')
+  aiAgentsCourse(@Req() req: Request) {
+    return this.withSharedModel(this.siteService.getCoursePageModel('JustAidyn Courses | AI Agents Course', 'course-home'), req);
+  }
+
+  @Get('/ai-agents-lite-group.html')
+  @Render('pages/course-wrapper')
+  aiAgentsLite(@Req() req: Request) {
+    return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | Lite Group', 'lite-group'), req);
+  }
+
+  @Get('/ai-agents-standard-group.html')
+  @Render('pages/course-wrapper')
+  aiAgentsStandard(@Req() req: Request) {
+    return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | Standard Group', 'standard-group'), req);
+  }
+
+  @Get('/ai-agents-standard-plus-group.html')
+  @Render('pages/course-wrapper')
+  aiAgentsStandardPlus(@Req() req: Request) {
+    return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | Standard+ Group', 'standard-plus-group'), req);
+  }
+
+  @Get('/ai-agents-vip-group.html')
+  @Render('pages/course-wrapper')
+  aiAgentsVip(@Req() req: Request) {
+    return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | VIP Group', 'vip-group'), req);
   }
 
   @Get('/health')
@@ -96,15 +233,95 @@ export class SiteController {
     };
   }
 
+  @Get('/api/health')
+  apiHealthPath(@Req() req: Request) {
+    return {
+      ok: true,
+      app: 'justaidyn-platform',
+      host: req.hostname,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Get([
+    '/skillsminds/:file',
+    '/nofacethinker/:file',
+    '/courses/:file',
+    '/apps/:file',
+    '/games/:file',
+    '/shop/:file',
+    '/api/:file',
+  ])
+  serveSectionLegacyFile(@Req() req: Request, @Res() res: Response) {
+    const rawSection = req.path.split('/').filter(Boolean)[0];
+    const rawFile = req.params.file;
+    const section = Array.isArray(rawSection) ? rawSection[0] : rawSection;
+    const file = Array.isArray(rawFile) ? rawFile[0] : rawFile;
+    const root = process.cwd();
+
+    const sectionMap: Record<string, string> = {
+      skillsminds: 'skillsminds',
+      nofacethinker: 'nofacethinker',
+      courses: 'courses',
+      apps: 'apps',
+      games: 'games',
+      shop: 'shop',
+      api: 'api',
+    };
+
+    if (!sectionMap[section] || !/\.(html|txt|xml|png)$/i.test(file)) {
+      throw new NotFoundException();
+    }
+
+    const found = join(root, sectionMap[section], file);
+    if (!existsSync(found)) {
+      throw new NotFoundException();
+    }
+
+    return res.sendFile(found);
+  }
+
   @Get('/:file')
   serveLegacyFile(@Req() req: Request, @Res() res: Response) {
     const rawFile = req.params.file;
     const file = Array.isArray(rawFile) ? rawFile[0] : rawFile;
+    const normalizedFile = file.replace(/ /g, '+');
     const site = this.siteService.resolveHost(req.hostname);
     const root = process.cwd();
 
+    const coursePageMap: Record<string, { title: string; key: string }> = {
+      'ai-agents-course.html': {
+        title: 'JustAidyn Courses | AI Agents Course',
+        key: 'course-home',
+      },
+      'ai-agents-lite-group.html': {
+        title: 'AI Agents Course | Lite Group',
+        key: 'lite-group',
+      },
+      'ai-agents-standard-group.html': {
+        title: 'AI Agents Course | Standard Group',
+        key: 'standard-group',
+      },
+      'ai-agents-standard-plus-group.html': {
+        title: 'AI Agents Course | Standard+ Group',
+        key: 'standard-plus-group',
+      },
+      'ai-agents-vip-group.html': {
+        title: 'AI Agents Course | VIP Group',
+        key: 'vip-group',
+      },
+    };
+
     if (!/\.(html|txt|xml|png)$/i.test(file)) {
       throw new NotFoundException();
+    }
+
+    if (site === 'main' && coursePageMap[normalizedFile]) {
+      const coursePage = coursePageMap[normalizedFile];
+      return res.render(
+        'pages/course-wrapper',
+        this.withSharedModel(this.siteService.getCoursePageModel(coursePage.title, coursePage.key), req),
+      );
     }
 
     const siteFolder = this.siteService.getLegacyFolderForSite(site);
@@ -121,6 +338,28 @@ export class SiteController {
     const found = candidatePaths.find((candidate) => existsSync(candidate));
     if (!found) {
       throw new NotFoundException();
+    }
+
+    const standalonePages = ['kaspiqr.html', 'programming-course.html'];
+
+    if (/\.html$/i.test(file) && site === 'main' && !standalonePages.includes(file)) {
+      try {
+        const html = readFileSync(found, 'utf-8');
+        const mainMatch = html.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
+        const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+        if (mainMatch) {
+          const content = mainMatch[1]
+            .replace(/src="images\//g, 'src="/images/')
+            .replace(/href="images\//g, 'href="/images/');
+          const title = titleMatch ? titleMatch[1].trim() : 'JustAidyn';
+          return res.render('pages/static-wrapper', this.withSharedModel(
+            this.siteService.getStaticPageModel(title, content),
+            req,
+          ));
+        }
+      } catch {
+        // fallthrough to sendFile
+      }
     }
 
     return res.sendFile(found);

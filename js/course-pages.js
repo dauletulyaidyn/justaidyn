@@ -3,11 +3,10 @@
   const navbar = document.querySelector('.course-navbar');
   const navMount = document.getElementById('courseNavMount');
   const mainMount = document.getElementById('coursePageContent');
-  const footerMount = document.getElementById('courseFooterMount');
   const inlineData = window.__COURSE_PAGES__ || null;
   const storageKey = 'site_lang';
 
-  if (!body || !body.classList.contains('course-page') || !navMount || !mainMount || !footerMount) {
+  if (!body || !body.classList.contains('course-page') || !mainMount) {
     return;
   }
 
@@ -62,71 +61,6 @@
 
     const headerHeight = Math.ceil(navbar.getBoundingClientRect().height);
     body.style.setProperty('--course-header-offset', `${headerHeight}px`);
-  }
-
-  function extractCourseMenuItem(navHtml) {
-    if (!navHtml) {
-      return '';
-    }
-
-    const match = navHtml.match(/<li class="nav-item dropdown" data-show-langs="ru,kk">[\s\S]*?<\/li>/);
-    return match ? match[0] : '';
-  }
-
-  function getUnifiedCourseNavHtml(navHtml) {
-    const courseMenuItem = extractCourseMenuItem(navHtml);
-
-    return `
-      <button aria-controls="courseNavbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#courseNavbar" data-bs-toggle="collapse" type="button">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <a class="navbar-brand mx-auto mx-lg-0" href="https://justaidyn.com/">JustAidyn</a>
-      <div class="d-flex align-items-center d-lg-none">
-        <i class="navbar-icon bi-envelope me-3"></i>
-        <a class="custom-btn btn" href="mailto:aidyn.daulet@gmail.com">Email</a>
-      </div>
-      <div class="collapse navbar-collapse" id="courseNavbar">
-        <div class="navbar-split-layout w-100">
-          <div class="navbar-top-contact d-none d-lg-flex">
-            <div class="navbar-top-contact-left">
-              <a class="navbar-top-contact-link" href="mailto:aidyn.daulet@gmail.com" aria-label="Write to me by email" title="Write to me by email"><i class="bi bi-envelope"></i></a>
-              <a class="navbar-top-contact-link" href="tel:+77769889889" aria-label="Call me" title="Call me"><i class="bi bi-telephone"></i></a>
-              <a class="navbar-top-contact-link" href="https://wa.me/77769889889" target="_blank" rel="noopener" aria-label="Write to me on WhatsApp" title="Write to me on WhatsApp"><i class="bi bi-whatsapp"></i></a>
-              <a class="navbar-top-contact-link" href="https://t.me/justaidyn" target="_blank" rel="noopener" aria-label="Write to me on Telegram" title="Write to me on Telegram"><i class="bi bi-telegram"></i></a>
-            </div>
-            <div class="navbar-top-tools">
-              <div aria-label="Language selector" class="language-selector navbar-top-lang language-flags" role="group">
-                <button aria-label="Kazakh" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')" title="Kazakh" type="button">KK</button>
-                <button aria-label="English" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')" title="English" type="button">EN</button>
-                <button aria-label="Russian" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')" title="Russian" type="button">RU</button>
-              </div>
-              <div class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle navbar-top-tool-link" href="#" id="projectsDropdownTop" role="button" data-bs-toggle="dropdown" aria-expanded="false">JustAidyn Projects</a>
-                <ul class="dropdown-menu" aria-labelledby="projectsDropdownTop">
-                  <li><a class="dropdown-item" href="https://justaidyn.com/">JustAidyn Home</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="https://skillsminds.justaidyn.com/">SkillsMinds</a></li>
-                  <li><a class="dropdown-item" href="https://nofacethinker.justaidyn.com/">NoFaceThinker</a></li>
-                  <li><a class="dropdown-item" href="https://courses.justaidyn.com/">Courses</a></li>
-                  <li><a class="dropdown-item" href="https://apps.justaidyn.com/">Apps</a></li>
-                  <li><a class="dropdown-item" href="https://games.justaidyn.com/">Games</a></li>
-                  <li><a class="dropdown-item" href="https://shop.justaidyn.com/">Shop</a></li>
-                  <li><a class="dropdown-item" href="https://api.justaidyn.com/">API</a></li>
-                </ul>
-              </div>
-              <a class="nav-link navbar-top-tool-link" href="https://justaidyn.com/articles/">Posts and Articles</a>
-            </div>
-          </div>
-          <ul class="navbar-nav ms-lg-0 nav-row-primary">
-            <li class="nav-item"><a class="nav-link" href="https://justaidyn.com/">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="https://justaidyn.com/projects">Projects</a></li>
-            <li class="nav-item"><a class="nav-link" href="https://justaidyn.com/#section_5">Contact</a></li>
-            ${courseMenuItem}
-          </ul>
-          <div class="nav-row-secondary d-none"></div>
-        </div>
-      </div>
-    `;
   }
 
   function readSavedLanguage() {
@@ -202,53 +136,13 @@
     }
   }
 
-  function normalizeCourseRelativeLinks(container) {
-    if (!container) {
-      return;
-    }
-
-    const rootOrigin = 'https://justaidyn.com/';
-    const rootPrefixes = ['articles/', 'downloads/', 'images/', 'data/', 'css/', 'js/', 'fonts/'];
-
-    container.querySelectorAll('[href]').forEach((element) => {
-      const href = element.getAttribute('href');
-      if (!href || /^(?:[a-z]+:|#|\/\/)/i.test(href)) {
-        return;
-      }
-
-      if (rootPrefixes.some((prefix) => href.startsWith(prefix))) {
-        element.setAttribute('href', rootOrigin + href);
-        return;
-      }
-
-      if (href === 'projects.html') {
-        element.setAttribute('href', rootOrigin + href);
-        return;
-      }
-
-      if (href === 'sitemap.xml') {
-        element.setAttribute('href', rootOrigin + href);
-      }
-    });
-
-    container.querySelectorAll('[src]').forEach((element) => {
-      const src = element.getAttribute('src');
-      if (!src || /^(?:[a-z]+:|\/\/)/i.test(src)) {
-        return;
-      }
-
-      if (rootPrefixes.some((prefix) => src.startsWith(prefix))) {
-        element.setAttribute('src', rootOrigin + src);
-      }
-    });
-  }
-
   function applyCurrentCourseNavState() {
     const pageKey = body.getAttribute('data-page-key');
     const map = {
       'course-home': 'course-home',
       'lite-group': 'course-lite',
       'standard-group': 'course-standard',
+      'standard-plus-group': 'course-standard-plus',
       'vip-group': 'course-vip'
     };
     const currentKey = map[pageKey];
@@ -271,7 +165,7 @@
       return;
     }
 
-    const courseDropdown = navMount.querySelector('#coursesDropdown');
+    const courseDropdown = navMount && navMount.querySelector('#coursesDropdown');
     if (courseDropdown) {
       courseDropdown.textContent = 'JustAidyn Courses';
       courseDropdown.setAttribute('data-en', 'JustAidyn Courses');
@@ -315,7 +209,7 @@
     });
 
     function setLanguage(lang) {
-      const uiLang = lang === 'kk' ? 'kk' : lang === 'en' ? 'en' : 'ru';
+      const uiLang = lang === 'kk' ? 'kk' : 'ru';
       const contentLang = uiLang;
 
       body.classList.add('lang-ready');
@@ -369,8 +263,8 @@
   }
 
   function enhanceMobileHeader() {
-    const mobileTools = navMount.querySelector('.d-flex.align-items-center.d-lg-none');
-    const toggler = navMount.querySelector('.navbar-toggler');
+    const mobileTools = navMount && navMount.querySelector('.d-flex.align-items-center.d-lg-none');
+    const toggler = navMount && navMount.querySelector('.navbar-toggler');
 
     if (toggler) {
       toggler.classList.add('course-mobile-toggler');
@@ -388,9 +282,8 @@
       langGroup.setAttribute('role', 'group');
       langGroup.setAttribute('aria-label', 'Language selector');
       langGroup.innerHTML = `
-        <button aria-label="Kazakh" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')" title="Kazakh" type="button">KK</button>
-        <button aria-label="English" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')" title="English" type="button">EN</button>
         <button aria-label="Russian" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')" title="Russian" type="button">RU</button>
+        <button aria-label="Kazakh" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')" title="Kazakh" type="button">KZ</button>
       `;
       mobileTools.appendChild(langGroup);
     }
@@ -456,57 +349,6 @@
       tableWrap.insertAdjacentElement('afterend', mobileGroups);
     });
   }
-  function getCourseFooterHtml() {
-    return `
-      <div class="row g-4 align-items-start text-start">
-        <div class="col-lg-4 col-md-6 col-12">
-          <strong class="site-footer-title d-block mb-3" data-en="JustAidyn" data-ru="JustAidyn" data-kk="JustAidyn">JustAidyn</strong>
-          <p class="mb-0"
-             data-en="Applied AI, research, engineering, and educational projects by Dauletuly Aidyn."
-             data-ru="Прикладной ИИ, исследования, инженерия и образовательные проекты Даулетулы Айдына."
-             data-kk="Дәулетұлы Айдынның қолданбалы AI, зерттеу, инженерия және білім беру жобалары.">
-            Applied AI, research, engineering, and educational projects by Dauletuly Aidyn.
-          </p>
-        </div>
-        <div class="col-lg-2 col-md-6 col-12">
-          <strong class="site-footer-title d-block mb-3" data-en="Basic Links" data-ru="Основные ссылки" data-kk="Негізгі сілтемелер">Basic Links</strong>
-          <ul class="footer-menu">
-            <li class="footer-menu-item"><a class="footer-menu-link" href="index.html" data-en="Main" data-ru="Главная" data-kk="Басты бет">Main</a></li>
-            <li class="footer-menu-item"><a class="footer-menu-link" href="projects.html" data-en="Projects" data-ru="Проекты" data-kk="Жобалар">Projects</a></li>
-            <li class="footer-menu-item"><a class="footer-menu-link" href="index.html?dl=pdf" data-en="CV PDF" data-ru="CV PDF" data-kk="CV PDF">CV PDF</a></li>
-          </ul>
-        </div>
-        <div class="col-lg-3 col-md-6 col-12">
-          <strong class="site-footer-title d-block mb-3" data-en="Sitemap" data-ru="Карта сайта" data-kk="Сайт картасы">Sitemap</strong>
-          <ul class="footer-menu">
-            <li class="footer-menu-item"><a class="footer-menu-link" href="articles/index.html" data-en="Articles" data-ru="Статьи" data-kk="Мақалалар">Articles</a></li>
-            <li class="footer-menu-item"><a class="footer-menu-link" href="faq.html" data-en="FAQ" data-ru="FAQ" data-kk="ЖҚС">FAQ</a></li>
-            <li class="footer-menu-item"><a class="footer-menu-link" href="sitemap.xml">Sitemap.xml</a></li>
-            <li class="footer-menu-item"><a class="footer-menu-link" href="ai-agents-course.html" data-en="AI Agents" data-ru="AI-агенты" data-kk="AI агенттер">AI Agents</a></li>
-          </ul>
-        </div>
-        <div class="col-lg-3 col-md-6 col-12">
-          <strong class="site-footer-title d-block mb-3" data-en="Contact" data-ru="Контакты" data-kk="Байланыс">Contact</strong>
-          <ul class="footer-menu">
-            <li class="footer-menu-item"><a class="footer-menu-link" href="https://wa.me/77769889889" rel="noopener" target="_blank">WhatsApp</a></li>
-            <li class="footer-menu-item"><a class="footer-menu-link" href="mailto:aidyn.daulet@gmail.com">Email</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="row mt-4">
-        <div class="col-lg-12 col-12">
-          <div class="copyright-text-wrap">
-            <p class="mb-0">
-              <span class="copyright-text" data-en="Copyright &#169; Dauletuly Aidyn" data-ru="Copyright &#169; Dauletuly Aidyn" data-kk="Copyright &#169; Dauletuly Aidyn">Copyright &#169; Dauletuly Aidyn</span>
-              <span data-en="All rights reserved." data-ru="All rights reserved." data-kk="All rights reserved.">All rights reserved.</span>
-              <span class="ms-2"><span data-en="Designed by" data-ru="Designed by" data-kk="Designed by">Designed by</span> <a href="https://templatemo.com/" rel="noopener" target="_blank">TemplateMo</a></span>
-            </p>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
   function shiftWeekCardEvents(weekBlock, direction) {
     const cards = Array.from(weekBlock.querySelectorAll('.course-day-card'));
 
@@ -620,12 +462,12 @@
 
       applyHead(page.meta);
       body.setAttribute('data-default-lang', page.defaultLang || body.getAttribute('data-default-lang') || 'ru');
-      navMount.innerHTML = getUnifiedCourseNavHtml(page.navHtml || '');
+      if (navMount) {
+        navMount.innerHTML = typeof window.getSharedStaticNavHtml === 'function'
+          ? window.getSharedStaticNavHtml('courses')
+          : (page.navHtml || '');
+      }
       mainMount.innerHTML = page.mainHtml || '';
-      footerMount.innerHTML = getCourseFooterHtml();
-      normalizeCourseRelativeLinks(navMount);
-      normalizeCourseRelativeLinks(mainMount);
-      normalizeCourseRelativeLinks(footerMount);
       enhanceMobileHeader();
       enhanceMobileComparisonTables();
       applyStandardScheduleShift();
@@ -643,7 +485,11 @@
 
   function renderError(error) {
       console.error(error);
-      navMount.innerHTML = '<a class="navbar-brand" href="ai-agents-course.html">AI agents</a>';
+      if (navMount) {
+        navMount.innerHTML = typeof window.getSharedStaticNavHtml === 'function'
+          ? window.getSharedStaticNavHtml('courses')
+          : '<a class="navbar-brand" href="/courses">JustAidyn</a>';
+      }
       mainMount.innerHTML = '<section class="section-padding"><div class="container"><div class="profile-thumb"><h3>Content failed to load</h3><p>Open the site through static hosting or a local server so JSON files can be loaded.</p></div></div></section>';
   }
 
@@ -661,21 +507,19 @@
     });
   }
 
-  loadJsonData()
-    .then(function (data) {
-      renderPage(normalizePageData(data));
-    })
-    .catch(function (fetchError) {
-      if (!inlineData) {
+  if (inlineData) {
+    try {
+      renderPage(normalizePageData(inlineData));
+    } catch (inlineError) {
+      renderError(inlineError);
+    }
+  } else {
+    loadJsonData()
+      .then(function (data) {
+        renderPage(normalizePageData(data));
+      })
+      .catch(function (fetchError) {
         renderError(fetchError);
-        return;
-      }
-
-      try {
-        renderPage(normalizePageData(inlineData));
-      } catch (inlineError) {
-        renderError(inlineError);
-      }
-    });
+      });
+  }
 }());
-

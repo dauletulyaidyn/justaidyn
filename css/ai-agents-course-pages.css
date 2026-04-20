@@ -5,6 +5,13 @@ body.course-page {
   --course-hero-gap: -34px;
 }
 
+body.course-page[data-page-key="lite-group"],
+body.course-page[data-page-key="standard-group"],
+body.course-page[data-page-key="standard-plus-group"],
+body.course-page[data-page-key="vip-group"] {
+  --course-hero-gap: 12px;
+}
+
 .course-page,
 .course-page * {
   font-family: "Roboto Slab", serif;
@@ -142,8 +149,26 @@ body.course-page {
     linear-gradient(135deg, var(--secondary-color), var(--primary-color));
   align-items: flex-start !important;
   min-height: 580px;
+  overflow: visible;
   padding-top: calc(var(--course-header-offset) + var(--course-hero-gap));
-  padding-bottom: 92px;
+  padding-bottom: 100px;
+  position: relative;
+}
+
+.course-page .hero > .container {
+  position: relative;
+  z-index: 2;
+}
+
+.course-page .hero > svg {
+  bottom: 0;
+  display: block;
+  height: auto;
+  left: 0;
+  max-height: 80px;
+  position: absolute;
+  width: 100%;
+  z-index: 1;
 }
 
 .course-page .hero-title,
@@ -173,7 +198,9 @@ body.course-page {
 }
 
 .course-page .hero-text {
+  position: relative;
   top: 0;
+  z-index: 3;
 }
 
 .course-page .hero-copy {
@@ -225,9 +252,11 @@ body.course-page {
   font-weight: var(--font-weight-bold);
   gap: 10px;
   letter-spacing: 0.08em;
-  margin-bottom: 10px;
+  margin-bottom: 18px;
   padding: 9px 16px;
+  position: relative;
   text-transform: uppercase;
+  z-index: 4;
 }
 
 .course-page .course-round-icon {
@@ -291,6 +320,8 @@ body.course-page {
   box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.18);
   margin-top: 24px;
   padding: 24px;
+  position: relative;
+  z-index: 10;
 }
 
 .course-page .course-hero-panel h3 {
@@ -1218,4 +1249,22 @@ body.course-page {
   .course-page .course-requirements-list > li > strong {
     font-size: 17px;
   }
+}
+
+.course-page .lang-flag-btn[data-lang-option="en"] {
+  display: none;
+}
+
+.course-page .course-step-num {
+  align-items: center;
+  background: var(--primary-color);
+  border-radius: 50%;
+  color: #fff;
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  height: 34px;
+  justify-content: center;
+  width: 34px;
 }

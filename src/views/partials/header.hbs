@@ -27,31 +27,36 @@
             <a class="navbar-top-contact-link" href="https://t.me/justaidyn" target="_blank" rel="noopener" aria-label="Write to me on Telegram" title="Write to me on Telegram">
               <i class="bi bi-telegram"></i>
             </a>
+            <a class="navbar-top-contact-link navbar-top-cv-link" href="{{mainSiteUrl}}/?dl=pdf" aria-label="CV" title="CV">CV</a>
           </div>
           <div class="navbar-top-tools">
-            <div class="language-selector navbar-top-lang language-flags" role="group" aria-label="Language selector">
-              <button type="button" class="lang-flag-btn">KK</button>
-              <button type="button" class="lang-flag-btn">EN</button>
-              <button type="button" class="lang-flag-btn">RU</button>
-            </div>
             <div class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle navbar-top-tool-link" href="#" id="projectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">JustAidyn Projects</a>
+              <a class="nav-link dropdown-toggle navbar-top-tool-link" href="#" id="projectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-en="JustAidyn Projects" data-ru="Проекты JustAidyn" data-kk="JustAidyn жобалары">JustAidyn Projects</a>
               <ul class="dropdown-menu" aria-labelledby="projectsDropdown">
-                <li><a class="dropdown-item" href="{{mainSiteUrl}}">JustAidyn Home</a></li>
+                <li><a class="dropdown-item" href="{{mainSiteUrl}}" data-en="JustAidyn Home" data-ru="Главная JustAidyn" data-kk="JustAidyn басты беті">JustAidyn Home</a></li>
                 <li><hr class="dropdown-divider"></li>
                 {{#each projectLinks}}
-                  <li><a class="dropdown-item" href="{{this.url}}">{{this.label}}</a></li>
+                  <li{{#if this.showLangs}} data-show-langs="{{this.showLangs}}"{{/if}}><a class="dropdown-item" href="{{this.url}}" data-en="{{this.labelEn}}" data-ru="{{this.labelRu}}" data-kk="{{this.labelKk}}">{{this.labelEn}}</a></li>
                 {{/each}}
               </ul>
             </div>
-            <a class="nav-link navbar-top-tool-link" href="{{articlesUrl}}">Posts and Articles</a>
+            <a class="nav-link navbar-top-tool-link" href="{{articlesUrl}}" data-en="Posts and Articles" data-ru="Посты и статьи" data-kk="Жазбалар мен мақалалар">Posts and Articles</a>
+            <div class="language-selector navbar-top-lang language-flags" role="group" aria-label="Language selector">
+              <button type="button" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')">KK</button>
+              {{#unless coursePageKey}}<button type="button" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')">EN</button>{{/unless}}
+              <button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')">RU</button>
+            </div>
+            <div class="navbar-top-auth-links">
+              <a class="navbar-top-tool-btn" href="{{mainSiteUrl}}/login" data-en="Login" data-ru="Войти" data-kk="Кіру">Login</a>
+              <a class="navbar-top-tool-btn" href="{{mainSiteUrl}}/register" data-en="Register" data-ru="Регистрация" data-kk="Тіркелу">Register</a>
+            </div>
           </div>
         </div>
 
         <ul class="navbar-nav ms-lg-0 nav-row-primary">
           {{#each lowerNav}}
-            <li class="nav-item">
-              <a class="nav-link {{#if this.active}}active{{/if}}" href="{{this.url}}">{{this.label}}</a>
+            <li class="nav-item"{{#if this.showLangs}} data-show-langs="{{this.showLangs}}"{{/if}}>
+              <a class="nav-link {{#if this.active}}active{{/if}} {{this.extraClass}}" href="{{this.url}}" data-en="{{this.labelEn}}" data-ru="{{this.labelRu}}" data-kk="{{this.labelKk}}">{{this.labelEn}}</a>
             </li>
           {{/each}}
         </ul>

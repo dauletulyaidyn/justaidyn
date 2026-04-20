@@ -517,17 +517,8 @@ strong {
 }
 
 .navbar-top-lang {
-  order: 1;
-  margin-left: 0 !important;
+  margin-left: auto !important;
   margin-right: 0 !important;
-}
-
-.navbar-top-tool-btn {
-  order: 4;
-}
-
-.navbar-top-tool-icon {
-  order: 5;
 }
 
 .navbar-top-tool-btn {
@@ -542,6 +533,12 @@ strong {
   gap: 6px;
   line-height: 1;
   padding: 9px 14px;
+}
+
+.navbar-top-auth-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .navbar-top-tool-btn:hover {
@@ -579,11 +576,6 @@ strong {
 .navbar-top-tool-link:hover,
 .navbar-top-tool-link:focus {
   color: var(--secondary-color);
-}
-
-.navbar-top-tools .nav-item.dropdown,
-.navbar-top-tools > .navbar-top-tool-link {
-  order: 2;
 }
 
 .navbar-top-tools .dropdown-toggle::after {
