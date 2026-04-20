@@ -7,26 +7,26 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
-      - name: Deploy to server
+
+      - name: Sync files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: 89.207.254.135
+          username: root
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          source: "."
+          target: "/var/www/justaidyn.com"
+          rm: false
+
+      - name: Restart app
         uses: appleboy/ssh-action@v1.2.2
         with:
           host: 89.207.254.135
           username: root
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
-            set -e
-            cd /var/www/justaidyn.com
-            echo "=== git fetch ==="
-            git fetch --prune origin
-            echo "=== git clean ==="
-            git clean -ffd
-            echo "=== git reset ==="
-            git reset --hard origin/main
-            echo "=== restart ==="
             pm2 reload all || pm2 restart all || true
-            echo "=== done ==="
