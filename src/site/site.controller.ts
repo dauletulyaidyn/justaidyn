@@ -106,7 +106,7 @@ export class SiteController {
 
     switch (project) {
       case 'skillsminds':
-        return res.redirect(301, '/articles/');
+        return res.sendFile(join(process.cwd(), 'articles', 'index.html'));
       case 'nofacethinker':
         return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('nofacethinker'), req));
       case 'courses':
@@ -126,11 +126,6 @@ export class SiteController {
 
   @Get('/skillsminds')
   skillsmindsProject(@Res() res: Response) {
-    return res.redirect(301, '/articles/');
-  }
-
-  @Get(['/articles', '/articles/'])
-  articlesHub(@Res() res: Response) {
     return res.sendFile(join(process.cwd(), 'articles', 'index.html'));
   }
 

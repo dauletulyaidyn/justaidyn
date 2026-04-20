@@ -96,7 +96,6 @@ export class SiteService {
       { labelEn: 'Skills', labelRu: 'Навыки', labelKk: 'Дағдылар', url: '/#section_3' },
       { labelEn: 'Projects', labelRu: 'Проекты', labelKk: 'Жобалар', url: '/#section_4' },
       { labelEn: 'Contact', labelRu: 'Контакты', labelKk: 'Байланыс', url: '/#section_5' },
-      { labelEn: 'Posts and Articles', labelRu: 'Посты и статьи', labelKk: 'Жазбалар мен мақалалар', url: '/articles/' },
     ];
   }
 
