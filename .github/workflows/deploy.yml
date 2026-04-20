@@ -12,21 +12,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H 89.207.254.135 >> ~/.ssh/known_hosts
+
       - name: Sync files to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: 89.207.254.135
-          username: root
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          source: "."
-          target: "/var/www/justaidyn.com"
-          rm: false
+        run: |
+          rsync -avz --delete \
+            --exclude=node_modules \
+            --exclude=.git \
+            -e "ssh -i ~/.ssh/deploy_key" \
+            ./ root@89.207.254.135:/var/www/justaidyn.com/
 
       - name: Restart app
-        uses: appleboy/ssh-action@v1.2.2
-        with:
-          host: 89.207.254.135
-          username: root
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          script: |
-            pm2 reload all || pm2 restart all || true
+        run: |
+          ssh -i ~/.ssh/deploy_key root@89.207.254.135 "pm2 reload all || pm2 restart all || true"
