@@ -56,8 +56,8 @@ const ROOT_HOSTS = new Set([
 ]);
 
 const PROJECT_LINKS: ProjectLink[] = [
-  { labelEn: 'SkillsMinds', labelRu: 'SkillsMinds', labelKk: 'SkillsMinds', url: '/articles/' },
-  { labelEn: 'NoFaceThinker', labelRu: 'NoFaceThinker', labelKk: 'NoFaceThinker', url: '/nofacethinker' },
+  { labelEn: 'Skills and Minds Hub', labelRu: 'Skills and Minds Hub', labelKk: 'Skills and Minds Hub', url: '/articles/' },
+  { labelEn: 'No Face Thinker', labelRu: 'No Face Thinker', labelKk: 'No Face Thinker', url: '/nofacethinker' },
   { labelEn: 'Courses', labelRu: 'Курсы', labelKk: 'Курстар', url: '/courses', showLangs: 'ru,kk' },
   { labelEn: 'Apps', labelRu: 'Приложения', labelKk: 'Қосымшалар', url: '/apps' },
   { labelEn: 'Games', labelRu: 'Игры', labelKk: 'Ойындар', url: '/games' },
