@@ -17,7 +17,7 @@ export class SiteController {
     }
 
     if (site === 'courses') {
-      return res.sendFile(join(process.cwd(), 'ai-agents-course.html'));
+      return res.render('pages/course-wrapper', this.withSharedModel(this.siteService.getCoursePageModel('JustAidyn Courses | AI Agents Course', 'course-home'), req));
     }
 
     return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage(site), req));
@@ -110,7 +110,7 @@ export class SiteController {
       case 'nofacethinker':
         return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('nofacethinker'), req));
       case 'courses':
-        return res.sendFile(join(process.cwd(), 'ai-agents-course.html'));
+        return res.render('pages/course-wrapper', this.withSharedModel(this.siteService.getCoursePageModel('JustAidyn Courses | AI Agents Course', 'course-home'), req));
       case 'apps':
         return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('apps'), req));
       case 'games':
@@ -137,8 +137,8 @@ export class SiteController {
   }
 
   @Get('/courses')
-  coursesProject(@Res() res: Response) {
-    return res.sendFile(join(process.cwd(), 'ai-agents-course.html'));
+  coursesProject(@Req() req: Request, @Res() res: Response) {
+    return res.render('pages/course-wrapper', this.withSharedModel(this.siteService.getCoursePageModel('JustAidyn Courses | AI Agents Course', 'course-home'), req));
   }
 
   @Get('/apps')
