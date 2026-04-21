@@ -212,6 +212,9 @@
       var currentSection = detectCurrentSection();
 
       document.querySelectorAll('.navbar.navbar-split').forEach(function(navbar) {
+        if (navbar.classList.contains('course-navbar')) {
+          return;
+        }
         navbar.innerHTML = getSharedStaticNavHtml(currentSection);
       });
     }
