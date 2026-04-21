@@ -165,7 +165,7 @@
       return;
     }
 
-    const courseDropdown = navMount && navMount.querySelector('#coursesDropdown');
+    const courseDropdown = navbar && navbar.querySelector('#coursesDropdown');
     if (courseDropdown) {
       courseDropdown.textContent = 'JustAidyn Courses';
       courseDropdown.setAttribute('data-en', 'JustAidyn Courses');
@@ -265,8 +265,8 @@
   }
 
   function enhanceMobileHeader() {
-    const mobileTools = navMount && navMount.querySelector('.d-flex.align-items-center.d-lg-none');
-    const toggler = navMount && navMount.querySelector('.navbar-toggler');
+    const mobileTools = navbar && navbar.querySelector('.d-flex.align-items-center.d-lg-none');
+    const toggler = navbar && navbar.querySelector('.navbar-toggler');
 
     if (toggler) {
       toggler.classList.add('course-mobile-toggler');
@@ -464,8 +464,8 @@
 
       applyHead(page.meta);
       body.setAttribute('data-default-lang', page.defaultLang || body.getAttribute('data-default-lang') || 'ru');
-      if (navMount) {
-        navMount.innerHTML = typeof window.getSharedStaticNavHtml === 'function'
+      if (navbar) {
+        navbar.innerHTML = typeof window.getSharedStaticNavHtml === 'function'
           ? window.getSharedStaticNavHtml('courses')
           : (page.navHtml || '');
       }
@@ -487,8 +487,8 @@
 
   function renderError(error) {
       console.error(error);
-      if (navMount) {
-        navMount.innerHTML = typeof window.getSharedStaticNavHtml === 'function'
+      if (navbar) {
+        navbar.innerHTML = typeof window.getSharedStaticNavHtml === 'function'
           ? window.getSharedStaticNavHtml('courses')
           : '<a class="navbar-brand" href="/courses">JustAidyn</a>';
       }
