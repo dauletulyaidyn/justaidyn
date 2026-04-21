@@ -199,6 +199,18 @@
                 <li class="nav-item"><a class="nav-link" href="/#section_2" data-en="About" data-ru="Обо мне" data-kk="Мен туралы">About</a></li>
                 <li class="nav-item"><a class="nav-link" href="/#section_3" data-en="Skills" data-ru="Навыки" data-kk="Дағдылар">Skills</a></li>
                 <li class="nav-item"><a class="nav-link" href="/#section_5" data-en="Contact" data-ru="Контакты" data-kk="Байланыс">Contact</a></li>
+                <li class="nav-item dropdown" data-show-langs="ru,kk">
+                  <a class="nav-link dropdown-toggle ${isCourses ? 'active' : ''}" href="/courses" id="coursesNavDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-en="Courses" data-ru="Курсы" data-kk="Курстар">Курсы</a>
+                  <ul class="dropdown-menu" aria-labelledby="coursesNavDropdown">
+                    <li><a class="dropdown-item" href="/courses/ai-agents-course.html" data-en="AI Agents" data-ru="AI-агенты" data-kk="AI агенттер">AI-агенты</a></li>
+                    <li><a class="dropdown-item dropdown-subitem" href="/courses/faq.html" data-en="— FAQ" data-ru="— FAQ" data-kk="— ЖҚС">— FAQ</a></li>
+                    <li><a class="dropdown-item dropdown-subitem text-muted" href="#" data-en="— Graduates list 🔒" data-ru="— Список слушателей 🔒" data-kk="— Тыңдаушылар тізімі 🔒">— Список слушателей 🔒</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-muted" href="/courses/programming-course.html" data-en="Programming 🔒" data-ru="Программирование 🔒" data-kk="Бағдарламалау 🔒">Программирование 🔒</a></li>
+                    <li><a class="dropdown-item" href="/courses/non-standard-math-logic.html" data-en="Non-standard math and logic" data-ru="Нестандартная математика и логика" data-kk="Стандартты емес математика">Нестандартная математика и логика</a></li>
+                    <li><a class="dropdown-item" href="/courses/motivational-letter.html" data-en="Motivational letter" data-ru="Мотивационное письмо" data-kk="Мотивациялық хат">Мотивационное письмо</a></li>
+                  </ul>
+                </li>
                 </ul>
             </div>
           </div>
