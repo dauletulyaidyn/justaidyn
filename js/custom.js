@@ -317,6 +317,10 @@
       enhanceMobileSplitNavbars();
       renderSharedFooters();
       if (isCoursePage) {
+        var savedCourseLang = readSavedLanguage();
+        if (savedCourseLang && typeof window.changeLanguage === 'function') {
+          window.changeLanguage(savedCourseLang);
+        }
         return;
       }
       window.changeLanguage = function(lang) {

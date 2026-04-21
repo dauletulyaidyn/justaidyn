@@ -246,7 +246,9 @@
       applyVisibleBranding();
 
       document.documentElement.lang = uiLang;
-      saveLanguage(uiLang);
+      if (lang !== 'en') {
+        saveLanguage(uiLang);
+      }
     }
 
     document.querySelectorAll('[data-lang-btn]').forEach((button) => {
