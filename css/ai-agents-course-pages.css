@@ -8,7 +8,9 @@ body.course-page {
 body.course-page[data-page-key="lite-group"],
 body.course-page[data-page-key="standard-group"],
 body.course-page[data-page-key="standard-plus-group"],
-body.course-page[data-page-key="vip-group"] {
+body.course-page[data-page-key="vip-group"],
+body.course-page[data-page-key="learning-steps"],
+body.course-page[data-page-key="learning-principles"] {
   --course-hero-gap: 12px;
 }
 
