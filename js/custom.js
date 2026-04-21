@@ -173,13 +173,13 @@
                     <ul class="dropdown-menu" aria-labelledby="projectsDropdownTop">
                       <li><a class="dropdown-item" href="/" data-en="JustAidyn Home" data-ru="Главная JustAidyn" data-kk="Басты бет">JustAidyn Home</a></li>
                       <li><hr class="dropdown-divider"></li>
-                      <li><a class="dropdown-item" href="/skillsminds" data-en="Skills and Minds Hub" data-ru="Skills and Minds Hub" data-kk="Skills and Minds Hub">Skills and Minds Hub</a></li>
-                      <li><a class="dropdown-item" href="/nofacethinker" data-en="No Face Thinker" data-ru="No Face Thinker" data-kk="No Face Thinker">No Face Thinker</a></li>
+                      <li><a class="dropdown-item" href="#" data-en="Skills and Minds Hub" data-ru="Skills and Minds Hub" data-kk="Skills and Minds Hub">Skills and Minds Hub</a></li>
+                      <li><a class="dropdown-item" href="#" data-en="No Face Thinker" data-ru="No Face Thinker" data-kk="No Face Thinker">No Face Thinker</a></li>
                       <li data-show-langs="ru,kk"><a class="dropdown-item" href="/courses" data-en="Courses" data-ru="Курсы" data-kk="Курстар">Courses</a></li>
-                      <li><a class="dropdown-item" href="/apps" data-en="Apps" data-ru="Приложения" data-kk="Қосымшалар">Apps</a></li>
-                      <li><a class="dropdown-item" href="/games" data-en="Games" data-ru="Игры" data-kk="Ойындар">Games</a></li>
-                      <li><a class="dropdown-item" href="/shop" data-en="Shop" data-ru="Магазин" data-kk="Дүкен">Shop</a></li>
-                      <li><a class="dropdown-item" href="/api" data-en="API" data-ru="API" data-kk="API">API</a></li>
+                      <li><a class="dropdown-item" href="#" data-en="Apps" data-ru="Приложения" data-kk="Қосымшалар">Apps</a></li>
+                      <li><a class="dropdown-item" href="#" data-en="Games" data-ru="Игры" data-kk="Ойындар">Games</a></li>
+                      <li><a class="dropdown-item" href="#" data-en="Shop" data-ru="Магазин" data-kk="Дүкен">Shop</a></li>
+                      <li><a class="dropdown-item" href="#" data-en="API" data-ru="API" data-kk="API">API</a></li>
                     </ul>
                   </div>
 <div class="language-selector navbar-top-lang language-flags" role="group" aria-label="Language selector">
