@@ -19,7 +19,7 @@ body.platform-body {
   background:
     linear-gradient(rgba(243, 247, 251, 0.9), rgba(243, 247, 251, 0.98)),
     url('/images/portrait-happy-excited-man-holding-laptop-computer.png') center top / cover no-repeat fixed;
-  font-family: 'DM Sans', Arial, sans-serif;
+  font-family: 'Roboto Slab', serif;
 }
 
 .platform-main {

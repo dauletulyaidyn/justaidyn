@@ -11,7 +11,7 @@
   }
 
   function looksLikeMojibake(value) {
-    return typeof value === 'string' && /(?:Ãƒ.|Ã‚.|Ã.|Ã‘.|Ã’.|Ã“.|Ã”.|Ã•.|Ã–.|Ã—.|Ã˜.|Ã™.|Ãš.|Ã›.|Ãœ.|Ã.|Ãž.|ÃŸ.|Ã°Å¸)/.test(value);
+    return typeof value === 'string' && /(?:Ã.|Â.|Ð.|Ñ.|Ò.|Ó.|Ô.|Õ.|Ö.|×.|Ø.|Ù.|Ú.|Û.|Ü.|Ý.|Þ.|ß.|ðŸ)/.test(value);
   }
 
   function countLocalizedLetters(value) {
@@ -202,10 +202,7 @@
 
   function bindLanguageButtons() {
     document.querySelectorAll('[data-lang-option="en"]').forEach((button) => {
-      button.disabled = true;
-      button.hidden = true;
-      button.setAttribute('aria-disabled', 'true');
-      button.setAttribute('tabindex', '-1');
+      button.remove();
     });
 
     function setLanguage(lang) {
@@ -261,7 +258,8 @@
       setLanguage(lang);
     };
 
-    setLanguage(readSavedLanguage() || body.getAttribute('data-default-lang') || 'ru');
+    const savedLanguage = readSavedLanguage();
+    setLanguage(savedLanguage === 'en' ? 'ru' : savedLanguage || body.getAttribute('data-default-lang') || 'ru');
   }
 
   function enhanceMobileHeader() {
@@ -285,7 +283,7 @@
       langGroup.setAttribute('aria-label', 'Language selector');
       langGroup.innerHTML = `
         <button aria-label="Russian" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')" title="Russian" type="button">RU</button>
-        <button aria-label="Kazakh" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')" title="Kazakh" type="button">KZ</button>
+        <button aria-label="Kazakh" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')" title="Kazakh" type="button">KK</button>
       `;
       mobileTools.appendChild(langGroup);
     }

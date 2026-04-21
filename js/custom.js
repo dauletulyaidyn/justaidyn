@@ -120,6 +120,7 @@
       if (path === '/login') return 'login';
       if (path === '/register') return 'register';
       if (path.startsWith('/courses')) return 'courses';
+      if (path.startsWith('/ai-agents') || path === '/faq.html') return 'courses';
       if (path.startsWith('/apps')) return 'apps';
       if (path.startsWith('/skillsminds')) return 'skillsminds';
       if (path.startsWith('/nofacethinker')) return 'nofacethinker';
@@ -133,8 +134,10 @@
 
     function getSharedStaticNavHtml(currentSection) {
       var isHome = currentSection === 'home';
-      var isProjects = currentSection === 'projects';
       var isCourses = currentSection === 'courses';
+      var languageButtons = isCourses
+        ? `<button type="button" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')">KK</button><button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')">RU</button>`
+        : `<button type="button" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')">KK</button><button type="button" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')">EN</button><button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')">RU</button>`;
 
       return `
         <div class="container">
@@ -173,19 +176,31 @@
                     <ul class="dropdown-menu" aria-labelledby="projectsDropdownTop">
                       <li><a class="dropdown-item" href="/" data-en="JustAidyn Home" data-ru="Главная JustAidyn" data-kk="Басты бет">JustAidyn Home</a></li>
                       <li><hr class="dropdown-divider"></li>
-                      <li><a class="dropdown-item" href="#" data-en="Skills and Minds Hub" data-ru="Skills and Minds Hub" data-kk="Skills and Minds Hub">Skills and Minds Hub</a></li>
-                      <li><a class="dropdown-item" href="#" data-en="No Face Thinker" data-ru="No Face Thinker" data-kk="No Face Thinker">No Face Thinker</a></li>
-                      <li data-show-langs="ru,kk"><a class="dropdown-item" href="/courses" data-en="Courses" data-ru="Курсы" data-kk="Курстар">Courses</a></li>
-                      <li><a class="dropdown-item" href="#" data-en="Apps" data-ru="Приложения" data-kk="Қосымшалар">Apps</a></li>
-                      <li><a class="dropdown-item" href="#" data-en="Games" data-ru="Игры" data-kk="Ойындар">Games</a></li>
-                      <li><a class="dropdown-item" href="#" data-en="Shop" data-ru="Магазин" data-kk="Дүкен">Shop</a></li>
-                      <li><a class="dropdown-item" href="#" data-en="API" data-ru="API" data-kk="API">API</a></li>
+                      <li><a class="dropdown-item" href="/articles/" data-en="Skills and Minds Hub" data-ru="Skills and Minds Hub" data-kk="Skills and Minds Hub">Skills and Minds Hub</a></li>
+                      <li><a class="dropdown-item" href="/nofacethinker" data-en="No Face Thinker" data-ru="No Face Thinker" data-kk="No Face Thinker">No Face Thinker</a></li>
+                      <li class="dropdown-submenu" data-show-langs="ru,kk">
+                        <a class="dropdown-item dropdown-toggle" href="/courses" data-en="Courses" data-ru="Курсы" data-kk="Курстар">Courses</a>
+                        <ul class="dropdown-menu">
+                          <li class="dropdown-submenu">
+                            <a class="dropdown-item dropdown-toggle" href="/courses/ai-agents-course.html" data-en="AI agents" data-ru="AI-агенты" data-kk="AI агенттер">AI agents</a>
+                            <ul class="dropdown-menu">
+                              <li><a class="dropdown-item" href="/courses/faq.html" data-en="FAQ" data-ru="FAQ" data-kk="ЖҚС">FAQ</a></li>
+                              <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true" data-en="List of students" data-ru="Список слушателей" data-kk="Тыңдаушылар тізімі">List of students</a></li>
+                            </ul>
+                          </li>
+                          <li><a class="dropdown-item disabled" href="/courses/programming-course.html" tabindex="-1" aria-disabled="true" data-en="Programming" data-ru="Программирование" data-kk="Бағдарламалау">Programming</a></li>
+                          <li><a class="dropdown-item" href="/courses/non-standard-math-logic.html" data-en="Non-standard math" data-ru="Нестандартная математика" data-kk="Стандарттан тыс математика">Non-standard math</a></li>
+                          <li><a class="dropdown-item" href="/courses/motivational-letter.html" data-en="Motivational letter" data-ru="Мотивационное письмо" data-kk="Мотивациялық хат">Motivational letter</a></li>
+                        </ul>
+                      </li>
+                      <li><a class="dropdown-item" href="/apps" data-en="Apps" data-ru="Приложения" data-kk="Қосымшалар">Apps</a></li>
+                      <li><a class="dropdown-item" href="/games" data-en="Games" data-ru="Игры" data-kk="Ойындар">Games</a></li>
+                      <li><a class="dropdown-item" href="/shop" data-en="Shop" data-ru="Магазин" data-kk="Дүкен">Shop</a></li>
+                      <li><a class="dropdown-item" href="/api" data-en="API" data-ru="API" data-kk="API">API</a></li>
                     </ul>
                   </div>
-<div class="language-selector navbar-top-lang language-flags" role="group" aria-label="Language selector">
-                    <button type="button" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')">KK</button>
-                    <button type="button" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')">EN</button>
-                    <button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')">RU</button>
+                  <div class="language-selector navbar-top-lang language-flags" role="group" aria-label="Language selector">
+                    ${languageButtons}
                   </div>
                   <div class="navbar-top-auth-links">
                     <a class="navbar-top-tool-btn" href="#" data-en="Login" data-ru="Войти" data-kk="Кіру">Login</a>
@@ -199,7 +214,7 @@
                 <li class="nav-item"><a class="nav-link" href="/#section_2" data-en="About" data-ru="Обо мне" data-kk="Мен туралы">About</a></li>
                 <li class="nav-item"><a class="nav-link" href="/#section_3" data-en="Skills" data-ru="Навыки" data-kk="Дағдылар">Skills</a></li>
                 <li class="nav-item"><a class="nav-link" href="/#section_5" data-en="Contact" data-ru="Контакты" data-kk="Байланыс">Contact</a></li>
-                </ul>
+              </ul>
             </div>
           </div>
         </div>
@@ -240,7 +255,7 @@
 
       document.documentElement.lang = uiLang;
 
-      document.querySelectorAll('[data-en][data-ru][data-kk]').forEach(function(element) {
+      document.querySelectorAll('[data-' + uiLang + ']').forEach(function(element) {
         var value = element.getAttribute('data-' + uiLang);
         if (value !== null) {
           if (value.indexOf('<') !== -1 || value.indexOf('&') !== -1) {

@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1080" height="1080" viewBox="0 0 1080 1080">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#1a2744"/>
+      <stop offset="100%" stop-color="#0d1520"/>
+    </linearGradient>
+
+    <!-- Gold glow for logo circle -->
+    <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#c9a343" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#c9a343" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Clip for corner accent -->
+    <clipPath id="topLeft">
+      <rect x="0" y="0" width="300" height="300"/>
+    </clipPath>
+    <clipPath id="bottomRight">
+      <rect x="780" y="780" width="300" height="300"/>
+    </clipPath>
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="1080" height="1080" fill="url(#bgGrad)"/>
+
+  <!-- Subtle dot grid pattern -->
+  <g opacity="0.07">
+    <pattern id="dots" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+      <circle cx="30" cy="30" r="1.5" fill="#c9a343"/>
+    </pattern>
+    <rect width="1080" height="1080" fill="url(#dots)"/>
+  </g>
+
+  <!-- ── Corner accent arcs ── -->
+  <!-- Top-left -->
+  <g opacity="0.25">
+    <circle cx="0" cy="0" r="220" fill="none" stroke="#c9a343" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="170" fill="none" stroke="#c9a343" stroke-width="0.8"/>
+    <circle cx="0" cy="0" r="120" fill="none" stroke="#c9a343" stroke-width="0.5"/>
+  </g>
+  <!-- Bottom-right -->
+  <g opacity="0.25">
+    <circle cx="1080" cy="1080" r="220" fill="none" stroke="#c9a343" stroke-width="1.5"/>
+    <circle cx="1080" cy="1080" r="170" fill="none" stroke="#c9a343" stroke-width="0.8"/>
+    <circle cx="1080" cy="1080" r="120" fill="none" stroke="#c9a343" stroke-width="0.5"/>
+  </g>
+
+  <!-- ── Logo glow halo ── -->
+  <circle cx="540" cy="345" r="260" fill="url(#glowGrad)"/>
+
+  <!-- ── Logo image (PNG) ── -->
+  <!-- Размер логотипа 420×420, центрирован по горизонтали -->
+  <image href="justaidyn-logo.png"
+         x="330" y="135" width="420" height="420"
+         preserveAspectRatio="xMidYMid meet"/>
+
+  <!-- ── Gold separator ── -->
+  <line x1="160" y1="610" x2="920" y2="610" stroke="#c9a343" stroke-width="1.5" opacity="0.7"/>
+  <!-- Diamond on separator -->
+  <polygon points="540,601 550,610 540,619 530,610" fill="#c9a343" opacity="0.9"/>
+
+  <!-- ── Text area ── -->
+
+  <!-- Main headline — редактируй этот текст -->
+  <text x="540" y="690"
+        font-family="'Segoe UI', Arial, sans-serif"
+        font-size="52"
+        font-weight="700"
+        fill="#ffffff"
+        text-anchor="middle"
+        letter-spacing="1">Заголовок поста</text>
+
+  <!-- Sub-line — второй уровень -->
+  <text x="540" y="760"
+        font-family="'Segoe UI', Arial, sans-serif"
+        font-size="34"
+        font-weight="400"
+        fill="#c9a343"
+        text-anchor="middle"
+        letter-spacing="0.5">Подзаголовок или короткая мысль</text>
+
+  <!-- Body text line 1 — основной текст -->
+  <text x="540" y="840"
+        font-family="'Segoe UI', Arial, sans-serif"
+        font-size="28"
+        font-weight="300"
+        fill="#ccd6f0"
+        text-anchor="middle">Строка текста первая</text>
+
+  <!-- Body text line 2 -->
+  <text x="540" y="882"
+        font-family="'Segoe UI', Arial, sans-serif"
+        font-size="28"
+        font-weight="300"
+        fill="#ccd6f0"
+        text-anchor="middle">Строка текста вторая</text>
+
+  <!-- Body text line 3 -->
+  <text x="540" y="924"
+        font-family="'Segoe UI', Arial, sans-serif"
+        font-size="28"
+        font-weight="300"
+        fill="#ccd6f0"
+        text-anchor="middle">Строка текста третья</text>
+
+  <!-- ── Bottom branding strip ── -->
+  <rect x="0" y="990" width="1080" height="90" fill="#c9a343" opacity="0.12"/>
+  <line x1="0" y1="990" x2="1080" y2="990" stroke="#c9a343" stroke-width="1" opacity="0.5"/>
+
+  <!-- Branding: justaidyn.com + слоган -->
+  <text x="80" y="1042"
+        font-family="'Segoe UI', Arial, sans-serif"
+        font-size="26"
+        font-weight="700"
+        fill="#c9a343"
+        letter-spacing="2">JUSTAIDYN.COM</text>
+
+  <text x="1000" y="1042"
+        font-family="'Segoe UI', Arial, sans-serif"
+        font-size="22"
+        font-weight="300"
+        fill="#8899bb"
+        text-anchor="end"
+        letter-spacing="1">EDUCATION · AI · RESEARCH</text>
+</svg>

@@ -6,7 +6,7 @@ https://templatemo.com/tm-578-first-portfolio
 
 */
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Roboto+Slab:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500;700&display=swap');
 
 
 /*---------------------------------------
@@ -394,12 +394,14 @@ strong {
 
 .navbar .container {
   border-radius: var(--border-radius-small);
-  padding: 10px 25px;
+  padding: 18px 28px 12px;
 }
 
 .navbar-brand {
-  font-size: var(--h4-font-size);
+  font-size: 26px;
   font-weight: var(--font-weight-bold);
+  letter-spacing: 2px;
+  min-width: 130px;
 }
 
 .navbar-brand,
@@ -456,11 +458,37 @@ strong {
   color: var(--secondary-color);
 }
 
+.is-sticky .navbar-split {
+  background: transparent;
+}
+
+.is-sticky .navbar-split .container {
+  background: var(--primary-color);
+}
+
+.is-sticky .navbar-split .navbar-brand,
+.is-sticky .navbar-split .navbar-brand:hover,
+.is-sticky .navbar-split .navbar-nav .nav-link {
+  color: var(--white-color);
+}
+
+.is-sticky .navbar-split .navbar-nav .nav-link.active,
+.is-sticky .navbar-split .navbar-nav .nav-link:hover,
+.is-sticky .navbar-split .navbar-top-tool-link:hover,
+.is-sticky .navbar-split .navbar-top-tool-link:focus {
+  color: var(--white-color);
+}
+
+.is-sticky .navbar-split .navbar-nav .nav-link.active::after,
+.is-sticky .navbar-split .navbar-nav .nav-link:hover::after {
+  background: rgba(255, 255, 255, 0.85);
+}
+
 .navbar-split .navbar-split-layout {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
 }
 
 .navbar-split .container {
@@ -469,12 +497,12 @@ strong {
 
 .navbar-top-contact {
   align-items: center;
-  background: #535da1;
-  border-radius: 8px;
+  background: transparent;
+  border-radius: 0;
   display: flex;
   flex-wrap: nowrap;
   justify-content: flex-start;
-  padding: 8px 14px;
+  padding: 0;
 }
 
 .navbar-top-contact-left {
@@ -513,7 +541,7 @@ strong {
   flex: 1 1 auto;
   margin-left: 12px;
   justify-content: flex-end;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .navbar-top-lang {
@@ -647,6 +675,7 @@ strong {
 
 .navbar-split .nav-row-primary {
   justify-content: center;
+  gap: 38px;
 }
 
 .navbar-split .nav-row-secondary {
@@ -675,7 +704,8 @@ strong {
   color: #2f376d;
   cursor: pointer;
   display: inline-flex;
-  font-size: 16px;
+  font-size: 12px;
+  font-weight: var(--font-weight-bold);
   height: 32px;
   justify-content: center;
   line-height: 1;
@@ -697,6 +727,34 @@ strong {
 
 .navbar-split .dropdown-menu {
   z-index: 1200;
+}
+
+.navbar-split .dropdown-submenu {
+  position: relative;
+}
+
+.navbar-split .dropdown-submenu > .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: 0;
+}
+
+.navbar-split .dropdown-submenu:hover > .dropdown-menu,
+.navbar-split .dropdown-submenu:focus-within > .dropdown-menu {
+  display: block;
+}
+
+.navbar-split .dropdown-submenu > .dropdown-toggle {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.navbar-split .dropdown-submenu > .dropdown-toggle::after {
+  margin-left: auto;
+  transform: rotate(-90deg);
 }
 
 .navbar-split .dropdown-item {
@@ -742,6 +800,20 @@ strong {
 .navbar-split .dropdown-menu .dropdown-subitem::before {
   content: "- ";
   opacity: 0.65;
+}
+
+@media screen and (max-width: 991px) {
+  .navbar-split .dropdown-submenu > .dropdown-menu {
+    position: static;
+    margin: 0;
+    padding-left: 0.75rem;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .navbar-split .dropdown-submenu > .dropdown-toggle::after {
+    transform: none;
+  }
 }
 
 .is-sticky .navbar-split .nav-row-secondary {
@@ -3595,7 +3667,7 @@ h2[data-en="Group formats and pricing"] + .row .group-plan-accent {
 }
 
 .rpdf {
-  font-family: 'DM Sans', Arial, sans-serif;
+  font-family: 'Roboto Slab', serif;
   color: #222;
   width: 700px;
   margin: 0 auto;
