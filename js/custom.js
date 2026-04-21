@@ -175,14 +175,7 @@
                       <li><hr class="dropdown-divider"></li>
                       <li><a class="dropdown-item" href="#" data-en="Skills and Minds Hub" data-ru="Skills and Minds Hub" data-kk="Skills and Minds Hub">Skills and Minds Hub</a></li>
                       <li><a class="dropdown-item" href="#" data-en="No Face Thinker" data-ru="No Face Thinker" data-kk="No Face Thinker">No Face Thinker</a></li>
-                      <li class="dropdown-header" data-show-langs="ru,kk" data-en="Courses" data-ru="Курсы" data-kk="Курстар">Courses</li>
-                      <li data-show-langs="ru,kk"><a class="dropdown-item" href="/courses/ai-agents-course.html" data-en="AI Agents" data-ru="AI-агенты" data-kk="AI агенттер">AI-агенты</a></li>
-                      <li data-show-langs="ru,kk"><a class="dropdown-item dropdown-subitem" href="/courses/faq.html" data-en="— FAQ" data-ru="— FAQ" data-kk="— ЖҚС">— FAQ</a></li>
-                      <li data-show-langs="ru,kk"><a class="dropdown-item dropdown-subitem disabled" href="#" aria-disabled="true" data-en="— Graduates list" data-ru="— Список слушателей" data-kk="— Тыңдаушылар тізімі">— Список слушателей</a></li>
-                      <li data-show-langs="ru,kk"><a class="dropdown-item disabled" href="#" aria-disabled="true" data-en="Programming" data-ru="Программирование" data-kk="Бағдарламалау">Программирование</a></li>
-                      <li data-show-langs="ru,kk"><a class="dropdown-item" href="/courses/non-standard-math-logic.html" data-en="Non-standard math" data-ru="Нестандартная математика" data-kk="Стандартты емес математика">Нестандартная математика</a></li>
-                      <li data-show-langs="ru,kk"><a class="dropdown-item" href="/courses/motivational-letter.html" data-en="Motivational letter" data-ru="Мотивационное письмо" data-kk="Мотивациялық хат">Мотивационное письмо</a></li>
-                      <li><hr class="dropdown-divider"></li>
+                      <li data-show-langs="ru,kk"><a class="dropdown-item" href="/courses" data-en="Courses" data-ru="Курсы" data-kk="Курстар">Courses</a></li>
                       <li><a class="dropdown-item" href="#" data-en="Apps" data-ru="Приложения" data-kk="Қосымшалар">Apps</a></li>
                       <li><a class="dropdown-item" href="#" data-en="Games" data-ru="Игры" data-kk="Ойындар">Games</a></li>
                       <li><a class="dropdown-item" href="#" data-en="Shop" data-ru="Магазин" data-kk="Дүкен">Shop</a></li>
