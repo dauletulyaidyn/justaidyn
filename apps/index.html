@@ -4,131 +4,228 @@
   <meta charset="UTF-8">
   <meta name="google-site-verification" content="dIyQej_DeYbNN1TxKXD_y2Exrk-8smfMADQga5G621I"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Apps | JustAidyn</title>
-  <meta name="description" content="JustAidyn applications hub.">
+  <title>Apps — JustAidyn</title>
+  <meta name="description" content="Downloadable desktop applications built by JustAidyn. Screen recording, camera tools, and more.">
+  <link rel="icon" type="image/png" href="/favicon.png?v=20260331c">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500;700&display=swap" rel="stylesheet">
   <link href="https://justaidyn.com/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://justaidyn.com/css/bootstrap-icons.css" rel="stylesheet">
-  <link href="https://justaidyn.com/css/magnific-popup.css" rel="stylesheet">
   <link href="https://justaidyn.com/css/templatemo-first-portfolio-style.css" rel="stylesheet">
   <style>
     :root {
-      color-scheme: light;
-      --text: #18232c;
-      --muted: #54606a;
-      --accent: #0f6b73;
-      --accent-2: #0a5258;
-      --panel: rgba(255, 255, 255, 0.9);
-      --border: rgba(24, 35, 44, 0.12);
+      --accent:       #535da1;
+      --accent-dark:  #3d4680;
+      --accent-light: rgba(83,93,161,0.08);
+      --text:         #18232c;
+      --muted:        #54606a;
+      --panel:        rgba(255,255,255,0.93);
+      --border:       rgba(24,35,44,0.11);
+      --tag-bg:       rgba(83,93,161,0.10);
     }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       min-height: 100vh;
-      padding: 0;
       font-family: 'Roboto Slab', serif;
       background:
-        linear-gradient(rgba(238, 244, 244, 0.88), rgba(238, 244, 244, 0.94)),
-        url("../images/portrait-happy-excited-man-holding-laptop-computer.png") center / cover no-repeat;
+        linear-gradient(rgba(240,242,250,0.90), rgba(240,242,250,0.96)),
+        url("/images/portrait-happy-excited-man-holding-laptop-computer.png") center / cover no-repeat fixed;
       color: var(--text);
     }
-
-    .shell {
-      width: min(1080px, 100%);
+    .page-shell {
+      width: min(1100px, 100%);
       margin: 0 auto;
-      padding: 32px 24px;
+      padding: 40px 24px 64px;
     }
 
-    .hero,
-    .card {
+    /* ── Hero ── */
+    .hero {
       background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      backdrop-filter: blur(4px);
+      border-radius: 12px;
+      padding: 48px 40px;
+      margin-bottom: 32px;
     }
-
-    .hero {
-      padding: 40px 32px;
-      margin-bottom: 24px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-    }
-
-    .card {
-      padding: 24px;
-    }
-
-    h1 {
-      margin: 0 0 12px;
-      font-size: clamp(2rem, 4vw, 3.5rem);
-      line-height: 1.05;
-    }
-
-    h2 {
-      margin: 0 0 12px;
-      font-size: 1.4rem;
-      line-height: 1.2;
-    }
-
-    p,
-    li {
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    ul {
-      margin: 12px 0 0;
-      padding-left: 20px;
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 20px;
-    }
-
-    .btn {
+    .hero-eyebrow {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      min-height: 44px;
-      padding: 10px 16px;
-      border-radius: 8px;
-      border: 1px solid var(--accent);
-      color: #fff;
-      background: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
+      gap: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-light);
+      border-radius: 6px;
+      padding: 5px 12px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      margin: 0 0 14px;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.08;
+      color: var(--text);
+    }
+    .hero p {
+      margin: 0;
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 620px;
+      line-height: 1.7;
     }
 
-    .btn.secondary {
+    /* ── Grid ── */
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    /* ── App card ── */
+    .app-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow 0.18s, transform 0.18s;
+    }
+    .app-card:hover {
+      box-shadow: 0 8px 32px rgba(83,93,161,0.13);
+      transform: translateY(-2px);
+    }
+    .app-card-poster {
+      background: linear-gradient(135deg, #4a5398 0%, #6b77c4 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 36px 24px;
+      min-height: 200px;
+    }
+    .app-card-poster img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 18px rgba(0,0,0,0.30));
+    }
+    .app-card-body {
+      padding: 28px 28px 24px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .app-card-header {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .app-card-header h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: var(--text);
+    }
+    .version-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--tag-bg);
+      border-radius: 99px;
+      padding: 2px 9px;
+      white-space: nowrap;
+    }
+    .app-card-desc {
+      margin: 0 0 16px;
+      font-size: 0.97rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    .app-card-features {
+      margin: 0 0 20px;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .app-card-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .app-card-features li::before {
+      content: "";
+      display: block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: 7px;
+      flex-shrink: 0;
+    }
+    .app-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 22px;
+    }
+    .tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent-dark);
+      background: var(--tag-bg);
+      border-radius: 6px;
+      padding: 3px 10px;
+    }
+    .app-card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: auto;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 42px;
+      padding: 9px 18px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.92rem;
+      text-decoration: none;
+      border: none;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: var(--accent-dark); color: #fff; }
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 42px;
+      padding: 9px 18px;
+      border-radius: 8px;
       background: transparent;
       color: var(--accent);
+      font-weight: 700;
+      font-size: 0.92rem;
+      text-decoration: none;
+      border: 1.5px solid var(--accent);
+      transition: background 0.15s, color 0.15s;
     }
+    .btn-outline:hover { background: var(--accent-light); color: var(--accent-dark); }
 
-    .meta {
-      margin-top: 18px;
-      padding-top: 18px;
-      border-top: 1px solid var(--border);
-      font-size: 0.95rem;
-    }
-
-    code {
-      font-family: Consolas, monospace;
-      font-size: 0.95em;
-    }
-
-    a {
-      color: var(--accent-2);
+    @media (max-width: 600px) {
+      .hero { padding: 28px 20px; }
+      .app-card-body { padding: 20px 20px 18px; }
     }
   </style>
 </head>
@@ -149,82 +246,113 @@
             <div class="navbar-top-contact-left">
               <a class="navbar-top-contact-link" href="mailto:aidyn.daulet@gmail.com" aria-label="Write to me by email" title="Write to me by email"><i class="bi bi-envelope"></i></a>
               <a class="navbar-top-contact-link" href="tel:+77769889889" aria-label="Call me" title="Call me"><i class="bi bi-telephone"></i></a>
-              <a class="navbar-top-contact-link" href="https://wa.me/77769889889"  aria-label="Write to me on WhatsApp" title="Write to me on WhatsApp"><i class="bi bi-whatsapp"></i></a>
-              <a class="navbar-top-contact-link" href="https://t.me/justaidyn"  aria-label="Write to me on Telegram" title="Write to me on Telegram"><i class="bi bi-telegram"></i></a>
+              <a class="navbar-top-contact-link" href="https://wa.me/77769889889" target="_blank" rel="noopener" aria-label="Write to me on WhatsApp" title="Write to me on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+              <a class="navbar-top-contact-link" href="https://t.me/justaidyn" target="_blank" rel="noopener" aria-label="Write to me on Telegram" title="Write to me on Telegram"><i class="bi bi-telegram"></i></a>
+              <a class="navbar-top-contact-link navbar-top-cv-link" href="https://justaidyn.com/?dl=pdf" aria-label="CV" title="CV">CV</a>
             </div>
             <div class="navbar-top-tools">
               <div class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle navbar-top-tool-link active" href="#" id="projectsDropdownApps" role="button" data-bs-toggle="dropdown" aria-expanded="false">JustAidyn Projects</a>
+                <a class="nav-link dropdown-toggle navbar-top-tool-link" href="#" id="projectsDropdownApps" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                   data-en="JustAidyn Projects" data-ru="Проекты JustAidyn" data-kk="JustAidyn жобалары">JustAidyn Projects</a>
                 <ul class="dropdown-menu" aria-labelledby="projectsDropdownApps">
-                  <li><a class="dropdown-item" href="https://justaidyn.com/">JustAidyn Home</a></li>
+                  <li><a class="dropdown-item" href="https://justaidyn.com/" data-en="JustAidyn Home" data-ru="Главная JustAidyn" data-kk="Басты бет">JustAidyn Home</a></li>
                   <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="/skillsminds">SkillsMinds</a></li>
-                  <li><a class="dropdown-item" href="/nofacethinker">NoFaceThinker</a></li>
-                  <li><a class="dropdown-item" href="/courses">Courses</a></li>
-                  <li><a class="dropdown-item" href="/apps">Apps</a></li>
-                  <li><a class="dropdown-item" href="/games">Games</a></li>
-                  <li><a class="dropdown-item" href="/shop">Shop</a></li>
-                  <li><a class="dropdown-item" href="/api">API</a></li>
+                  <li><a class="dropdown-item" href="https://justaidyn.com/articles/" data-en="Skills and Minds Hub" data-ru="Skills and Minds Hub" data-kk="Skills and Minds Hub">Skills and Minds Hub</a></li>
+                  <li><a class="dropdown-item" href="https://justaidyn.com/nofacethinker" data-en="No Face Thinker" data-ru="No Face Thinker" data-kk="No Face Thinker">No Face Thinker</a></li>
+                  <li><a class="dropdown-item active" href="/apps" data-en="Apps" data-ru="Приложения" data-kk="Қосымшалар">Apps</a></li>
+                  <li><a class="dropdown-item" href="/games" data-en="Games" data-ru="Игры" data-kk="Ойындар">Games</a></li>
+                  <li><a class="dropdown-item" href="/shop" data-en="Shop" data-ru="Магазин" data-kk="Дүкен">Shop</a></li>
+                  <li><a class="dropdown-item" href="/api" data-en="API" data-ru="API" data-kk="API">API</a></li>
                 </ul>
               </div>
-              <div class="navbar-top-auth-links">
-                <a class="navbar-top-tool-btn" href="https://justaidyn.com/login">Login</a>
-                <a class="navbar-top-tool-btn" href="https://justaidyn.com/register">Register</a>
-              </div>
               <div class="language-selector navbar-top-lang language-flags" role="group" aria-label="Language selector">
-                <button type="button" class="lang-flag-btn">KK</button>
-                <button type="button" class="lang-flag-btn">EN</button>
-                <button type="button" class="lang-flag-btn">RU</button>
+                <button type="button" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')">KK</button>
+                <button type="button" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')">EN</button>
+                <button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')">RU</button>
+              </div>
+              <div class="navbar-top-auth-links">
+                <a class="navbar-top-tool-btn" href="https://justaidyn.com/login" data-en="Login" data-ru="Войти" data-kk="Кіру">Login</a>
+                <a class="navbar-top-tool-btn" href="https://justaidyn.com/register" data-en="Register" data-ru="Регистрация" data-kk="Тіркелу">Register</a>
               </div>
             </div>
           </div>
           <ul class="navbar-nav ms-lg-0 nav-row-primary">
-            <li class="nav-item"><a class="nav-link active" href="/apps">Apps Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="/appsjustaidyn-screencam/">ScreenCam</a></li>
+            <li class="nav-item"><a class="nav-link active" href="/apps" data-en="Apps" data-ru="Приложения" data-kk="Қосымшалар">Apps</a></li>
+            <li class="nav-item"><a class="nav-link" href="/apps/justaidyn-screencam/" data-en="ScreenCam" data-ru="ScreenCam" data-kk="ScreenCam">ScreenCam</a></li>
           </ul>
         </div>
       </div>
     </div>
   </nav>
-  <div class="shell">
+
+  <div class="page-shell">
     <section class="hero">
-      <h1>JustAidyn Apps</h1>
-      <p>A single place for downloadable JustAidyn applications, storage folders, and direct installer links.</p>
-      <div class="actions">
-        <a class="btn" href="/apps/justaidyn-screencam/">Open JustAidyn ScreenCam</a>
-        <a class="btn secondary" href="https://justaidyn.com/">Back to JustAidyn</a>
+      <div class="hero-eyebrow">
+        <i class="bi bi-grid-3x3-gap-fill"></i>
+        <span data-en="JustAidyn Apps" data-ru="Приложения JustAidyn" data-kk="JustAidyn қосымшалары">JustAidyn Apps</span>
       </div>
+      <h1 data-en="Desktop Applications" data-ru="Десктопные приложения" data-kk="Десктоп қосымшалары">Desktop Applications</h1>
+      <p data-en="Downloadable tools built by JustAidyn for everyday creative and productivity tasks."
+         data-ru="Загружаемые инструменты от JustAidyn для повседневных творческих и рабочих задач."
+         data-kk="JustAidyn жасаған күнделікті шығармашылық және өнімділік тапсырмаларға арналған жүктелетін құралдар.">
+        Downloadable tools built by JustAidyn for everyday creative and productivity tasks.
+      </p>
     </section>
 
-    <section class="grid">
-      <article class="card">
-        <h2>JustAidyn ScreenCam</h2>
-        <p>Desktop application page with a direct link to the future Windows installer and a separate download folder page.</p>
-        <ul>
-          <li>App page: <a href="/apps/justaidyn-screencam/">/apps/justaidyn-screencam/</a></li>
-          <li>Folder page: <a href="/downloads/apps/justaidyn-screencam/">/downloads/apps/justaidyn-screencam/</a></li>
-          <li>Installer URL: <a href="/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam.exe">/downloads/apps/justaidyn-screencam/JustAidyn ScreenCam.exe</a></li>
-        </ul>
-        <div class="meta">
-          <strong>Status:</strong> storage prepared, installer file not uploaded yet.
+    <section class="apps-grid">
+      <!-- JustAidyn ScreenCam -->
+      <article class="app-card">
+        <div class="app-card-poster">
+          <img src="/images/justaidyn-screencam-logo.svg" alt="JustAidyn ScreenCam">
         </div>
-      </article>
-
-      <article class="card">
-        <h2>Admin Panel Notes</h2>
-        <p>For now there is no subscription logic. The next backend step should be one admin panel for users, app access, and downloadable builds.</p>
-        <ul>
-          <li>Upload build metadata</li>
-          <li>Set visible download URL</li>
-          <li>Enable or disable application access later</li>
-          <li>Manage users when FastAPI backend is added</li>
-        </ul>
+        <div class="app-card-body">
+          <div class="app-card-header">
+            <h2>JustAidyn ScreenCam</h2>
+            <span class="version-badge">v1.1.0</span>
+          </div>
+          <p class="app-card-desc"
+             data-en="Compact Electron app that combines a live rotating camera preview with configurable screen recording."
+             data-ru="Компактное Electron-приложение, объединяющее живой вращающийся предпросмотр камеры и настраиваемую запись экрана."
+             data-kk="Тікелей бұрылатын камера алдын ала қарауы мен конфигурацияланатын экран жазбасын біріктіретін шағын Electron қосымшасы.">
+            Compact Electron app that combines a live rotating camera preview with configurable screen recording.
+          </p>
+          <ul class="app-card-features">
+            <li data-en="Always-on-top live camera preview with rotation"
+                data-ru="Живой предпросмотр камеры поверх окон с ротацией"
+                data-kk="Үнемі үстінде тұратын тікелей камера алдын ала қарауы">Always-on-top live camera preview with rotation</li>
+            <li data-en="Screen recording with custom region and MP4 output"
+                data-ru="Запись экрана с выбором области и выводом в MP4"
+                data-kk="Аймақты таңдауы бар экран жазбасы және MP4 шығысы">Screen recording with custom region and MP4 output</li>
+            <li data-en="Watermark, hotkeys, audio capture, drawing tools"
+                data-ru="Водяной знак, горячие клавиши, захват звука, инструменты рисования"
+                data-kk="Су белгісі, ыстық пернелер, дыбыс жазу, сурет салу құралдары">Watermark, hotkeys, audio capture, drawing tools</li>
+            <li data-en="Offline Whisper transcription to .srt after recording"
+                data-ru="Офлайн транскрипция Whisper в .srt после записи"
+                data-kk="Жазбадан кейін .srt форматына офлайн Whisper транскрипциясы">Offline Whisper transcription to .srt after recording</li>
+          </ul>
+          <div class="app-tags">
+            <span class="tag">Windows</span>
+            <span class="tag">Electron</span>
+            <span class="tag">Screen Recording</span>
+          </div>
+          <div class="app-card-actions">
+            <a class="btn-primary" href="/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam.exe">
+              <i class="bi bi-download"></i>
+              <span data-en="Download" data-ru="Скачать" data-kk="Жүктеу">Download</span>
+            </a>
+            <a class="btn-outline" href="/apps/justaidyn-screencam/">
+              <span data-en="Learn more" data-ru="Подробнее" data-kk="Толығырақ">Learn more</span>
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
       </article>
     </section>
   </div>
+
   <script src="https://justaidyn.com/js/jquery.min.js"></script>
   <script src="https://justaidyn.com/js/bootstrap.min.js"></script>
   <script src="https://justaidyn.com/js/jquery.sticky.js"></script>
-  <script src="/js/custom.js?v=20260422-menuall"></script>
+  <script src="https://justaidyn.com/js/custom.js"></script>
 </body>
 </html>

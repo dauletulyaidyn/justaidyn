@@ -4,115 +4,307 @@
   <meta charset="UTF-8">
   <meta name="google-site-verification" content="dIyQej_DeYbNN1TxKXD_y2Exrk-8smfMADQga5G621I"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JustAidyn ScreenCam</title>
-  <meta name="description" content="JustAidyn ScreenCam application page.">
+  <title>JustAidyn ScreenCam — Desktop Screen Recorder</title>
+  <meta name="description" content="JustAidyn ScreenCam: compact Electron app with live rotating camera preview, screen recording, watermark, Whisper transcription, and drawing tools. Windows.">
+  <link rel="icon" type="image/png" href="/favicon.png?v=20260331c">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500;700&display=swap" rel="stylesheet">
   <link href="https://justaidyn.com/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://justaidyn.com/css/bootstrap-icons.css" rel="stylesheet">
-  <link href="https://justaidyn.com/css/magnific-popup.css" rel="stylesheet">
   <link href="https://justaidyn.com/css/templatemo-first-portfolio-style.css" rel="stylesheet">
   <style>
     :root {
-      color-scheme: light;
-      --text: #18232c;
-      --muted: #54606a;
-      --accent: #0f6b73;
-      --accent-2: #0a5258;
-      --panel: rgba(255, 255, 255, 0.92);
-      --border: rgba(24, 35, 44, 0.12);
+      --accent:       #535da1;
+      --accent-dark:  #3d4680;
+      --accent-light: rgba(83,93,161,0.08);
+      --accent-mid:   rgba(83,93,161,0.15);
+      --text:         #18232c;
+      --muted:        #54606a;
+      --panel:        rgba(255,255,255,0.93);
+      --panel-inner:  rgba(255,255,255,0.75);
+      --border:       rgba(24,35,44,0.11);
     }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       min-height: 100vh;
-      padding: 0;
       font-family: 'Roboto Slab', serif;
       background:
-        linear-gradient(rgba(238, 244, 244, 0.88), rgba(238, 244, 244, 0.94)),
-        url("../../images/aerial-view-man-using-computer-laptop-wooden-table.jpg") center / cover no-repeat;
+        linear-gradient(rgba(240,242,250,0.90), rgba(240,242,250,0.96)),
+        url("/images/portrait-happy-excited-man-holding-laptop-computer.png") center / cover no-repeat fixed;
       color: var(--text);
     }
-
-    main {
+    .page-shell {
       width: min(960px, 100%);
       margin: 0 auto;
-      padding: 32px 24px;
+      padding: 40px 24px 72px;
+    }
+
+    /* ── App Hero ── */
+    .app-hero {
       background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 40px 32px;
-      backdrop-filter: blur(4px);
+      border-radius: 14px;
+      padding: 48px 40px;
+      margin-bottom: 28px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 36px;
+      align-items: center;
     }
-
-    h1 {
+    .app-hero-icon {
+      width: 140px;
+      height: 140px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, #4a5398 0%, #6b77c4 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 8px 32px rgba(83,93,161,0.25);
+    }
+    .app-hero-icon img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+    }
+    .app-hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .version-badge {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-light);
+      border-radius: 99px;
+      padding: 3px 10px;
+    }
+    .platform-badge {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #3d6b3a;
+      background: rgba(61,107,58,0.10);
+      border-radius: 99px;
+      padding: 3px 10px;
+    }
+    .app-hero h1 {
       margin: 0 0 12px;
-      font-size: clamp(2rem, 4vw, 3.3rem);
-      line-height: 1.05;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      line-height: 1.1;
     }
-
-    h2 {
-      margin: 28px 0 10px;
-      font-size: 1.2rem;
-    }
-
-    p,
-    li {
+    .app-hero-desc {
+      margin: 0 0 24px;
+      font-size: 1.05rem;
       color: var(--muted);
-      line-height: 1.6;
+      line-height: 1.7;
     }
-
-    .actions {
+    .app-hero-actions {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin-top: 20px;
     }
-
-    .btn {
+    .btn-download {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      min-height: 44px;
-      padding: 10px 16px;
-      border-radius: 8px;
-      border: 1px solid var(--accent);
-      color: #fff;
+      gap: 9px;
+      min-height: 48px;
+      padding: 11px 24px;
+      border-radius: 10px;
       background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
       text-decoration: none;
-      font-weight: 600;
+      border: none;
+      transition: background 0.15s;
+    }
+    .btn-download:hover { background: var(--accent-dark); color: #fff; }
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 48px;
+      padding: 11px 22px;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      border: 1.5px solid var(--accent);
+      transition: background 0.15s;
+    }
+    .btn-back:hover { background: var(--accent-light); color: var(--accent-dark); }
+
+    /* ── Content sections ── */
+    .content-section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 36px 40px;
+      margin-bottom: 20px;
+    }
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .content-section h2 {
+      margin: 0 0 20px;
+      font-size: 1.35rem;
+      color: var(--text);
+    }
+    .content-section p {
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 0 0 12px;
+    }
+    .content-section p:last-child { margin-bottom: 0; }
+
+    /* Feature list */
+    .feature-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 10px 24px;
+    }
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.55;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .feature-list li::before {
+      content: "";
+      display: block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: 7px;
+      flex-shrink: 0;
     }
 
-    .btn.secondary {
-      background: transparent;
+    /* Flow steps */
+    .flow-steps {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .flow-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 14px 18px;
+      background: var(--panel-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .step-num {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-text {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.55;
+      padding-top: 4px;
+    }
+
+    /* Requirements */
+    .req-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .req-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      background: var(--panel-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+    .req-item i {
+      font-size: 1.2rem;
       color: var(--accent);
     }
 
-    .panel {
-      margin-top: 24px;
-      padding: 20px;
+    /* Changelog */
+    .changelog-entry {
+      padding: 16px 20px;
+      background: var(--panel-inner);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.72);
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+    .changelog-entry:last-child { margin-bottom: 0; }
+    .changelog-version {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .changelog-list {
+      margin: 0;
+      padding: 0 0 0 16px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.65;
     }
 
-    code {
-      font-family: Consolas, monospace;
-      font-size: 0.95em;
-    }
-
-    a {
-      color: var(--accent-2);
+    @media (max-width: 680px) {
+      .app-hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 28px 20px;
+        gap: 20px;
+      }
+      .app-hero-icon { margin: 0 auto; }
+      .app-hero-meta { justify-content: center; }
+      .app-hero-actions { justify-content: center; }
+      .content-section { padding: 24px 20px; }
+      .feature-list { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-split">
     <div class="container">
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#appDetailNav" aria-controls="appDetailNav" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#scNav" aria-controls="scNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <a class="navbar-brand mx-auto mx-lg-0" href="https://justaidyn.com/">JustAidyn</a>
@@ -120,84 +312,303 @@
         <i class="navbar-icon bi-envelope me-3"></i>
         <a class="custom-btn btn" href="mailto:aidyn.daulet@gmail.com">Email</a>
       </div>
-      <div class="collapse navbar-collapse" id="appDetailNav">
+      <div class="collapse navbar-collapse" id="scNav">
         <div class="navbar-split-layout w-100">
           <div class="navbar-top-contact d-none d-lg-flex">
             <div class="navbar-top-contact-left">
               <a class="navbar-top-contact-link" href="mailto:aidyn.daulet@gmail.com" aria-label="Write to me by email" title="Write to me by email"><i class="bi bi-envelope"></i></a>
               <a class="navbar-top-contact-link" href="tel:+77769889889" aria-label="Call me" title="Call me"><i class="bi bi-telephone"></i></a>
-              <a class="navbar-top-contact-link" href="https://wa.me/77769889889"  aria-label="Write to me on WhatsApp" title="Write to me on WhatsApp"><i class="bi bi-whatsapp"></i></a>
-              <a class="navbar-top-contact-link" href="https://t.me/justaidyn"  aria-label="Write to me on Telegram" title="Write to me on Telegram"><i class="bi bi-telegram"></i></a>
+              <a class="navbar-top-contact-link" href="https://wa.me/77769889889" target="_blank" rel="noopener" aria-label="Write to me on WhatsApp" title="Write to me on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+              <a class="navbar-top-contact-link" href="https://t.me/justaidyn" target="_blank" rel="noopener" aria-label="Write to me on Telegram" title="Write to me on Telegram"><i class="bi bi-telegram"></i></a>
+              <a class="navbar-top-contact-link navbar-top-cv-link" href="https://justaidyn.com/?dl=pdf" aria-label="CV" title="CV">CV</a>
             </div>
             <div class="navbar-top-tools">
               <div class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle navbar-top-tool-link active" href="#" id="projectsDropdownAppDetail" role="button" data-bs-toggle="dropdown" aria-expanded="false">JustAidyn Projects</a>
-                <ul class="dropdown-menu" aria-labelledby="projectsDropdownAppDetail">
-                  <li><a class="dropdown-item" href="https://justaidyn.com/">JustAidyn Home</a></li>
+                <a class="nav-link dropdown-toggle navbar-top-tool-link" href="#" id="projectsDropdownSC" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                   data-en="JustAidyn Projects" data-ru="Проекты JustAidyn" data-kk="JustAidyn жобалары">JustAidyn Projects</a>
+                <ul class="dropdown-menu" aria-labelledby="projectsDropdownSC">
+                  <li><a class="dropdown-item" href="https://justaidyn.com/" data-en="JustAidyn Home" data-ru="Главная JustAidyn" data-kk="Басты бет">JustAidyn Home</a></li>
                   <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="/skillsminds">SkillsMinds</a></li>
-                  <li><a class="dropdown-item" href="/nofacethinker">NoFaceThinker</a></li>
-                  <li><a class="dropdown-item" href="/courses">Courses</a></li>
-                  <li><a class="dropdown-item" href="/apps">Apps</a></li>
-                  <li><a class="dropdown-item" href="/games">Games</a></li>
-                  <li><a class="dropdown-item" href="/shop">Shop</a></li>
-                  <li><a class="dropdown-item" href="/api">API</a></li>
+                  <li><a class="dropdown-item" href="https://justaidyn.com/articles/" data-en="Skills and Minds Hub" data-ru="Skills and Minds Hub" data-kk="Skills and Minds Hub">Skills and Minds Hub</a></li>
+                  <li><a class="dropdown-item" href="https://justaidyn.com/nofacethinker" data-en="No Face Thinker" data-ru="No Face Thinker" data-kk="No Face Thinker">No Face Thinker</a></li>
+                  <li><a class="dropdown-item active" href="/apps" data-en="Apps" data-ru="Приложения" data-kk="Қосымшалар">Apps</a></li>
+                  <li><a class="dropdown-item" href="/games" data-en="Games" data-ru="Игры" data-kk="Ойындар">Games</a></li>
+                  <li><a class="dropdown-item" href="/shop" data-en="Shop" data-ru="Магазин" data-kk="Дүкен">Shop</a></li>
+                  <li><a class="dropdown-item" href="/api" data-en="API" data-ru="API" data-kk="API">API</a></li>
                 </ul>
               </div>
-              <div class="navbar-top-auth-links">
-                <a class="navbar-top-tool-btn" href="https://justaidyn.com/login">Login</a>
-                <a class="navbar-top-tool-btn" href="https://justaidyn.com/register">Register</a>
-              </div>
               <div class="language-selector navbar-top-lang language-flags" role="group" aria-label="Language selector">
-                <button type="button" class="lang-flag-btn">KK</button>
-                <button type="button" class="lang-flag-btn">EN</button>
-                <button type="button" class="lang-flag-btn">RU</button>
+                <button type="button" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')">KK</button>
+                <button type="button" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')">EN</button>
+                <button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')">RU</button>
+              </div>
+              <div class="navbar-top-auth-links">
+                <a class="navbar-top-tool-btn" href="https://justaidyn.com/login" data-en="Login" data-ru="Войти" data-kk="Кіру">Login</a>
+                <a class="navbar-top-tool-btn" href="https://justaidyn.com/register" data-en="Register" data-ru="Регистрация" data-kk="Тіркелу">Register</a>
               </div>
             </div>
           </div>
           <ul class="navbar-nav ms-lg-0 nav-row-primary">
-            <li class="nav-item"><a class="nav-link" href="/apps">Apps Home</a></li>
-            <li class="nav-item"><a class="nav-link active" href="/appsjustaidyn-screencam/">ScreenCam</a></li>
+            <li class="nav-item"><a class="nav-link" href="/apps" data-en="Apps" data-ru="Приложения" data-kk="Қосымшалар">Apps</a></li>
+            <li class="nav-item"><a class="nav-link active" href="/apps/justaidyn-screencam/" data-en="ScreenCam" data-ru="ScreenCam" data-kk="ScreenCam">ScreenCam</a></li>
           </ul>
         </div>
       </div>
     </div>
   </nav>
-  <main>
-    <h1>JustAidyn ScreenCam</h1>
-    <p>This page is prepared for the desktop application download flow. The application file should be stored in its own public folder and linked directly from this page.</p>
 
-    <div class="actions">
-      <a class="btn" href="/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam.exe">Download EXE</a>
-      <a class="btn secondary" href="/downloads/apps/justaidyn-screencam/">Open Storage Folder Page</a>
-      <a class="btn secondary" href="/apps/">Back to Apps</a>
-    </div>
+  <div class="page-shell">
 
-    <div class="panel">
-      <h2>Storage Settings</h2>
-      <p><strong>Application page:</strong> <a href="/apps/justaidyn-screencam/">/apps/justaidyn-screencam/</a></p>
-      <p><strong>Storage folder page:</strong> <a href="/downloads/apps/justaidyn-screencam/">/downloads/apps/justaidyn-screencam/</a></p>
-      <p><strong>Expected EXE path:</strong> <code>/downloads/apps/justaidyn-screencam/JustAidyn ScreenCam.exe</code></p>
-      <p><strong>Server folder:</strong> <code>D:\JustAidyn\justaidyn.com\downloads\apps\justaidyn-screencam\</code></p>
-    </div>
+    <!-- Hero -->
+    <section class="app-hero">
+      <div class="app-hero-icon">
+        <img src="/images/justaidyn-screencam-logo.svg" alt="JustAidyn ScreenCam icon">
+      </div>
+      <div>
+        <div class="app-hero-meta">
+          <span class="version-badge">v1.1.0</span>
+          <span class="platform-badge"><i class="bi bi-windows"></i> Windows</span>
+        </div>
+        <h1>JustAidyn ScreenCam</h1>
+        <p class="app-hero-desc"
+           data-en="Compact Electron app that combines a live rotating camera preview with configurable screen recording."
+           data-ru="Компактное Electron-приложение, объединяющее живой вращающийся предпросмотр камеры и настраиваемую запись экрана."
+           data-kk="Тікелей бұрылатын камера алдын ала қарауы мен конфигурацияланатын экран жазбасын біріктіретін шағын Electron қосымшасы.">
+          Compact Electron app that combines a live rotating camera preview with configurable screen recording.
+        </p>
+        <div class="app-hero-actions">
+          <a class="btn-download" href="/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam.exe">
+            <i class="bi bi-download"></i>
+            <span data-en="Download for Windows" data-ru="Скачать для Windows" data-kk="Windows үшін жүктеу">Download for Windows</span>
+          </a>
+          <a class="btn-back" href="/apps/">
+            <i class="bi bi-grid-3x3-gap"></i>
+            <span data-en="All Apps" data-ru="Все приложения" data-kk="Барлық қосымшалар">All Apps</span>
+          </a>
+        </div>
+      </div>
+    </section>
 
-    <div class="panel">
-      <h2>What To Upload</h2>
-      <ul>
-        <li>Windows installer file: <code>JustAidyn ScreenCam.exe</code></li>
-        <li>Optional release notes or version manifest later</li>
-        <li>No subscription checks yet</li>
+    <!-- What It Does -->
+    <section class="content-section">
+      <div class="section-label">
+        <i class="bi bi-stars"></i>
+        <span data-en="Capabilities" data-ru="Возможности" data-kk="Мүмкіндіктер">Capabilities</span>
+      </div>
+      <h2 data-en="What It Does" data-ru="Что умеет" data-kk="Не істей алады">What It Does</h2>
+      <ul class="feature-list">
+        <li data-en="Live camera preview in a small always-on-top window"
+            data-ru="Живой предпросмотр камеры в маленьком окне поверх всех"
+            data-kk="Шағын үнемі үстінде тұратын терезеде тікелей камера алдын ала қарауы">Live camera preview in a small always-on-top window</li>
+        <li data-en="Pick which cameras participate in preview and rotation"
+            data-ru="Выбор камер для предпросмотра и ротации"
+            data-kk="Алдын ала қарау мен ротацияға қатысатын камераларды таңдау">Pick which cameras participate in preview and rotation</li>
+        <li data-en="Separate frameless setup window before start"
+            data-ru="Отдельное безрамочное окно настройки перед запуском"
+            data-kk="Іске қосар алдында жеке шекарасыз баптау терезесі">Separate frameless setup window before start</li>
+        <li data-en="Screen recording with selectable capture region"
+            data-ru="Запись экрана с выбираемой областью захвата"
+            data-kk="Таңдамалы жазу аймағымен экран жазбасы">Screen recording with selectable capture region</li>
+        <li data-en="Records to MP4 via ffmpeg"
+            data-ru="Запись в MP4 через ffmpeg"
+            data-kk="ffmpeg арқылы MP4 форматына жазу">Records to MP4 via ffmpeg</li>
+        <li data-en="Optional computer audio and microphone capture"
+            data-ru="Опциональный захват компьютерного звука и микрофона"
+            data-kk="Қосымша компьютер дыбысы мен микрофон жазу">Optional computer audio and microphone capture</li>
+        <li data-en="Custom recording hotkeys for stop and pause/resume"
+            data-ru="Настраиваемые горячие клавиши для остановки и паузы/возобновления"
+            data-kk="Тоқтату мен үзу/жалғастыруға арналған реттелетін ыстық пернелер">Custom recording hotkeys for stop and pause/resume</li>
+        <li data-en="Watermark text with 9 anchor positions and opacity control"
+            data-ru="Текст водяного знака с 9 позициями и управлением прозрачностью"
+            data-kk="9 орын мен мөлдірлікті басқаруы бар су белгісі мәтіні">Watermark text with 9 anchor positions and opacity control</li>
+        <li data-en="Floating pointer menu: Cursor, Laser, Pen, Highlighter"
+            data-ru="Плавающее меню указателей: курсор, лазер, ручка, маркер"
+            data-kk="Жылжымалы меңзер мәзірі: курсор, лазер, қалам, маркер">Floating pointer menu: Cursor, Laser, Pen, Highlighter</li>
+        <li data-en="Drawing layers with create, navigate, hide, delete, clear-all"
+            data-ru="Слои рисования: создание, навигация, скрытие, удаление, очистка"
+            data-kk="Сурет салу қабаттары: жасау, шарлау, жасыру, жою, барлығын тазалау">Drawing layers with create, navigate, hide, delete, clear-all</li>
+        <li data-en="Camera background effects: Blur or Background on one selected camera"
+            data-ru="Эффекты фона камеры: размытие или фон для одной выбранной камеры"
+            data-kk="Камера фон эффектілері: бір таңдалған камера үшін бұлыңғырлау немесе фон">Camera background effects: Blur or Background on one selected camera</li>
+        <li data-en="Offline Whisper transcription to .srt after recording stops"
+            data-ru="Офлайн транскрипция Whisper в .srt после остановки записи"
+            data-kk="Жазба тоқтағаннан кейін .srt форматына офлайн Whisper транскрипциясы">Offline Whisper transcription to .srt after recording stops</li>
+        <li data-en="Google sign-in before opening the main app"
+            data-ru="Вход через Google перед открытием основного приложения"
+            data-kk="Негізгі қосымшаны ашар алдында Google арқылы кіру">Google sign-in before opening the main app</li>
       </ul>
+    </section>
+
+    <!-- How It Works -->
+    <section class="content-section">
+      <div class="section-label">
+        <i class="bi bi-arrow-right-circle"></i>
+        <span data-en="Workflow" data-ru="Рабочий процесс" data-kk="Жұмыс процесі">Workflow</span>
+      </div>
+      <h2 data-en="How It Works" data-ru="Как это работает" data-kk="Қалай жұмыс істейді">How It Works</h2>
+      <ol class="flow-steps">
+        <li class="flow-step">
+          <span class="step-num">1</span>
+          <span class="step-text" data-en="Launch the app and sign in with Google."
+                data-ru="Запустите приложение и войдите через Google."
+                data-kk="Қосымшаны іске қосып, Google арқылы кіріңіз.">Launch the app and sign in with Google.</span>
+        </li>
+        <li class="flow-step">
+          <span class="step-num">2</span>
+          <span class="step-text" data-en="The preview window opens and shows the first selected camera."
+                data-ru="Открывается окно предпросмотра с первой выбранной камерой."
+                data-kk="Алдын ала қарау терезесі ашылып, бірінші таңдалған камераны көрсетеді.">The preview window opens and shows the first selected camera.</span>
+        </li>
+        <li class="flow-step">
+          <span class="step-num">3</span>
+          <span class="step-text" data-en="The setup window opens separately — configure cameras, recording region, audio, watermark, hotkeys, and save location."
+                data-ru="Отдельно открывается окно настройки — настройте камеры, область записи, звук, водяной знак, горячие клавиши и папку сохранения."
+                data-kk="Баптау терезесі бөлек ашылады — камераларды, жазу аймағын, дыбысты, су белгісін, ыстық пернелерді және сақтау орнын реттеңіз.">The setup window opens separately — configure cameras, recording region, audio, watermark, hotkeys, and save location.</span>
+        </li>
+        <li class="flow-step">
+          <span class="step-num">4</span>
+          <span class="step-text" data-en="Click Start. The setup window closes and the live session begins."
+                data-ru="Нажмите Старт. Окно настройки закрывается, начинается живая сессия."
+                data-kk="Бастау түймесін басыңыз. Баптау терезесі жабылып, тікелей сессия басталады.">Click Start. The setup window closes and the live session begins.</span>
+        </li>
+        <li class="flow-step">
+          <span class="step-num">5</span>
+          <span class="step-text" data-en="When recording stops, the setup window opens again and Whisper generates an .srt subtitle file automatically."
+                data-ru="После остановки записи окно настройки открывается снова, а Whisper автоматически создаёт файл субтитров .srt."
+                data-kk="Жазба тоқтағаннан кейін баптау терезесі қайта ашылады, ал Whisper автоматты түрде .srt субтитр файлын жасайды.">When recording stops, the setup window opens again and Whisper generates an .srt subtitle file automatically.</span>
+        </li>
+      </ol>
+    </section>
+
+    <!-- Main Features -->
+    <section class="content-section">
+      <div class="section-label">
+        <i class="bi bi-list-check"></i>
+        <span data-en="All Features" data-ru="Все функции" data-kk="Барлық мүмкіндіктер">All Features</span>
+      </div>
+      <h2 data-en="Main Features" data-ru="Основные функции" data-kk="Негізгі мүмкіндіктер">Main Features</h2>
+      <ul class="feature-list">
+        <li data-en="Borderless preview and setup windows"
+            data-ru="Безрамочные окна предпросмотра и настройки"
+            data-kk="Шекарасыз алдын ала қарау мен баптау терезелері">Borderless preview and setup windows</li>
+        <li data-en="Google authentication gate before the app opens"
+            data-ru="Гейт аутентификации Google перед открытием приложения"
+            data-kk="Қосымша ашылар алдында Google аутентификация қақпасы">Google authentication gate before the app opens</li>
+        <li data-en="Camera rotation interval selection and order management"
+            data-ru="Выбор интервала ротации камер и управление порядком"
+            data-kk="Камера ротациясы интервалын таңдау мен ретін басқару">Camera rotation interval selection and order management</li>
+        <li data-en="Horizontal and vertical preview flip"
+            data-ru="Горизонтальный и вертикальный переворот предпросмотра"
+            data-kk="Алдын ала қарауды көлденең және тік аудару">Horizontal and vertical preview flip</li>
+        <li data-en="Restore preview window position and size on launch"
+            data-ru="Восстановление позиции и размера окна предпросмотра при запуске"
+            data-kk="Іске қосқанда алдын ала қарау терезесінің орны мен өлшемін қалпына келтіру">Restore preview window position and size on launch</li>
+        <li data-en="Capture presets: HD, Full HD, QHD, Instagram, WhatsApp, YouTube, TikTok…"
+            data-ru="Пресеты записи: HD, Full HD, QHD, Instagram, WhatsApp, YouTube, TikTok…"
+            data-kk="Жазу пресеттері: HD, Full HD, QHD, Instagram, WhatsApp, YouTube, TikTok…">Capture presets: HD, Full HD, QHD, Instagram, WhatsApp, YouTube, TikTok…</li>
+        <li data-en="Custom capture-region selector with move and resize handles"
+            data-ru="Кастомный выбор области захвата с ручками перемещения и изменения размера"
+            data-kk="Жылжыту мен өлшемді өзгерту тұтқалары бар реттелетін жазу аймағын таңдау">Custom capture-region selector with move and resize handles</li>
+        <li data-en="Optional system audio and single microphone selection"
+            data-ru="Опциональный захват системного звука и выбор одного микрофона"
+            data-kk="Қосымша жүйе дыбысы мен бір микрофонды таңдау">Optional system audio and single microphone selection</li>
+        <li data-en="Save folder preselection or prompt after stop"
+            data-ru="Предварительный выбор папки сохранения или запрос после остановки"
+            data-kk="Сақтау қалтасын алдын ала таңдау немесе тоқтағаннан кейін сұрау">Save folder preselection or prompt after stop</li>
+        <li data-en="Watermark text with 9 placement options and opacity 30–50%"
+            data-ru="Текст водяного знака с 9 позициями и прозрачностью 30–50%"
+            data-kk="9 орналасу опциясы мен 30–50% мөлдірлігі бар су белгісі мәтіні">Watermark text with 9 placement options and opacity 30–50%</li>
+        <li data-en="Global hotkeys for recording stop, pause, and resume"
+            data-ru="Глобальные горячие клавиши для остановки, паузы и возобновления записи"
+            data-kk="Жазбаны тоқтату, үзу мен жалғастыруға арналған жаһандық ыстық пернелер">Global hotkeys for recording stop, pause, and resume</li>
+        <li data-en="Single-camera background effects: Blur and Background 1"
+            data-ru="Эффекты фона для одной камеры: Размытие и Фон 1"
+            data-kk="Бір камераға арналған фон эффектілері: Бұлыңғырлау мен Фон 1">Single-camera background effects: Blur and Background 1</li>
+        <li data-en="Right-click camera switching during recording"
+            data-ru="Переключение камер правой кнопкой мыши во время записи"
+            data-kk="Жазу кезінде тінтуірдің оң жақ түймесімен камераларды ауыстыру">Right-click camera switching during recording</li>
+        <li data-en="Single-instance protection to block parallel launches"
+            data-ru="Защита от параллельного запуска"
+            data-kk="Параллель іске қосудан қорғау">Single-instance protection to block parallel launches</li>
+        <li data-en="Floating live capture preview window with watermark overlay"
+            data-ru="Плавающее окно предпросмотра захвата с наложением водяного знака"
+            data-kk="Су белгісі қабатымен жылжымалы тікелей жазу алдын ала қарау терезесі">Floating live capture preview window with watermark overlay</li>
+        <li data-en="Offline Whisper transcription auto-downloaded on first use"
+            data-ru="Офлайн транскрипция Whisper — модель загружается автоматически при первом использовании"
+            data-kk="Алғаш пайдалануда автоматты жүктелетін офлайн Whisper транскрипциясы">Offline Whisper transcription auto-downloaded on first use</li>
+      </ul>
+    </section>
+
+    <!-- Requirements -->
+    <section class="content-section">
+      <div class="section-label">
+        <i class="bi bi-pc-display"></i>
+        <span data-en="Requirements" data-ru="Требования" data-kk="Талаптар">Requirements</span>
+      </div>
+      <h2 data-en="System Requirements" data-ru="Системные требования" data-kk="Жүйелік талаптар">System Requirements</h2>
+      <div class="req-grid">
+        <div class="req-item"><i class="bi bi-windows"></i> <span>Windows</span></div>
+        <div class="req-item"><i class="bi bi-camera-video"></i> <span data-en="At least one camera" data-ru="Минимум одна камера" data-kk="Кемінде бір камера">At least one camera</span></div>
+        <div class="req-item"><i class="bi bi-person-check"></i> <span data-en="Google account for sign-in" data-ru="Аккаунт Google для входа" data-kk="Кіру үшін Google аккаунты">Google account for sign-in</span></div>
+      </div>
+    </section>
+
+    <!-- Changelog -->
+    <section class="content-section">
+      <div class="section-label">
+        <i class="bi bi-clock-history"></i>
+        <span data-en="Changelog" data-ru="История изменений" data-kk="Өзгерістер тарихы">Changelog</span>
+      </div>
+      <h2 data-en="Recent Changes" data-ru="Последние изменения" data-kk="Соңғы өзгерістер">Recent Changes</h2>
+      <div class="changelog-entry">
+        <div class="changelog-version">v1.1.0</div>
+        <ul class="changelog-list">
+          <li data-en="Added offline Whisper transcription — generates an .srt subtitle file automatically after recording"
+              data-ru="Добавлена офлайн транскрипция Whisper — автоматически создаёт .srt файл после записи"
+              data-kk="Офлайн Whisper транскрипциясы қосылды — жазбадан кейін автоматты .srt файлын жасайды">Added offline Whisper transcription — generates an .srt subtitle file automatically after recording</li>
+          <li data-en="Added floating live capture preview window with watermark overlay in real time"
+              data-ru="Добавлено плавающее окно предпросмотра захвата с наложением водяного знака в реальном времени"
+              data-kk="Нақты уақытта су белгісі қабатымен жылжымалы тікелей жазу алдын ала қарау терезесі қосылды">Added floating live capture preview window with watermark overlay in real time</li>
+          <li data-en="Auto-download of Whisper binary and model on first use, with progress indicator"
+              data-ru="Автоматическая загрузка Whisper и модели при первом использовании с индикатором прогресса"
+              data-kk="Бірінші пайдалануда Whisper бинарлығы мен модельдің прогресс индикаторымен автоматты жүктелуі">Auto-download of Whisper binary and model on first use, with progress indicator</li>
+        </ul>
+      </div>
+      <div class="changelog-entry">
+        <div class="changelog-version">v1.0.9 and earlier</div>
+        <ul class="changelog-list">
+          <li data-en="Added drawing layers with Pen, Highlighter, color/size controls, and per-session reset"
+              data-ru="Добавлены слои рисования с Ручкой, Маркером, управлением цветом/размером и сбросом на каждой сессии"
+              data-kk="Қалам, маркер, түс/өлшем басқару мен сессиядан сессияға сыфырлауы бар сурет салу қабаттары қосылды">Added drawing layers with Pen, Highlighter, color/size controls, and per-session reset</li>
+          <li data-en="Added per-camera background effects (Blur, Background 1) limited to one camera to reduce system load"
+              data-ru="Добавлены эффекты фона для каждой камеры (Размытие, Фон 1), ограниченные одной камерой для снижения нагрузки"
+              data-kk="Жүктемені азайту үшін бір камерамен шектелген камераға арналған фон эффектілері қосылды (Бұлыңғырлау, Фон 1)">Added per-camera background effects (Blur, Background 1) limited to one camera to reduce system load</li>
+          <li data-en="Added watermark opacity control (30–50% range) visible in live preview and final recording"
+              data-ru="Добавлено управление прозрачностью водяного знака (30–50%) с отображением в предпросмотре и итоговой записи"
+              data-kk="Тікелей алдын ала қарау мен соңғы жазбада көрінетін су белгісі мөлдірлігін басқару қосылды (30–50% ауқымы)">Added watermark opacity control (30–50% range) visible in live preview and final recording</li>
+          <li data-en="Renamed the app to JustAidyn ScreenCam with new branding and icons"
+              data-ru="Приложение переименовано в JustAidyn ScreenCam с новым брендингом и иконками"
+              data-kk="Қосымша жаңа брендинг пен иконкалармен JustAidyn ScreenCam деп атауы өзгертілді">Renamed the app to JustAidyn ScreenCam with new branding and icons</li>
+          <li data-en="Split into separate preview and setup windows with screen recording and custom region selection"
+              data-ru="Разделено на отдельные окна предпросмотра и настройки с записью экрана и выбором области"
+              data-kk="Экранды жазу мен аймақты таңдаумен бөлек алдын ала қарау мен баптау терезелеріне бөлінді">Split into separate preview and setup windows with screen recording and custom region selection</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Bottom CTA -->
+    <div style="text-align:center; margin-top:36px;">
+      <a class="btn-download" href="/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam.exe">
+        <i class="bi bi-download"></i>
+        <span data-en="Download JustAidyn ScreenCam" data-ru="Скачать JustAidyn ScreenCam" data-kk="JustAidyn ScreenCam жүктеу">Download JustAidyn ScreenCam</span>
+      </a>
     </div>
 
-    <div class="panel">
-      <h2>Future Admin Panel</h2>
-      <p>When the FastAPI backend is added, the admin panel should manage users, subscriptions, and downloadable app builds from one place. For now this page uses a direct static file link.</p>
-    </div>
-  </main>
+  </div>
+
   <script src="https://justaidyn.com/js/jquery.min.js"></script>
   <script src="https://justaidyn.com/js/bootstrap.min.js"></script>
   <script src="https://justaidyn.com/js/jquery.sticky.js"></script>
-  <script src="/js/custom.js?v=20260422-menuall"></script>
+  <script src="https://justaidyn.com/js/custom.js"></script>
 </body>
 </html>
