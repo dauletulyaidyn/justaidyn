@@ -1,3 +1,5 @@
 node_modules/
 *.tsbuildinfo
 __pycache__/
+downloads/**/*.msi
+downloads/**/*.exe

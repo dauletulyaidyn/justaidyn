@@ -24,6 +24,8 @@ jobs:
           rsync -avz --delete \
             --exclude=node_modules \
             --exclude=.git \
+            --exclude='*.msi' \
+            --exclude='*.exe' \
             -e "ssh -i ~/.ssh/deploy_key" \
             ./ root@89.207.254.135:/var/www/justaidyn.com/
 
