@@ -338,46 +338,48 @@ strong {
   height: auto !important;
 }
 
-.is-sticky,
-.is-sticky .navbar .container {
-  background: var(--white-color);
+.is-sticky {
   box-shadow: 0 1rem 3rem rgb(0 0 0 / 18%);
+}
+
+.is-sticky .navbar .container {
+  background: var(--primary-color);
 }
 
 .is-sticky .navbar-brand,
 .is-sticky .navbar-brand:hover {
-  color: var(--dark-color);
-}
-
-.is-sticky .navbar-nav .nav-link {
-  color: var(--p-color);
-}
-
-.is-sticky .navbar .custom-btn {
-  border-color: var(--secondary-color);
-  color: var(--secondary-color);
-}
-
-.is-sticky .navbar .custom-btn:hover {
-  background: var(--secondary-color);
   color: var(--white-color);
 }
 
-.is-sticky #download-cv {
-  border-color: var(--secondary-color);
+.is-sticky .navbar-nav .nav-link {
+  color: var(--section-bg-color);
+}
+
+.is-sticky .navbar .custom-btn {
+  border-color: var(--white-color);
+  color: var(--white-color);
+}
+
+.is-sticky .navbar .custom-btn:hover {
+  background: var(--white-color);
   color: var(--secondary-color);
+}
+
+.is-sticky #download-cv {
+  border-color: var(--white-color);
+  color: var(--white-color);
 }
 
 .is-sticky #download-cv:hover,
 .is-sticky #download-cv:focus-visible {
-  background: var(--secondary-color);
-  border-color: var(--secondary-color);
-  color: var(--white-color);
+  background: var(--white-color);
+  border-color: transparent;
+  color: var(--secondary-color);
 }
 
 .is-sticky #download-cv:hover span,
 .is-sticky #download-cv:focus-visible span {
-  color: var(--white-color);
+  color: var(--secondary-color);
 }
 
 .navbar {
@@ -450,19 +452,20 @@ strong {
 
 .is-sticky .navbar-nav .nav-link.active::after,
 .is-sticky .navbar-nav .nav-link:hover::after {
-  background: var(--secondary-color);
+  background: rgba(255, 255, 255, 0.85);
 }
 
 .is-sticky .navbar-nav .nav-link.active,
 .is-sticky .navbar-nav .nav-link:hover {
-  color: var(--secondary-color);
+  color: var(--white-color);
 }
 
 .is-sticky .navbar-split {
   background: transparent;
 }
 
-.is-sticky .navbar-split .container {
+.is-sticky .navbar-split .container,
+.is-sticky .navbar.navbar-split .container {
   background: var(--primary-color);
 }
 
