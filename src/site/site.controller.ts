@@ -396,7 +396,7 @@ export class SiteController {
   trackDownload(@Req() req: Request, @Res() res: Response) {
     const app = req.params.app;
     const fileMap: Record<string, string> = {
-      'justaidyn-screencam': '/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.1.msi',
+      'justaidyn-screencam': '/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.2.msi',
     };
 
     if (!fileMap[app]) {
