@@ -110,8 +110,8 @@ let SiteController = class SiteController {
     coursesProject(req, res) {
         return res.redirect('/courses/ai-agents-course.html');
     }
-    appsProject(req) {
-        return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);
+    appsProject(res) {
+        return res.sendFile((0, path_1.join)(process.cwd(), 'apps', 'index.html'));
     }
     gamesProject(req) {
         return this.withSharedModel(this.siteService.getComingSoonPage('games'), req);
@@ -129,8 +129,8 @@ let SiteController = class SiteController {
         }
         return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);
     }
-    appDetailPath(req) {
-        return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);
+    appDetailPath(res) {
+        return res.sendFile((0, path_1.join)(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
     }
     appDetailAlias(req) {
         return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);
@@ -387,8 +387,7 @@ __decorate([
 ], SiteController.prototype, "coursesProject", null);
 __decorate([
     (0, common_1.Get)('/apps'),
-    (0, common_1.Render)('pages/host-router'),
-    __param(0, (0, common_1.Req)()),
+    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
@@ -427,8 +426,7 @@ __decorate([
 ], SiteController.prototype, "appDetail", null);
 __decorate([
     (0, common_1.Get)('/apps/justaidyn-screencam'),
-    (0, common_1.Render)('pages/host-router'),
-    __param(0, (0, common_1.Req)()),
+    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)

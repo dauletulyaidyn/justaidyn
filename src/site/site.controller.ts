@@ -141,9 +141,8 @@ export class SiteController {
   }
 
   @Get('/apps')
-  @Render('pages/host-router')
-  appsProject(@Req() req: Request) {
-    return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);
+  appsProject(@Res() res: Response) {
+    return res.sendFile(join(process.cwd(), 'apps', 'index.html'));
   }
 
   @Get('/games')
@@ -176,9 +175,8 @@ export class SiteController {
   }
 
   @Get('/apps/justaidyn-screencam')
-  @Render('pages/host-router')
-  appDetailPath(@Req() req: Request) {
-    return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);
+  appDetailPath(@Res() res: Response) {
+    return res.sendFile(join(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
   }
 
   @Get('/p/apps/justaidyn-screencam')
