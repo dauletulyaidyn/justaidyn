@@ -27,6 +27,11 @@ jobs:
             -e "ssh -i ~/.ssh/deploy_key" \
             ./ root@89.207.254.135:/var/www/justaidyn.com/
 
-      - name: Restart app
+      - name: Build and restart app
         run: |
-          ssh -i ~/.ssh/deploy_key root@89.207.254.135 "pm2 reload all || pm2 restart all || true"
+          ssh -i ~/.ssh/deploy_key root@89.207.254.135 "
+            cd /var/www/justaidyn.com &&
+            npm install --omit=dev &&
+            npm run build &&
+            pm2 reload all || pm2 restart all || true
+          "
