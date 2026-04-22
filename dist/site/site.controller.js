@@ -275,6 +275,32 @@ let SiteController = class SiteController {
         }
         return res.sendFile(found);
     }
+    getDownloadStats() {
+        const countsFile = (0, path_1.join)(process.cwd(), 'data', 'download-counts.json');
+        try {
+            return JSON.parse((0, fs_1.readFileSync)(countsFile, 'utf-8'));
+        }
+        catch {
+            return {};
+        }
+    }
+    trackDownload(app, res) {
+        const fileMap = {
+            'justaidyn-screencam': '/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.1.msi',
+        };
+        if (!fileMap[app]) {
+            throw new common_1.NotFoundException();
+        }
+        const countsFile = (0, path_1.join)(process.cwd(), 'data', 'download-counts.json');
+        try {
+            const counts = JSON.parse((0, fs_1.readFileSync)(countsFile, 'utf-8'));
+            counts[app] = (counts[app] || 0) + 1;
+            (0, fs_1.writeFileSync)(countsFile, JSON.stringify(counts, null, 2));
+        }
+        catch {
+        }
+        return res.redirect(fileMap[app]);
+    }
     withSharedModel(page, req) {
         const host = req?.hostname?.toLowerCase().split(':')[0];
         const mainSiteUrl = host === 'localhost' || host === '127.0.0.1' ? 'http://localhost:3000' : 'https://justaidyn.com';
@@ -533,6 +559,20 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "serveLegacyFile", null);
+__decorate([
+    (0, common_1.Get)('/api/stats/downloads'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "getDownloadStats", null);
+__decorate([
+    (0, common_1.Get)('/track/download/apps/:app'),
+    __param(0, (0, common_1.Param)('app')),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "trackDownload", null);
 exports.SiteController = SiteController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [site_service_1.SiteService])

@@ -396,8 +396,8 @@ export class SiteService {
       heroText:
         'Capture workflows and download management will live here. The binary is still served from the shared downloads directory.',
       primaryAction: {
-        label: 'Download EXE',
-        url: '/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam.exe',
+        label: 'Download MSI',
+        url: '/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.1.msi',
       },
       secondaryAction: { label: 'Open Downloads Folder', url: '/downloads/apps/justaidyn-screencam/' },
       cards: [
@@ -407,7 +407,7 @@ export class SiteService {
         },
         {
           title: 'Expected Binary',
-          text: 'JustAidyn ScreenCam.exe',
+          text: 'JustAidyn ScreenCam 1.1.1.msi',
         },
       ],
     };

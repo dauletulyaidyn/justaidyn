@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException, Render, Req, Res } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param, Render, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
@@ -393,10 +393,9 @@ export class SiteController {
   }
 
   @Get('/track/download/apps/:app')
-  trackDownload(@Req() req: Request, @Res() res: Response) {
-    const app = req.params.app;
+  trackDownload(@Param('app') app: string, @Res() res: Response) {
     const fileMap: Record<string, string> = {
-      'justaidyn-screencam': '/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.2.msi',
+      'justaidyn-screencam': '/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.1.msi',
     };
 
     if (!fileMap[app]) {

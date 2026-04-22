@@ -2,15 +2,15 @@
 
 Put the desktop installer for the application in this folder.
 
-Expected file name:
+Current installer file:
 
-- `JustAidyn ScreenCam.exe`
+- `JustAidyn ScreenCam 1.1.1.msi`
 
 Public URLs:
 
 - Folder page: `/downloads/apps/justaidyn-screencam/`
 - App page: `/apps/justaidyn-screencam/`
-- Direct EXE URL: `/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam.exe`
+- Direct MSI URL: `/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.1.msi`
 
 Local path:
 
