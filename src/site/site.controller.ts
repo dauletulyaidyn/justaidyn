@@ -1,6 +1,6 @@
 import { Controller, Get, NotFoundException, Render, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { existsSync, readFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { PageModel, SiteService } from './site.service';
 
@@ -380,6 +380,39 @@ export class SiteController {
     }
 
     return res.sendFile(found);
+  }
+
+  @Get('/api/stats/downloads')
+  getDownloadStats() {
+    const countsFile = join(process.cwd(), 'data', 'download-counts.json');
+    try {
+      return JSON.parse(readFileSync(countsFile, 'utf-8'));
+    } catch {
+      return {};
+    }
+  }
+
+  @Get('/track/download/apps/:app')
+  trackDownload(@Req() req: Request, @Res() res: Response) {
+    const app = req.params.app;
+    const fileMap: Record<string, string> = {
+      'justaidyn-screencam': '/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.1.msi',
+    };
+
+    if (!fileMap[app]) {
+      throw new NotFoundException();
+    }
+
+    const countsFile = join(process.cwd(), 'data', 'download-counts.json');
+    try {
+      const counts = JSON.parse(readFileSync(countsFile, 'utf-8'));
+      counts[app] = (counts[app] || 0) + 1;
+      writeFileSync(countsFile, JSON.stringify(counts, null, 2));
+    } catch {
+      // don't block download if counter fails
+    }
+
+    return res.redirect(fileMap[app]);
   }
 
   private withSharedModel(page: PageModel, req?: Request) {

@@ -309,6 +309,9 @@
           <div class="app-card-header">
             <h2>JustAidyn ScreenCam</h2>
             <span class="version-badge">v1.1.1</span>
+            <span class="version-badge" id="dl-count-screencam" style="background:rgba(20,183,137,0.12);color:#0e8a63;display:none">
+              <i class="bi bi-download" style="font-size:0.7rem"></i> <span id="dl-count-screencam-val">0</span>
+            </span>
           </div>
           <p class="app-card-desc"
              data-en="Compact Electron app that combines a live rotating camera preview with configurable screen recording."
@@ -336,7 +339,7 @@
             <span class="tag">Screen Recording</span>
           </div>
           <div class="app-card-actions">
-            <a class="btn-primary" href="/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.1.msi">
+            <a class="btn-primary" href="/track/download/apps/justaidyn-screencam">
               <i class="bi bi-download"></i>
               <span data-en="Download" data-ru="Скачать" data-kk="Жүктеу">Download</span>
             </a>
@@ -354,5 +357,14 @@
   <script src="/js/bootstrap.min.js"></script>
   <script src="/js/jquery.sticky.js"></script>
   <script src="/js/custom.js"></script>
+  <script>
+    fetch('/api/stats/downloads').then(r => r.json()).then(data => {
+      const count = data['justaidyn-screencam'];
+      if (count > 0) {
+        document.getElementById('dl-count-screencam-val').textContent = count;
+        document.getElementById('dl-count-screencam').style.display = '';
+      }
+    }).catch(() => {});
+  </script>
 </body>
 </html>
