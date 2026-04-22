@@ -58,7 +58,7 @@ const ROOT_HOSTS = new Set([
 const PROJECT_LINKS: ProjectLink[] = [
   { labelEn: 'Skills and Minds Hub', labelRu: 'Skills and Minds Hub', labelKk: 'Skills and Minds Hub', url: '/articles/' },
   { labelEn: 'No Face Thinker', labelRu: 'No Face Thinker', labelKk: 'No Face Thinker', url: '/nofacethinker' },
-  { labelEn: 'Courses', labelRu: 'Курсы', labelKk: 'Курстар', url: '/courses', showLangs: 'ru,kk' },
+  { labelEn: 'Courses', labelRu: 'Курсы', labelKk: 'Курстар', url: '/courses/ai-agents-course.html', showLangs: 'ru,kk' },
   { labelEn: 'Apps', labelRu: 'Приложения', labelKk: 'Қосымшалар', url: '/apps' },
   { labelEn: 'Games', labelRu: 'Игры', labelKk: 'Ойындар', url: '/games' },
   { labelEn: 'Shop', labelRu: 'Магазин', labelKk: 'Дүкен', url: '/shop' },
@@ -169,7 +169,7 @@ export class SiteService {
       heroText:
         'This NestJS baseline becomes the single entry point for justaidyn.com and all current subdomains. Header, footer, and routing are now centralized.',
       primaryAction: { label: 'Open Projects', url: '/projects' },
-      secondaryAction: { label: 'Courses', url: '/courses' },
+      secondaryAction: { label: 'Courses', url: '/courses/ai-agents-course.html' },
       cards: [
         {
           title: 'Unified Platform',

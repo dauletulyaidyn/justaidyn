@@ -41,12 +41,6 @@
 
   <!-- Courses section -->
   <url>
-    <loc>https://justaidyn.com/courses</loc>
-    <lastmod>2026-04-21</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://justaidyn.com/courses/ai-agents-course.html</loc>
     <lastmod>2026-04-21</lastmod>
     <changefreq>weekly</changefreq>
@@ -171,6 +165,12 @@
   <url>
     <loc>https://justaidyn.com/articles/programming/installing-nodejs-and-setting-up-path.html</loc>
     <lastmod>2026-04-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://justaidyn.com/articles/programming/installing-qdrant-first-use-python-nestjs.html</loc>
+    <lastmod>2026-04-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

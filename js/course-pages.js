@@ -201,13 +201,9 @@
   }
 
   function bindLanguageButtons() {
-    document.querySelectorAll('[data-lang-option="en"]').forEach((button) => {
-      button.remove();
-    });
-
     function setLanguage(lang) {
-      const uiLang = lang === 'kk' ? 'kk' : 'ru';
-      const contentLang = uiLang;
+      const uiLang = lang === 'kk' ? 'kk' : lang === 'en' ? 'en' : 'ru';
+      const contentLang = uiLang === 'kk' ? 'kk' : 'ru';
 
       body.classList.add('lang-ready');
       body.setAttribute('data-active-lang', contentLang);
@@ -243,9 +239,7 @@
       applyVisibleBranding();
 
       document.documentElement.lang = uiLang;
-      if (lang !== 'en') {
-        saveLanguage(uiLang);
-      }
+      saveLanguage(uiLang);
     }
 
     document.querySelectorAll('[data-lang-btn]').forEach((button) => {
@@ -259,7 +253,7 @@
     };
 
     const savedLanguage = readSavedLanguage();
-    setLanguage(savedLanguage === 'en' ? 'ru' : savedLanguage || body.getAttribute('data-default-lang') || 'ru');
+    setLanguage(savedLanguage || body.getAttribute('data-default-lang') || 'ru');
   }
 
   function enhanceMobileHeader() {
@@ -283,6 +277,7 @@
       langGroup.setAttribute('aria-label', 'Language selector');
       langGroup.innerHTML = `
         <button aria-label="Russian" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')" title="Russian" type="button">RU</button>
+        <button aria-label="English" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')" title="English" type="button">EN</button>
         <button aria-label="Kazakh" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')" title="Kazakh" type="button">KK</button>
       `;
       mobileTools.appendChild(langGroup);
@@ -488,7 +483,7 @@
       if (navbar) {
         navbar.innerHTML = typeof window.getSharedStaticNavHtml === 'function'
           ? window.getSharedStaticNavHtml('courses')
-          : '<a class="navbar-brand" href="/courses">JustAidyn</a>';
+          : '<a class="navbar-brand" href="/courses/ai-agents-course.html">JustAidyn</a>';
       }
       mainMount.innerHTML = '<section class="section-padding"><div class="container"><div class="profile-thumb"><h3>Content failed to load</h3><p>Open the site through static hosting or a local server so JSON files can be loaded.</p></div></div></section>';
   }

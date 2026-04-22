@@ -110,7 +110,7 @@ export class SiteController {
       case 'nofacethinker':
         return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('nofacethinker'), req));
       case 'courses':
-        return res.render('pages/course-wrapper', this.withSharedModel(this.siteService.getCoursePageModel('JustAidyn Courses | AI Agents Course', 'course-home'), req));
+        return res.redirect('/courses/ai-agents-course.html');
       case 'apps':
         return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('apps'), req));
       case 'games':
@@ -137,7 +137,7 @@ export class SiteController {
 
   @Get('/courses')
   coursesProject(@Req() req: Request, @Res() res: Response) {
-    return res.render('pages/course-wrapper', this.withSharedModel(this.siteService.getCoursePageModel('JustAidyn Courses | AI Agents Course', 'course-home'), req));
+    return res.redirect('/courses/ai-agents-course.html');
   }
 
   @Get('/apps')

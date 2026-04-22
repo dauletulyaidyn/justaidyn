@@ -134,10 +134,9 @@
 
     function getSharedStaticNavHtml(currentSection) {
       var isHome = currentSection === 'home';
-      var isCourses = currentSection === 'courses';
-      var languageButtons = isCourses
-        ? `<button type="button" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')">KK</button><button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')">RU</button>`
-        : `<button type="button" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')">KK</button><button type="button" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')">EN</button><button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')">RU</button>`;
+      var isLogin = currentSection === 'login';
+      var isRegister = currentSection === 'register';
+      var languageButtons = `<button type="button" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')" aria-label="Kazakh" title="Kazakh">KK</button><button type="button" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')" aria-label="English" title="English">EN</button><button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')" aria-label="Russian" title="Russian">RU</button>`;
 
       return `
         <div class="container">
@@ -148,8 +147,8 @@
           <a href="/" class="navbar-brand mx-auto mx-lg-0">JustAidyn</a>
 
           <div class="d-flex align-items-center d-lg-none">
-            <i class="navbar-icon bi-envelope me-3"></i>
-            <a class="custom-btn btn" href="mailto:aidyn.daulet@gmail.com">Email</a>
+            <i class="navbar-icon bi-whatsapp me-3"></i>
+            <a class="custom-btn btn" href="https://wa.me/77769889889" target="_blank" rel="noopener" data-en="Chat on WhatsApp" data-ru="Написать в WhatsApp" data-kk="WhatsApp-та жазу">Chat on WhatsApp</a>
           </div>
 
           <div class="collapse navbar-collapse" id="navbarNav">
@@ -172,48 +171,48 @@
                 </div>
                 <div class="navbar-top-tools">
                   <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle navbar-top-tool-link" href="#" id="projectsDropdownTop" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-en="JustAidyn Projects" data-ru="Проекты JustAidyn" data-kk="JustAidyn жобалары">JustAidyn Projects</a>
+                    <a class="nav-link dropdown-toggle navbar-top-tool-link" href="#" id="projectsDropdownTop" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-en="JUSTAIDYN PROJECTS" data-ru="ПРОЕКТЫ JUSTAIDYN" data-kk="JUSTAIDYN ЖОБАЛАРЫ">JUSTAIDYN ЖОБАЛАРЫ</a>
                     <ul class="dropdown-menu" aria-labelledby="projectsDropdownTop">
-                      <li><a class="dropdown-item" href="/" data-en="JustAidyn Home" data-ru="Главная JustAidyn" data-kk="Басты бет">JustAidyn Home</a></li>
+                      <li><a class="dropdown-item" href="/" data-en="JustAidyn Home" data-ru="JustAidyn Home" data-kk="JustAidyn Home">JustAidyn Home</a></li>
                       <li><hr class="dropdown-divider"></li>
-                      <li><a class="dropdown-item" href="/articles/" data-en="Skills and Minds Hub" data-ru="Skills and Minds Hub" data-kk="Skills and Minds Hub">Skills and Minds Hub</a></li>
-                      <li><a class="dropdown-item" href="/nofacethinker" data-en="No Face Thinker" data-ru="No Face Thinker" data-kk="No Face Thinker">No Face Thinker</a></li>
+                      <li><a class="dropdown-item" href="/skillsminds" data-en="SkillsMinds" data-ru="SkillsMinds" data-kk="SkillsMinds">SkillsMinds</a></li>
+                      <li><a class="dropdown-item" href="#" data-en="NoFaceThinker" data-ru="NoFaceThinker" data-kk="NoFaceThinker">NoFaceThinker</a></li>
                       <li class="dropdown-submenu" data-show-langs="ru,kk">
-                        <a class="dropdown-item dropdown-toggle" href="/courses" data-en="Courses" data-ru="Курсы" data-kk="Курстар">Courses</a>
+                        <a class="dropdown-item dropdown-toggle" href="#" data-en="Courses" data-ru="Курсы" data-kk="Курстар">Courses</a>
                         <ul class="dropdown-menu">
                           <li class="dropdown-submenu">
-                            <a class="dropdown-item dropdown-toggle" href="/courses/ai-agents-course.html" data-en="AI agents" data-ru="AI-агенты" data-kk="AI агенттер">AI agents</a>
+                            <a class="dropdown-item dropdown-toggle" href="/courses/ai-agents-course.html" data-en="AI Agents" data-ru="AI-агенты" data-kk="AI-агенттер">AI Agents</a>
                             <ul class="dropdown-menu">
-                              <li><a class="dropdown-item" href="/courses/faq.html" data-en="FAQ" data-ru="FAQ" data-kk="ЖҚС">FAQ</a></li>
-                              <li><a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true" data-en="List of students" data-ru="Список слушателей" data-kk="Тыңдаушылар тізімі">List of students</a></li>
+                              <li data-show-langs="ru,kk"><a class="dropdown-item" href="/courses/faq.html" data-en="FAQ" data-ru="FAQ" data-kk="ЖҚС">FAQ</a></li>
+                              <li><a class="dropdown-item disabled" href="#" aria-disabled="true" tabindex="-1" data-en="Student List" data-ru="Список слушателей" data-kk="Тыңдаушылар тізімі">Student List</a></li>
                             </ul>
                           </li>
-                          <li><a class="dropdown-item disabled" href="/courses/programming-course.html" tabindex="-1" aria-disabled="true" data-en="Programming" data-ru="Программирование" data-kk="Бағдарламалау">Programming</a></li>
-                          <li><a class="dropdown-item" href="/courses/non-standard-math-logic.html" data-en="Non-standard math" data-ru="Нестандартная математика" data-kk="Стандарттан тыс математика">Non-standard math</a></li>
-                          <li><a class="dropdown-item" href="/courses/motivational-letter.html" data-en="Motivational letter" data-ru="Мотивационное письмо" data-kk="Мотивациялық хат">Motivational letter</a></li>
+                          <li><a class="dropdown-item disabled" href="#" aria-disabled="true" tabindex="-1" data-en="Programming" data-ru="Программирование" data-kk="Бағдарламалау">Programming</a></li>
+                          <li><a class="dropdown-item" href="/courses/non-standard-math-logic.html" data-en="Non-standard Math" data-ru="Нестандартная математика" data-kk="Стандарттан тыс математика">Non-standard Math</a></li>
+                          <li data-show-langs="ru,kk"><a class="dropdown-item" href="/courses/motivational-letter.html" data-en="Motivational Letter" data-ru="Мотивационное письмо" data-kk="Мотивациялық хат">Motivational Letter</a></li>
                         </ul>
                       </li>
                       <li><a class="dropdown-item" href="/apps" data-en="Apps" data-ru="Приложения" data-kk="Қосымшалар">Apps</a></li>
-                      <li><a class="dropdown-item" href="/games" data-en="Games" data-ru="Игры" data-kk="Ойындар">Games</a></li>
-                      <li><a class="dropdown-item" href="/shop" data-en="Shop" data-ru="Магазин" data-kk="Дүкен">Shop</a></li>
-                      <li><a class="dropdown-item" href="/api" data-en="API" data-ru="API" data-kk="API">API</a></li>
+                      <li><a class="dropdown-item" href="#" data-en="Games" data-ru="Игры" data-kk="Ойындар">Games</a></li>
+                      <li><a class="dropdown-item" href="#" data-en="Shop" data-ru="Магазин" data-kk="Дүкен">Shop</a></li>
+                      <li><a class="dropdown-item" href="#" data-en="API" data-ru="API" data-kk="API">API</a></li>
                     </ul>
                   </div>
                   <div class="language-selector navbar-top-lang language-flags" role="group" aria-label="Language selector">
                     ${languageButtons}
                   </div>
                   <div class="navbar-top-auth-links">
-                    <a class="navbar-top-tool-btn" href="#" data-en="Login" data-ru="Войти" data-kk="Кіру">Login</a>
-                    <a class="navbar-top-tool-btn" href="#" data-en="Register" data-ru="Регистрация" data-kk="Тіркелу">Register</a>
+                    <a class="navbar-top-tool-btn ${isLogin ? 'active' : ''}" href="#" data-en="Login" data-ru="Войти" data-kk="Кіру">Кіру</a>
+                    <a class="navbar-top-tool-btn ${isRegister ? 'active' : ''}" href="#" data-en="Register" data-ru="Регистрация" data-kk="Тіркелу">Тіркелу</a>
                   </div>
                 </div>
               </div>
 
               <ul class="navbar-nav ms-lg-0 nav-row-primary">
-                <li class="nav-item"><a class="nav-link ${isHome ? 'active' : ''}" href="/#section_1" data-en="Home" data-ru="Главная" data-kk="Басты">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="/#section_2" data-en="About" data-ru="Обо мне" data-kk="Мен туралы">About</a></li>
-                <li class="nav-item"><a class="nav-link" href="/#section_3" data-en="Skills" data-ru="Навыки" data-kk="Дағдылар">Skills</a></li>
-                <li class="nav-item"><a class="nav-link" href="/#section_5" data-en="Contact" data-ru="Контакты" data-kk="Байланыс">Contact</a></li>
+                <li class="nav-item"><a class="nav-link ${isHome ? 'active' : ''}" href="/#section_1" data-en="Home" data-ru="Главная" data-kk="Басты">Басты</a></li>
+                <li class="nav-item"><a class="nav-link" href="/#section_2" data-en="About" data-ru="Обо мне" data-kk="Мен туралы">Мен туралы</a></li>
+                <li class="nav-item"><a class="nav-link" href="/#section_3" data-en="Skills" data-ru="Навыки" data-kk="Дағдылар">Дағдылар</a></li>
+                <li class="nav-item"><a class="nav-link" href="/#section_5" data-en="Contact" data-ru="Контакты" data-kk="Байланыс">Байланыс</a></li>
               </ul>
             </div>
           </div>
@@ -227,9 +226,7 @@
       var currentSection = detectCurrentSection();
 
       document.querySelectorAll('.navbar.navbar-split').forEach(function(navbar) {
-        if (navbar.classList.contains('course-navbar')) {
-          return;
-        }
+        navbar.classList.remove('course-navbar');
         navbar.innerHTML = getSharedStaticNavHtml(currentSection);
       });
     }
@@ -289,10 +286,6 @@
 
     function enhanceMobileSplitNavbars() {
       document.querySelectorAll('.navbar.navbar-split').forEach(function(navbar) {
-        if (navbar.classList.contains('course-navbar')) {
-          return;
-        }
-
         var mobileTools = navbar.querySelector('.d-flex.align-items-center.d-lg-none');
         var desktopLangs = navbar.querySelector('.navbar-top-lang.language-flags');
 
@@ -336,6 +329,9 @@
         if (savedCourseLang && typeof window.changeLanguage === 'function') {
           window.changeLanguage(savedCourseLang);
         }
+        return;
+      }
+      if (document.body && document.body.classList.contains('articles-page')) {
         return;
       }
       window.changeLanguage = function(lang) {

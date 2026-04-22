@@ -88,7 +88,7 @@ let SiteController = class SiteController {
             case 'nofacethinker':
                 return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('nofacethinker'), req));
             case 'courses':
-                return res.render('pages/course-wrapper', this.withSharedModel(this.siteService.getCoursePageModel('JustAidyn Courses | AI Agents Course', 'course-home'), req));
+                return res.redirect('/courses/ai-agents-course.html');
             case 'apps':
                 return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('apps'), req));
             case 'games':
@@ -108,7 +108,7 @@ let SiteController = class SiteController {
         return this.withSharedModel(this.siteService.getComingSoonPage('nofacethinker'), req);
     }
     coursesProject(req, res) {
-        return res.render('pages/course-wrapper', this.withSharedModel(this.siteService.getCoursePageModel('JustAidyn Courses | AI Agents Course', 'course-home'), req));
+        return res.redirect('/courses/ai-agents-course.html');
     }
     appsProject(req) {
         return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);

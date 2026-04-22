@@ -466,6 +466,14 @@
       currentPage = page;
       body.setAttribute('data-default-lang', page.defaultLang || body.getAttribute('data-default-lang') || 'kk');
       navMount.innerHTML = page.navHtml || '';
+      if (typeof window.getSharedStaticNavHtml === 'function') {
+        const sharedNav = document.createElement('div');
+        sharedNav.innerHTML = window.getSharedStaticNavHtml('articles');
+        const sharedContainer = sharedNav.querySelector('.container');
+        if (sharedContainer) {
+          navMount.innerHTML = sharedContainer.innerHTML;
+        }
+      }
       footerMount.innerHTML = page.footerHtml || '';
       applyLanguage(readSavedLanguage() || body.getAttribute('data-default-lang') || 'kk');
   }
