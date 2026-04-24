@@ -296,32 +296,24 @@
               <div class="navbar-mobile-actions" aria-label="Mobile contact actions">
                 <a class="navbar-mobile-action" href="mailto:aidyn.daulet@gmail.com">
                   <i class="bi bi-envelope"></i>
-                  <span data-en="Write to email" data-ru="Write to email" data-kk="Write to email">Write to email</span>
+                  <span class="visually-hidden" data-en="Write to email" data-ru="Write to email" data-kk="Write to email">Write to email</span>
                 </a>
                 <a class="navbar-mobile-action" href="tel:+77769889889">
                   <i class="bi bi-telephone"></i>
-                  <span data-en="Call to phone" data-ru="Call to phone" data-kk="Call to phone">Call to phone</span>
+                  <span class="visually-hidden" data-en="Call to phone" data-ru="Call to phone" data-kk="Call to phone">Call to phone</span>
                 </a>
                 <a class="navbar-mobile-action" href="https://wa.me/77769889889" target="_blank" rel="noopener">
                   <i class="bi bi-whatsapp"></i>
-                  <span data-en="Write to WhatsApp" data-ru="Write to WhatsApp" data-kk="Write to WhatsApp">Write to WhatsApp</span>
+                  <span class="visually-hidden" data-en="Write to WhatsApp" data-ru="Write to WhatsApp" data-kk="Write to WhatsApp">Write to WhatsApp</span>
                 </a>
                 <a class="navbar-mobile-action" href="https://t.me/justaidyn" target="_blank" rel="noopener">
                   <i class="bi bi-telegram"></i>
-                  <span data-en="Write to Telegram" data-ru="Write to Telegram" data-kk="Write to Telegram">Write to Telegram</span>
+                  <span class="visually-hidden" data-en="Write to Telegram" data-ru="Write to Telegram" data-kk="Write to Telegram">Write to Telegram</span>
                 </a>
                 <a class="navbar-mobile-action" href="/?dl=pdf">
                   <i class="bi bi-file-earmark-arrow-down"></i>
-                  <span data-en="Download CV" data-ru="Download CV" data-kk="Download CV">Download CV</span>
+                  <span class="visually-hidden" data-en="Download CV" data-ru="Download CV" data-kk="Download CV">Download CV</span>
                 </a>
-              </div>
-
-              <div class="navbar-mobile-row">
-                <div class="language-selector language-flags" role="group" aria-label="Language selector">
-                  <button type="button" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')" aria-label="English" title="English">EN</button>
-                  <button type="button" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')" aria-label="Kazakh" title="Kazakh">KK</button>
-                  <button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')" aria-label="Russian" title="Russian">RU</button>
-                </div>
               </div>
 
               <div class="navbar-mobile-auth">
@@ -330,8 +322,15 @@
               </div>
 
               <div class="nav-item dropdown navbar-mobile-projects">
-                <a class="nav-link dropdown-toggle navbar-mobile-projects-toggle" href="#" id="projectsDropdownMobile" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-en="Projects of JustAidyn" data-ru="Projects of JustAidyn" data-kk="Projects of JustAidyn">Projects of JustAidyn</a>
+                <a class="nav-link dropdown-toggle navbar-mobile-projects-toggle" href="#" id="projectsDropdownMobile" role="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" data-en="Projects of JustAidyn" data-ru="Projects of JustAidyn" data-kk="Projects of JustAidyn">Projects of JustAidyn</a>
                 <ul class="dropdown-menu" aria-labelledby="projectsDropdownMobile">
+                  <li>
+                    <button type="button" class="dropdown-item navbar-mobile-projects-close">
+                      <i class="bi bi-x-lg"></i>
+                      <span data-en="Close menu" data-ru="Close menu" data-kk="Close menu">Close menu</span>
+                    </button>
+                  </li>
+                  <li><hr class="dropdown-divider"></li>
                   <li><a class="dropdown-item" href="/" data-en="JustAidyn Home" data-ru="JustAidyn Home" data-kk="JustAidyn Home">JustAidyn Home</a></li>
                   <li><a class="dropdown-item" href="/skillsminds" data-en="SkillsMinds" data-ru="SkillsMinds" data-kk="SkillsMinds">SkillsMinds</a></li>
                   <li><a class="dropdown-item" href="/nofacethinker" data-en="NoFaceThinker" data-ru="NoFaceThinker" data-kk="NoFaceThinker">NoFaceThinker</a></li>
@@ -344,6 +343,28 @@
               </div>
             </div>
           `);
+          layout.querySelectorAll('.navbar-mobile-projects-close').forEach(function(button) {
+            button.addEventListener('click', function(event) {
+              event.preventDefault();
+              var projects = button.closest('.navbar-mobile-projects');
+              var toggle = projects && projects.querySelector('.navbar-mobile-projects-toggle');
+              if (!toggle || typeof bootstrap === 'undefined' || !bootstrap.Dropdown) {
+                return;
+              }
+              bootstrap.Dropdown.getOrCreateInstance(toggle).hide();
+            });
+          });
+          layout.querySelectorAll('.navbar-mobile-projects-toggle').forEach(function(toggle) {
+            toggle.addEventListener('show.bs.dropdown', function() {
+              var menu = toggle.closest('.navbar-mobile-projects').querySelector('.dropdown-menu');
+              var rect = toggle.getBoundingClientRect();
+              var gutter = 24;
+              var menuWidth = Math.max(0, window.innerWidth - gutter * 2);
+              menu.style.setProperty('--mobile-projects-menu-bottom', Math.max(8, window.innerHeight - rect.top + 6) + 'px');
+              menu.style.setProperty('--mobile-projects-menu-left', gutter + 'px');
+              menu.style.setProperty('--mobile-projects-menu-width', menuWidth + 'px');
+            });
+          });
           return;
         }
 
