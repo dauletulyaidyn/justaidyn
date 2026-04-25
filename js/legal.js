@@ -201,10 +201,55 @@
     });
   }
 
+  function legalFooterHtml() {
+    return [
+      "<div class=\"col-lg-12 col-12\" data-legal-footer>",
+      "<strong class=\"site-footer-title d-block mb-3\">Legal</strong>",
+      "<ul class=\"footer-menu d-flex flex-wrap gap-3\">",
+      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/terms.html\">Terms</a></li>",
+      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/eula.html\">EULA</a></li>",
+      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/privacy.html\">Privacy</a></li>",
+      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/cookie-policy.html\">Cookies</a></li>",
+      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/refunds.html\">Refunds</a></li>",
+      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/subscription-terms.html\">Subscriptions</a></li>",
+      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/dmca.html\">DMCA</a></li>",
+      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/legal-notice.html\">Legal Notice</a></li>",
+      "</ul>",
+      "</div>"
+    ].join("");
+  }
+
+  function ensureLegalFooterLinks() {
+    var footers = document.querySelectorAll(".site-footer");
+    if (!footers.length) {
+      var footer = document.createElement("footer");
+      footer.className = "site-footer";
+      footer.innerHTML = "<div class=\"container\"><div class=\"row g-4 align-items-start text-start\"></div></div>";
+      document.body.appendChild(footer);
+      footers = document.querySelectorAll(".site-footer");
+    }
+
+    footers.forEach(function (footer) {
+      if (footer.querySelector("[data-legal-footer]")) return;
+
+      var row = footer.querySelector(".row.g-4") || footer.querySelector(".row");
+      if (!row) {
+        var container = footer.querySelector(".container") || footer;
+        row = document.createElement("div");
+        row.className = "row g-4 align-items-start text-start";
+        container.appendChild(row);
+      }
+
+      row.insertAdjacentHTML("beforeend", legalFooterHtml());
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initRegionControls();
     initCookiePolicyButtons();
     initCheckoutWaiver();
+    ensureLegalFooterLinks();
     createCookiePanel();
+    setTimeout(ensureLegalFooterLinks, 0);
   });
 }());

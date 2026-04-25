@@ -1366,8 +1366,7 @@
                 win.document.write('<style>' + css + '</style>');
                 win.document.write('</head><body>');
                 win.document.write(rpdf.outerHTML);
-                win.document.write('  <script src="/js/legal.js"></script>
-</body></html>');
+                win.document.write('</body></html>');
                 win.document.close();
 
                 win.onload = function() {
