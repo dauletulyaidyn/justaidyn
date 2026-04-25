@@ -47,6 +47,7 @@
         <link href="css/bootstrap-icons.css" rel="stylesheet">
         <link href="css/magnific-popup.css" rel="stylesheet">
         <link href="css/templatemo-first-portfolio-style.css" rel="stylesheet">
+  <link href="/static/styles/legal.css" rel="stylesheet">
     </head>
 
     <body>
@@ -1365,7 +1366,8 @@
                 win.document.write('<style>' + css + '</style>');
                 win.document.write('</head><body>');
                 win.document.write(rpdf.outerHTML);
-                win.document.write('</body></html>');
+                win.document.write('  <script src="/js/legal.js"></script>
+</body></html>');
                 win.document.close();
 
                 win.onload = function() {
@@ -1426,6 +1428,7 @@
     <script>
       window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
-    <script defer src="/_vercel/insights/script.js"></script>
+    <script defer src="/_vercel/insights/script.js"></script>  <script src="/js/legal.js"></script>
+
 </body>
 </html>

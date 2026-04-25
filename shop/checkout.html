@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout Legal Waiver | JustAidyn</title>
+  <meta name="description" content="Required checkout waiver for immediate paid digital access on JustAidyn.">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/templatemo-first-portfolio-style.css" rel="stylesheet">
+  <link href="/static/styles/legal.css" rel="stylesheet">
+</head>
+<body>
+<main class="legal-page">
+  <div class="legal-shell">
+    <section class="legal-hero">
+      <span class="legal-eyebrow">Checkout requirement</span>
+      <h1>Paid Digital Access Waiver</h1>
+      <p>This is the required checkbox block for paid JustAidyn subscriptions that provide immediate digital access.</p>
+    </section>
+    <section class="legal-card">
+      <h2>Before payment</h2>
+      <p>The payment button stays disabled until the user confirms the waiver below.</p>
+      <div class="legal-checkout-waiver" data-checkout-waiver data-controls="#demoPayButton">
+        <label>
+          <input type="checkbox" name="digital_access_waiver" required>
+          <span>I agree to receive immediate access to digital content. I understand that paid digital subscriptions are non-refundable after access begins, except where mandatory law requires otherwise. If EU/UK withdrawal rights apply to me, I acknowledge that I lose my 14-day right of withdrawal. I have read the <a href="/refunds.html">Refund & Cancellation Policy</a> and <a href="/subscription-terms.html">Subscription Terms</a>.</span>
+        </label>
+      </div>
+      <p class="mt-3"><button id="demoPayButton" class="custom-btn btn legal-pay-button" type="button" data-pay-button>Continue to payment</button></p>
+    </section>
+  </div>
+</main>
+<script src="/js/legal.js"></script>
+</body>
+</html>
