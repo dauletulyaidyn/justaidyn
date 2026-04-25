@@ -224,7 +224,9 @@
     if (!footers.length) {
       var footer = document.createElement("footer");
       footer.className = "site-footer";
-      footer.innerHTML = "<div class=\"container\"><div class=\"row g-4 align-items-start text-start\"></div></div>";
+      footer.innerHTML = typeof window.getSharedFooterHtml === "function"
+        ? window.getSharedFooterHtml()
+        : "<div class=\"container\"><div class=\"row g-4 align-items-start text-start\"></div></div>";
       document.body.appendChild(footer);
       footers = document.querySelectorAll(".site-footer");
     }
