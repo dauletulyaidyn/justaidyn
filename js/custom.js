@@ -72,7 +72,7 @@
                 <li class="footer-menu-item"><a class="footer-menu-link" href="index.html?dl=pdf" data-en="CV PDF" data-ru="CV PDF" data-kk="CV PDF">CV PDF</a></li>
               </ul>
             </div>
-            <div class="col-lg-3 col-md-6 col-12">
+            <div class="col-lg-2 col-md-6 col-12">
               <strong class="site-footer-title d-block mb-3" data-en="Sitemap" data-ru="Карта сайта" data-kk="Сайт картасы">Sitemap</strong>
               <ul class="footer-menu">
                 <li class="footer-menu-item"><a class="footer-menu-link" href="articles/index.html" data-en="Articles" data-ru="Статьи" data-kk="Мақалалар">Articles</a></li>
@@ -81,11 +81,24 @@
                 <li class="footer-menu-item"><a class="footer-menu-link" href="ai-agents-course.html" data-en="AI Agents" data-ru="AI-агенты" data-kk="AI агенттер">AI Agents</a></li>
               </ul>
             </div>
-            <div class="col-lg-3 col-md-6 col-12">
+            <div class="col-lg-2 col-md-6 col-12">
               <strong class="site-footer-title d-block mb-3" data-en="Contact" data-ru="Контакты" data-kk="Байланыс">Contact</strong>
               <ul class="footer-menu">
                 <li class="footer-menu-item"><a class="footer-menu-link" href="https://wa.me/77769889889" target="_blank" rel="noopener">WhatsApp</a></li>
                 <li class="footer-menu-item"><a class="footer-menu-link" href="mailto:aidyn.daulet@gmail.com">Email</a></li>
+              </ul>
+            </div>
+            <div class="col-lg-2 col-md-6 col-12" data-legal-footer>
+              <strong class="site-footer-title d-block mb-3">Legal</strong>
+              <ul class="footer-menu">
+                <li class="footer-menu-item"><a class="footer-menu-link" href="${getSiteAssetPath('terms.html')}">Terms</a></li>
+                <li class="footer-menu-item"><a class="footer-menu-link" href="${getSiteAssetPath('eula.html')}">EULA</a></li>
+                <li class="footer-menu-item"><a class="footer-menu-link" href="${getSiteAssetPath('privacy.html')}">Privacy</a></li>
+                <li class="footer-menu-item"><a class="footer-menu-link" href="${getSiteAssetPath('cookie-policy.html')}">Cookies</a></li>
+                <li class="footer-menu-item"><a class="footer-menu-link" href="${getSiteAssetPath('refunds.html')}">Refunds</a></li>
+                <li class="footer-menu-item"><a class="footer-menu-link" href="${getSiteAssetPath('subscription-terms.html')}">Subscriptions</a></li>
+                <li class="footer-menu-item"><a class="footer-menu-link" href="${getSiteAssetPath('dmca.html')}">DMCA</a></li>
+                <li class="footer-menu-item"><a class="footer-menu-link" href="${getSiteAssetPath('legal-notice.html')}">Legal Notice</a></li>
               </ul>
             </div>
           </div>
