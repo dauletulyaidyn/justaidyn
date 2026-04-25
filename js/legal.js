@@ -620,10 +620,39 @@
     };
   }
 
+  function initLegalLanguageFallback() {
+    document.querySelectorAll("[data-lang-option]").forEach(function (button) {
+      if (button.getAttribute("data-legal-lang-bound") === "true") return;
+      button.setAttribute("data-legal-lang-bound", "true");
+      button.addEventListener("click", function () {
+        var lang = button.getAttribute("data-lang-option");
+        if (["en", "ru", "kk"].indexOf(lang) === -1) return;
+        localStorage.setItem("site_lang", lang);
+        document.documentElement.lang = lang;
+        document.querySelectorAll("[data-lang-option]").forEach(function (item) {
+          var active = item.getAttribute("data-lang-option") === lang;
+          item.classList.toggle("active", active);
+          item.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+        document.querySelectorAll("[data-en][data-ru][data-kk]").forEach(function (item) {
+          var value = item.getAttribute("data-" + lang);
+          if (!value) return;
+          if (value.indexOf("<br>") !== -1) {
+            item.innerHTML = value;
+          } else {
+            item.textContent = value;
+          }
+        });
+        renderLegalDocument();
+      });
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     ensureLegalRuntimeStyles();
     renderLegalDocument();
     patchLegalLanguageSwitch();
+    initLegalLanguageFallback();
     initRegionControls();
     initCookiePolicyButtons();
     initCheckoutWaiver();
