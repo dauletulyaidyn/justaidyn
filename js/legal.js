@@ -203,9 +203,9 @@
 
   function legalFooterHtml() {
     return [
-      "<div class=\"col-lg-12 col-12\" data-legal-footer>",
+      "<div class=\"col-lg-2 col-md-6 col-12\" data-legal-footer>",
       "<strong class=\"site-footer-title d-block mb-3\">Legal</strong>",
-      "<ul class=\"footer-menu d-flex flex-wrap gap-3\">",
+      "<ul class=\"footer-menu\">",
       "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/terms.html\">Terms</a></li>",
       "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/eula.html\">EULA</a></li>",
       "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/privacy.html\">Privacy</a></li>",
