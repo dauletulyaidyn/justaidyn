@@ -621,6 +621,7 @@
     ].join("");
     applyRegion(detectRegion());
     initRegionControls();
+    setTimeout(initLegalLanguageFallback, 0);
   }
 
   function patchLegalLanguageSwitch() {
