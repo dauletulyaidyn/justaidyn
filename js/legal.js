@@ -233,16 +233,16 @@
   function legalFooterHtml() {
     return [
       "<div class=\"col-lg-2 col-md-6 col-12\" data-legal-footer>",
-      "<strong class=\"site-footer-title d-block mb-3\">Legal</strong>",
+      "<strong class=\"site-footer-title d-block mb-3\" data-en=\"Legal\" data-ru=\"Правовые документы\" data-kk=\"Құқықтық құжаттар\">Legal</strong>",
       "<ul class=\"footer-menu\">",
-      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/terms.html\">Terms</a></li>",
-      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/eula.html\">EULA</a></li>",
-      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/privacy.html\">Privacy</a></li>",
-      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/cookie-policy.html\">Cookies</a></li>",
-      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/refunds.html\">Refunds</a></li>",
-      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/subscription-terms.html\">Subscriptions</a></li>",
-      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/dmca.html\">DMCA</a></li>",
-      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/legal-notice.html\">Legal Notice</a></li>",
+      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/terms.html\" data-en=\"Terms\" data-ru=\"Условия\" data-kk=\"Шарттар\">Terms</a></li>",
+      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/eula.html\" data-en=\"EULA\" data-ru=\"EULA\" data-kk=\"EULA\">EULA</a></li>",
+      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/privacy.html\" data-en=\"Privacy\" data-ru=\"Конфиденциальность\" data-kk=\"Құпиялылық\">Privacy</a></li>",
+      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/cookie-policy.html\" data-en=\"Cookies\" data-ru=\"Cookies\" data-kk=\"Cookies\">Cookies</a></li>",
+      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/refunds.html\" data-en=\"Refunds\" data-ru=\"Возвраты\" data-kk=\"Қайтарымдар\">Refunds</a></li>",
+      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/subscription-terms.html\" data-en=\"Subscriptions\" data-ru=\"Подписки\" data-kk=\"Жазылымдар\">Subscriptions</a></li>",
+      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/dmca.html\" data-en=\"DMCA\" data-ru=\"DMCA\" data-kk=\"DMCA\">DMCA</a></li>",
+      "<li class=\"footer-menu-item\"><a class=\"footer-menu-link\" href=\"/legal-notice.html\" data-en=\"Legal Notice\" data-ru=\"Юридическая информация\" data-kk=\"Заңды ақпарат\">Legal Notice</a></li>",
       "</ul>",
       "</div>"
     ].join("");
