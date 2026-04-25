@@ -588,6 +588,11 @@
         en: "The site selects a region from browser language and time zone where possible. You can change it manually.",
         ru: "Сайт по возможности выбирает регион по языку браузера и часовому поясу. Вы можете изменить его вручную.",
         kk: "Сайт мүмкін болған жағдайда аймақты браузер тілі мен уақыт белдеуі бойынша таңдайды. Оны қолмен өзгерте аласыз."
+      },
+      language: {
+        en: "Document language",
+        ru: "Язык документа",
+        kk: "Құжат тілі"
       }
     };
 
@@ -597,6 +602,14 @@
       "<h1>" + t(doc.title, lang) + "</h1>",
       "<p>" + t(doc.desc, lang) + "</p>",
       "<div class=\"legal-meta\"><span class=\"legal-pill\">" + t(labels.updated, lang) + "</span><span class=\"legal-pill\">" + t(labels.detected, lang) + " <span data-legal-region-label>Other Regions</span></span></div>",
+      "</section>",
+      "<section class=\"legal-region-control legal-card\">",
+      "<label>" + t(labels.language, lang) + "</label>",
+      "<div class=\"language-selector language-flags\" role=\"group\" aria-label=\"Language selector\">",
+      "<button type=\"button\" class=\"lang-flag-btn\" data-lang-option=\"kk\">KK</button>",
+      "<button type=\"button\" class=\"lang-flag-btn\" data-lang-option=\"en\">EN</button>",
+      "<button type=\"button\" class=\"lang-flag-btn\" data-lang-option=\"ru\">RU</button>",
+      "</div>",
       "</section>",
       "<section class=\"legal-region-control legal-card\">",
       "<label for=\"legalRegion\">" + t(labels.shownFor, lang) + "</label>",
