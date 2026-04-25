@@ -5,6 +5,35 @@
     "SI", "ES", "SE"
   ];
 
+  function ensureLegalRuntimeStyles() {
+    if (!document.querySelector("link[href=\"/static/styles/legal.css\"]")) {
+      var link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "/static/styles/legal.css";
+      document.head.appendChild(link);
+    }
+
+    if (document.getElementById("justaidyn-legal-runtime-styles")) return;
+
+    var style = document.createElement("style");
+    style.id = "justaidyn-legal-runtime-styles";
+    style.textContent = [
+      ".cookie-consent-panel{position:fixed;right:18px;bottom:18px;z-index:9999;width:min(460px,calc(100% - 36px));padding:20px;background:rgba(255,255,255,.96);border:1px solid rgba(24,36,50,.1);border-radius:8px;box-shadow:0 16px 48px rgba(18,35,52,.08);font-family:inherit}",
+      ".cookie-consent-panel h2{margin:0 0 8px;color:#182432;font-size:1.1rem;line-height:1.25}",
+      ".cookie-consent-panel p{margin:0 0 14px;color:#5e6c79;line-height:1.55}",
+      ".cookie-consent-actions{display:flex;flex-wrap:wrap;gap:10px}",
+      ".cookie-consent-actions button,.cookie-preference-list button{min-height:40px;padding:8px 12px;border-radius:8px;border:1px solid #0d5b5f;font-weight:700}",
+      ".cookie-primary{background:#0d5b5f;color:#fff}",
+      ".cookie-secondary{background:#fff;color:#0d5b5f}",
+      ".cookie-preference-list{display:none;margin-top:14px;grid-template-columns:1fr;gap:10px}",
+      ".cookie-consent-panel.is-customizing .cookie-preference-list{display:grid}",
+      ".cookie-option{display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid rgba(24,36,50,.1);border-radius:8px;color:#182432}",
+      ".cookie-option span{color:#5e6c79;line-height:1.45}",
+      ".cookie-option strong{color:#182432}"
+    ].join("");
+    document.head.appendChild(style);
+  }
+
   function getQueryParam(name) {
     try {
       return new URLSearchParams(window.location.search).get(name);
@@ -247,6 +276,7 @@
   }
 
   document.addEventListener("DOMContentLoaded", function () {
+    ensureLegalRuntimeStyles();
     initRegionControls();
     initCookiePolicyButtons();
     initCheckoutWaiver();
