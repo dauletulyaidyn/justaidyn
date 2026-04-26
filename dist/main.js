@@ -24,6 +24,8 @@ async function bootstrap() {
     app.use('/downloads', express_1.default.static((0, path_1.join)(root, 'downloads')));
     app.use('/data', express_1.default.static((0, path_1.join)(root, 'data')));
     app.use('/articles', express_1.default.static((0, path_1.join)(root, 'articles')));
+    app.use('/static', express_1.default.static((0, path_1.join)(root, 'public')));
+    app.use('/public', express_1.default.static((0, path_1.join)(root, 'public')));
     await app.listen(process.env.PORT ? Number(process.env.PORT) : 3000);
 }
 bootstrap();

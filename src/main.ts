@@ -23,6 +23,8 @@ async function bootstrap() {
   app.use('/downloads', express.static(join(root, 'downloads')));
   app.use('/data', express.static(join(root, 'data')));
   app.use('/articles', express.static(join(root, 'articles')));
+  app.use('/static', express.static(join(root, 'public')));
+  app.use('/public', express.static(join(root, 'public')));
 
   await app.listen(process.env.PORT ? Number(process.env.PORT) : 3000);
 }
