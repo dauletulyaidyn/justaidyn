@@ -104,6 +104,18 @@ let SiteController = class SiteController {
     skillsmindsProject(res) {
         return res.sendFile((0, path_1.join)(process.cwd(), 'articles', 'index.html'));
     }
+    programmingArticleShortcut(req, res) {
+        const rawFile = req.params.file;
+        const file = Array.isArray(rawFile) ? rawFile[0] : rawFile;
+        if (!/\.html$/i.test(file)) {
+            throw new common_1.NotFoundException();
+        }
+        const found = (0, path_1.join)(process.cwd(), 'articles', 'programming', file);
+        if (!(0, fs_1.existsSync)(found)) {
+            throw new common_1.NotFoundException();
+        }
+        return res.redirect(301, `/articles/programming/${file}`);
+    }
     nofacethinkerProject(req) {
         return this.withSharedModel(this.siteService.getComingSoonPage('nofacethinker'), req);
     }
@@ -395,6 +407,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "skillsmindsProject", null);
+__decorate([
+    (0, common_1.Get)('/programming/:file'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "programmingArticleShortcut", null);
 __decorate([
     (0, common_1.Get)('/nofacethinker'),
     (0, common_1.Render)('pages/host-router'),

@@ -129,6 +129,23 @@ export class SiteController {
     return res.sendFile(join(process.cwd(), 'articles', 'index.html'));
   }
 
+  @Get('/programming/:file')
+  programmingArticleShortcut(@Req() req: Request, @Res() res: Response) {
+    const rawFile = req.params.file;
+    const file = Array.isArray(rawFile) ? rawFile[0] : rawFile;
+
+    if (!/\.html$/i.test(file)) {
+      throw new NotFoundException();
+    }
+
+    const found = join(process.cwd(), 'articles', 'programming', file);
+    if (!existsSync(found)) {
+      throw new NotFoundException();
+    }
+
+    return res.redirect(301, `/articles/programming/${file}`);
+  }
+
   @Get('/nofacethinker')
   @Render('pages/host-router')
   nofacethinkerProject(@Req() req: Request) {
