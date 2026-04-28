@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { SiteModule } from './site/site.module';
+import { PrismaService } from './prisma.service';
 
 const rootPath = process.cwd();
 
@@ -19,5 +20,7 @@ const rootPath = process.cwd();
     ),
     SiteModule,
   ],
+  providers: [PrismaService],
+  exports: [PrismaService],
 })
 export class AppModule {}

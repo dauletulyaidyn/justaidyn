@@ -5,8 +5,11 @@ downloads/**/*.msi
 downloads/**/*.exe
 google-oauth.json
 paddle-config.json
+.env
 data/auth-users.json
 data/auth-sessions.json
 data/auth-oauth-states.json
 data/auth-password-reset-tokens.json
 data/superadmin-login.txt
+
+/src/generated/prisma
