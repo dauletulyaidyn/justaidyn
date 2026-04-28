@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import type { AuthUser } from './auth.service';
+import type { PostDto } from './post.service';
 
 type SiteKey =
   | 'main'
@@ -38,12 +40,42 @@ export interface PageModel {
   lowerNav: NavLink[];
   heroTitle: string;
   heroText: string;
+  heroTitleEn?: string;
+  heroTitleRu?: string;
+  heroTitleKk?: string;
+  heroTextEn?: string;
+  heroTextRu?: string;
+  heroTextKk?: string;
+  eyebrowEn?: string;
+  eyebrowRu?: string;
+  eyebrowKk?: string;
   eyebrow?: string;
   primaryAction?: ProjectLink;
   secondaryAction?: ProjectLink;
-  cards?: Array<{ title: string; text: string; href?: string; cta?: string }>;
+  cards?: Array<{
+    title: string;
+    titleEn?: string;
+    titleRu?: string;
+    titleKk?: string;
+    text: string;
+    href?: string;
+    cta?: string;
+    ctaEn?: string;
+    ctaRu?: string;
+    ctaKk?: string;
+  }>;
+  profileUser?: AuthUser;
+  adminUsers?: AuthUser[];
+  adminResetUrl?: string;
   content?: string;
   coursePageKey?: string;
+  posts?: PostDto[];
+  post?: PostDto;
+  platform?: string;
+  postPlatform?: string;
+  editPost?: PostDto | null;
+  isPaywall?: boolean;
+  thinkerPriceId?: string;
 }
 
 const ROOT_HOSTS = new Set([
@@ -57,7 +89,7 @@ const ROOT_HOSTS = new Set([
 
 const PROJECT_LINKS: ProjectLink[] = [
   { labelEn: 'Skills and Minds Hub', labelRu: 'Skills and Minds Hub', labelKk: 'Skills and Minds Hub', url: '/articles/' },
-  { labelEn: 'No Face Thinker', labelRu: 'No Face Thinker', labelKk: 'No Face Thinker', url: '/nofacethinker' },
+  { labelEn: 'no Face Thinker', labelRu: 'no Face Thinker', labelKk: 'no Face Thinker', url: '/nofacethinker' },
   { labelEn: 'Courses', labelRu: 'Курсы', labelKk: 'Курстар', url: '/courses/ai-agents-course.html', showLangs: 'ru,kk' },
   { labelEn: 'Apps', labelRu: 'Приложения', labelKk: 'Қосымшалар', url: '/apps' },
   { labelEn: 'Games', labelRu: 'Игры', labelKk: 'Ойындар', url: '/games' },
@@ -223,11 +255,10 @@ export class SiteService {
         { labelEn: 'Login', labelRu: 'Войти', labelKk: 'Кіру', url: '/login', active: true },
       ],
       eyebrow: 'Access',
-      heroTitle: 'Login to JustAidyn',
+      heroTitle: 'Sign in to JustAidyn',
       heroText:
-        'The auth layer will be shared across all projects. Initial roles are superadmin for JustAidyn and client for registered users.',
-      primaryAction: { label: 'Continue with Google', url: '/login/google' },
-      secondaryAction: { label: 'Continue with Apple', url: '/login/apple' },
+        'Sign in with Google. If this is your first time, JustAidyn will create a client profile automatically.',
+      primaryAction: { label: 'Sign in with Google', url: '/login/google' },
       cards: [
         {
           title: 'Role: superadmin',
@@ -255,9 +286,8 @@ export class SiteService {
       eyebrow: 'Access',
       heroTitle: 'Create a JustAidyn account',
       heroText:
-        'Registration will create a client account. Superadmin remains a restricted internal role for JustAidyn only.',
+        'Registration uses Google OAuth and creates a client profile. Superadmin remains a restricted internal role.',
       primaryAction: { label: 'Continue with Google', url: '/register/google' },
-      secondaryAction: { label: 'Continue with Apple', url: '/register/apple' },
       cards: [
         {
           title: 'Client onboarding',
@@ -271,9 +301,138 @@ export class SiteService {
     };
   }
 
-  getAuthProviderPage(mode: 'login' | 'register', provider: 'google' | 'apple'): PageModel {
+  getProfilePage(user: AuthUser): PageModel {
+    return {
+      view: 'pages/auth',
+      title: 'Profile | JustAidyn',
+      description: 'JustAidyn user profile.',
+      pageKey: 'profile',
+      isAuthPage: true,
+      lowerNav: [
+        { labelEn: 'Home', labelRu: 'Главная', labelKk: 'Басты', url: '/' },
+        { labelEn: 'Profile', labelRu: 'Профиль', labelKk: 'Профиль', url: '/profile', active: true },
+      ],
+      eyebrow: 'Profile',
+      eyebrowEn: 'Profile',
+      eyebrowRu: 'Профиль',
+      eyebrowKk: 'Профиль',
+      heroTitle: user.name || user.email,
+      heroText: 'Signed in with Google OAuth.',
+      heroTextEn: 'Signed in with Google OAuth.',
+      heroTextRu: 'Вход выполнен через Google OAuth.',
+      heroTextKk: 'Google OAuth арқылы кірдіңіз.',
+      primaryAction: {
+        label: 'Edit Profile',
+        labelEn: 'Edit Profile',
+        labelRu: 'Редактировать профиль',
+        labelKk: 'Профильді өңдеу',
+        url: '/profile/edit',
+      },
+      secondaryAction: { label: 'Logout', labelEn: 'Logout', labelRu: 'Выйти', labelKk: 'Шығу', url: '/logout' },
+      cards: [
+        {
+          title: 'Name',
+          titleEn: 'Name',
+          titleRu: 'Имя',
+          titleKk: 'Аты',
+          text: user.firstName || user.name || user.email,
+        },
+        {
+          title: 'Lastname',
+          titleEn: 'Lastname',
+          titleRu: 'Фамилия',
+          titleKk: 'Тегі',
+          text: user.lastName || '-',
+        },
+        {
+          title: 'Email',
+          titleEn: 'Email',
+          titleRu: 'Эл. почта',
+          titleKk: 'Электрондық пошта',
+          text: user.email,
+        },
+        {
+          title: 'Profile title',
+          titleEn: 'Profile title',
+          titleRu: 'Обращение',
+          titleKk: 'Мәртебе',
+          text: user.profileTitle || '-',
+        },
+        {
+          title: 'Profile label',
+          titleEn: 'Profile label',
+          titleRu: 'Профессиональная метка',
+          titleKk: 'Кәсіби белгі',
+          text: user.profileLabel || '-',
+        },
+        {
+          title: 'Short bio',
+          titleEn: 'Short bio',
+          titleRu: 'Кратко о себе',
+          titleKk: 'Қысқаша өзіңіз туралы',
+          text: user.shortBio || '-',
+        },
+        {
+          title: 'Organization',
+          titleEn: 'Organization',
+          titleRu: 'Организация',
+          titleKk: 'Ұйым',
+          text: user.organization || '-',
+        },
+        {
+          title: 'Location',
+          titleEn: 'Location',
+          titleRu: 'Локация',
+          titleKk: 'Орналасуы',
+          text: user.location || '-',
+        },
+        {
+          title: 'Website',
+          titleEn: 'Website',
+          titleRu: 'Сайт',
+          titleKk: 'Сайт',
+          text: user.website || '-',
+          href: user.website,
+          cta: user.website ? 'Open' : undefined,
+          ctaEn: user.website ? 'Open' : undefined,
+          ctaRu: user.website ? 'Открыть' : undefined,
+          ctaKk: user.website ? 'Ашу' : undefined,
+        },
+      ],
+    };
+  }
+
+  getProfileEditPage(user: AuthUser): PageModel {
+    return {
+      view: 'pages/auth',
+      title: 'Edit Profile | JustAidyn',
+      description: 'Edit JustAidyn user profile.',
+      pageKey: 'profile-edit',
+      isAuthPage: true,
+      lowerNav: [
+        { labelEn: 'Home', labelRu: 'Главная', labelKk: 'Басты', url: '/' },
+        { labelEn: 'Profile', labelRu: 'Профиль', labelKk: 'Профиль', url: '/profile' },
+        { labelEn: 'Edit', labelRu: 'Редактировать', labelKk: 'Өңдеу', url: '/profile/edit', active: true },
+      ],
+      eyebrow: 'Profile',
+      eyebrowEn: 'Profile',
+      eyebrowRu: 'Профиль',
+      eyebrowKk: 'Профиль',
+      heroTitle: 'Edit profile',
+      heroTitleEn: 'Edit profile',
+      heroTitleRu: 'Редактирование профиля',
+      heroTitleKk: 'Профильді өңдеу',
+      heroText: 'Google provides your email. The optional fields below are controlled by you.',
+      heroTextEn: 'Google provides your email. The optional fields below are controlled by you.',
+      heroTextRu: 'Email берётся из Google. Необязательные поля ниже вы заполняете сами.',
+      heroTextKk: 'Email Google арқылы алынады. Төмендегі қосымша өрістерді өзіңіз толтырасыз.',
+      profileUser: user,
+    };
+  }
+
+  getAuthProviderPage(mode: 'login' | 'register', provider: 'google'): PageModel {
     const isLogin = mode === 'login';
-    const providerLabel = provider === 'google' ? 'Google' : 'Apple';
+    const providerLabel = 'Google';
 
     return {
       view: 'pages/auth',
@@ -292,21 +451,116 @@ export class SiteService {
         },
       ],
       eyebrow: 'OAuth',
-      heroTitle: `${providerLabel} ${isLogin ? 'sign in' : 'registration'} is the next backend step`,
+      heroTitle: `${providerLabel} ${isLogin ? 'sign in' : 'registration'} for JustAidyn`,
       heroText:
-        'The route is now live. The real OAuth flow will be connected after the auth backend, sessions, and provider credentials are added.',
+        'This route can start the desktop OAuth flow when the app passes a loopback redirect_uri and PKCE code_challenge. The browser returns the Google code to the local desktop callback.',
       primaryAction: { label: isLogin ? 'Back to Login' : 'Back to Register', url: isLogin ? '/login' : '/register' },
       secondaryAction: { label: 'Main Site', url: '/' },
       cards: [
         {
-          title: 'What is missing',
-          text: 'Provider client credentials, callback handlers, token verification, user linking, and session storage are not wired yet.',
+          title: 'Desktop flow',
+          text: 'Open this route with redirect_uri=http://127.0.0.1:<port>/oauth2callback and code_challenge=<S256 challenge>. Optional state is preserved for the app.',
         },
         {
-          title: 'Planned providers',
-          text: 'Google OAuth and Apple Sign In will both use the central JustAidyn auth backend.',
+          title: 'Provider',
+          text: 'Only Google OAuth is enabled for JustAidyn sign in and registration.',
         },
       ],
+    };
+  }
+
+  getAdminLoginPage(): PageModel {
+    return {
+      view: 'pages/auth',
+      title: 'Superadmin Login | JustAidyn',
+      description: 'Superadmin login for JustAidyn.',
+      pageKey: 'admin-login',
+      lowerNav: [{ labelEn: 'Superadmin', labelRu: 'Superadmin', labelKk: 'Superadmin', url: '/admin/login', active: true }],
+      eyebrow: 'Superadmin',
+      heroTitle: 'Superadmin login',
+      heroText: 'Password access is restricted to the single JustAidyn superadmin account.',
+    };
+  }
+
+  getAdminDashboardPage(): PageModel {
+    return {
+      view: 'pages/auth',
+      title: 'Admin | JustAidyn',
+      description: 'JustAidyn superadmin dashboard.',
+      pageKey: 'admin',
+      lowerNav: [{ labelEn: 'Admin', labelRu: 'Admin', labelKk: 'Admin', url: '/admin', active: true }],
+      eyebrow: 'Superadmin',
+      heroTitle: 'JustAidyn admin',
+      heroText: 'Manage users, posts, applications, games, and courses.',
+      cards: [
+        { title: 'Users', text: 'View registered users and roles.', href: '/admin/users', cta: 'Open' },
+        { title: 'Posts', text: 'Manage Skills and Minds Hub and no Face Thinker posts.', href: '/admin/posts', cta: 'Open' },
+        { title: 'Apps', text: 'Manage app listings and releases.', href: '/admin/apps', cta: 'Open' },
+        { title: 'Games', text: 'Manage game listings and access.', href: '/admin/games', cta: 'Open' },
+        { title: 'Courses', text: 'Manage course pages, groups, and schedules.', href: '/admin/courses', cta: 'Open' },
+      ],
+    };
+  }
+
+  getAdminUsersPage(users: AuthUser[]): PageModel {
+    return {
+      view: 'pages/auth',
+      title: 'Admin Users | JustAidyn',
+      description: 'JustAidyn user management.',
+      pageKey: 'admin-users',
+      lowerNav: [
+        { labelEn: 'Admin', labelRu: 'Admin', labelKk: 'Admin', url: '/admin' },
+        { labelEn: 'Users', labelRu: 'Users', labelKk: 'Users', url: '/admin/users', active: true },
+      ],
+      eyebrow: 'Superadmin',
+      heroTitle: 'Users',
+      heroText: 'Registered JustAidyn accounts.',
+      adminUsers: users,
+    };
+  }
+
+  getAdminSectionPage(section: 'Posts' | 'Apps' | 'Games' | 'Courses'): PageModel {
+    return {
+      view: 'pages/auth',
+      title: `Admin ${section} | JustAidyn`,
+      description: `JustAidyn ${section.toLowerCase()} management.`,
+      pageKey: 'admin-section',
+      lowerNav: [
+        { labelEn: 'Admin', labelRu: 'Admin', labelKk: 'Admin', url: '/admin' },
+        { labelEn: section, labelRu: section, labelKk: section, url: `/admin/${section.toLowerCase()}`, active: true },
+      ],
+      eyebrow: 'Superadmin',
+      heroTitle: section,
+      heroText: `${section} management surface is protected and ready for editor controls.`,
+      secondaryAction: { label: 'Back to Admin', url: '/admin' },
+    };
+  }
+
+  getAdminPasswordResetRequestPage(resetUrl?: string): PageModel {
+    return {
+      view: 'pages/auth',
+      title: 'Reset Superadmin Password | JustAidyn',
+      description: 'Reset superadmin password.',
+      pageKey: 'admin-reset-request',
+      lowerNav: [{ labelEn: 'Password reset', labelRu: 'Password reset', labelKk: 'Password reset', url: '/admin/password-reset', active: true }],
+      eyebrow: 'Superadmin',
+      heroTitle: 'Reset password',
+      heroText: 'Password reset is restricted to aidyn.daulet@gmail.com.',
+      adminResetUrl: resetUrl,
+    };
+  }
+
+  getAdminPasswordResetSetPage(token: string): PageModel {
+    return {
+      view: 'pages/auth',
+      title: 'Set Superadmin Password | JustAidyn',
+      description: 'Set superadmin password.',
+      pageKey: 'admin-reset-set',
+      lowerNav: [{ labelEn: 'Password reset', labelRu: 'Password reset', labelKk: 'Password reset', url: '/admin/password-reset', active: true }],
+      eyebrow: 'Superadmin',
+      heroTitle: 'Set new password',
+      heroText: 'Use a password of at least 12 characters.',
+      content: token,
     };
   }
 
@@ -413,11 +667,88 @@ export class SiteService {
     };
   }
 
+  getPostsHubPage(platform: 'skillsminds' | 'nofacethinker', posts: PostDto[]): PageModel {
+    const isSkills = platform === 'skillsminds';
+    return {
+      lowerNav: [{ labelEn: isSkills ? 'Skills and Minds Hub' : 'no Face Thinker', labelRu: isSkills ? 'Skills and Minds Hub' : 'no Face Thinker', labelKk: isSkills ? 'Skills and Minds Hub' : 'no Face Thinker', url: `/${platform}`, active: true }],
+      view: 'pages/posts-hub',
+      title: isSkills ? 'Skills and Minds Hub | JustAidyn' : 'no Face Thinker | JustAidyn',
+      description: isSkills ? 'Free articles and posts for registered users.' : 'Exclusive posts for Thinker subscribers.',
+      pageKey: 'posts-hub',
+      heroTitle: isSkills ? 'Skills and Minds Hub' : 'no Face Thinker',
+      heroText: '',
+      platform,
+      posts,
+    };
+  }
+
+  getThinkerPaywallPage(): PageModel {
+    return {
+      lowerNav: [{ labelEn: 'no Face Thinker', labelRu: 'no Face Thinker', labelKk: 'no Face Thinker', url: '/nofacethinker', active: true }],
+      view: 'pages/posts-hub',
+      title: 'no Face Thinker | JustAidyn',
+      description: 'Exclusive posts for Thinker subscribers.',
+      pageKey: 'posts-hub',
+      heroTitle: 'no Face Thinker',
+      heroText: '',
+      platform: 'nofacethinker',
+      posts: [],
+      isPaywall: true,
+      thinkerPriceId: 'pri_01kq8ty439m33xebxp8hjy9ar9',
+    };
+  }
+
+  getPostDetailPage(post: PostDto): PageModel {
+    const platform = post.platform;
+    const isSkills = platform === 'skillsminds';
+    return {
+      lowerNav: [
+        { labelEn: isSkills ? 'Skills and Minds Hub' : 'no Face Thinker', labelRu: isSkills ? 'Skills and Minds Hub' : 'no Face Thinker', labelKk: isSkills ? 'Skills and Minds Hub' : 'no Face Thinker', url: `/${platform}` },
+        { labelEn: post.title, labelRu: post.title, labelKk: post.title, url: `/${platform}/post/${post.slug}`, active: true },
+      ],
+      view: 'pages/post-detail',
+      title: `${post.title} | JustAidyn`,
+      description: post.excerpt,
+      pageKey: 'post-detail',
+      heroTitle: post.title,
+      heroText: post.excerpt,
+      platform,
+      post,
+    };
+  }
+
+  getAdminPostsPage(posts: PostDto[]): PageModel {
+    return {
+      lowerNav: [{ labelEn: 'Admin', labelRu: 'Admin', labelKk: 'Admin', url: '/admin' }, { labelEn: 'Posts', labelRu: 'Posts', labelKk: 'Posts', url: '/admin/posts', active: true }],
+      view: 'pages/admin-posts',
+      title: 'Posts | Admin | JustAidyn',
+      description: 'Manage posts.',
+      pageKey: 'admin-posts',
+      heroTitle: 'Posts',
+      heroText: '',
+      posts,
+    };
+  }
+
+  getAdminPostFormPage(post: PostDto | null, platform: string): PageModel {
+    return {
+      lowerNav: [{ labelEn: 'Admin', labelRu: 'Admin', labelKk: 'Admin', url: '/admin' }, { labelEn: 'Posts', labelRu: 'Posts', labelKk: 'Posts', url: '/admin/posts' }, { labelEn: post ? 'Edit' : 'New', labelRu: post ? 'Edit' : 'New', labelKk: post ? 'Edit' : 'New', url: '#', active: true }],
+      view: 'pages/admin-post-form',
+      title: `${post ? 'Edit' : 'New'} Post | Admin | JustAidyn`,
+      description: 'Post form.',
+      pageKey: 'admin-post-form',
+      heroTitle: post ? 'Edit Post' : 'New Post',
+      heroText: '',
+      editPost: post,
+      postPlatform: post?.platform ?? platform,
+    };
+  }
+
   getComingSoonPage(site: Exclude<SiteKey, 'main' | 'courses'>): PageModel {
     const titles: Record<Exclude<SiteKey, 'main' | 'courses'>, string> = {
       apps: 'Apps',
-      skillsminds: 'SkillsMinds',
-      nofacethinker: 'NoFaceThinker',
+      skillsminds: 'Skills and Minds Hub',
+      nofacethinker: 'no Face Thinker',
       games: 'Games',
       shop: 'Shop',
       api: 'API',

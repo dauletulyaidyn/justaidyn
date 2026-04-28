@@ -4,12 +4,14 @@ import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { AuthService } from './auth.service';
 import { PageModel, SiteService } from './site.service';
+import { PostService } from './post.service';
 
 @Controller()
 export class SiteController {
   constructor(
     private readonly siteService: SiteService,
     private readonly authService: AuthService,
+    private readonly postService: PostService,
   ) {}
 
   @Get('/')
@@ -61,13 +63,13 @@ export class SiteController {
   }
 
   @Post('/admin/login')
-  adminLoginPost(@Req() req: Request, @Res() res: Response, @Body() body: Record<string, string>) {
+  async adminLoginPost(@Req() req: Request, @Res() res: Response, @Body() body: Record<string, string>) {
     const site = this.siteService.resolveHost(req.hostname);
     if (site !== 'main') {
       throw new NotFoundException();
     }
 
-    this.authService.loginSuperadmin(req, res, body.email, body.password);
+    await this.authService.loginSuperadmin(req, res, body.email, body.password);
     return res.redirect('/admin');
   }
 
@@ -90,8 +92,8 @@ export class SiteController {
   }
 
   @Post('/admin/password-reset/:token')
-  adminPasswordResetSetPost(@Req() req: Request, @Res() res: Response, @Param('token') token: string, @Body() body: Record<string, string>) {
-    this.authService.resetSuperadminPassword(token, body.password);
+  async adminPasswordResetSetPost(@Req() req: Request, @Res() res: Response, @Param('token') token: string, @Body() body: Record<string, string>) {
+    await this.authService.resetSuperadminPassword(token, body.password);
     return res.redirect('/admin/login');
   }
 
@@ -105,17 +107,68 @@ export class SiteController {
   }
 
   @Get('/admin/users')
-  adminUsers(@Req() req: Request, @Res() res: Response) {
-    if (!this.tryRequireSuperadmin(req, res)) {
-      return;
-    }
-
-    return res.render('pages/host-router', this.withSharedModel(this.siteService.getAdminUsersPage(this.authService.listUsersForSuperadmin(req)), req));
+  async adminUsers(@Req() req: Request, @Res() res: Response) {
+    if (!this.tryRequireSuperadmin(req, res)) return;
+    const users = await this.authService.listUsersForSuperadmin(req);
+    return res.render('pages/host-router', this.withSharedModel(this.siteService.getAdminUsersPage(users), req));
   }
 
   @Get('/admin/posts')
-  adminPosts(@Req() req: Request, @Res() res: Response) {
-    return this.renderAdminSection(req, res, 'Posts');
+  async adminPosts(@Req() req: Request, @Res() res: Response) {
+    if (!this.tryRequireSuperadmin(req, res)) return;
+    const posts = await this.postService.listAll();
+    return res.render('pages/admin-posts', this.withSharedModel(this.siteService.getAdminPostsPage(posts), req));
+  }
+
+  @Get('/admin/posts/new')
+  adminPostNew(@Req() req: Request, @Res() res: Response) {
+    if (!this.tryRequireSuperadmin(req, res)) return;
+    const platform = (req.query.platform as string) || 'skillsminds';
+    return res.render('pages/admin-post-form', this.withSharedModel(this.siteService.getAdminPostFormPage(null, platform), req));
+  }
+
+  @Post('/admin/posts/new')
+  async adminPostCreate(@Req() req: Request, @Res() res: Response, @Body() body: Record<string, string>) {
+    if (!this.tryRequireSuperadmin(req, res)) return;
+    const platform = body.platform === 'nofacethinker' ? 'nofacethinker' : 'skillsminds';
+    await this.postService.create({
+      platform,
+      title: body.title,
+      slug: body.slug,
+      excerpt: body.excerpt,
+      content: body.content,
+      coverImage: body.coverImage,
+      published: body.published === 'on',
+    });
+    return res.redirect('/admin/posts');
+  }
+
+  @Get('/admin/posts/:id/edit')
+  async adminPostEdit(@Req() req: Request, @Res() res: Response, @Param('id') id: string) {
+    if (!this.tryRequireSuperadmin(req, res)) return;
+    const post = await this.postService.getById(id);
+    return res.render('pages/admin-post-form', this.withSharedModel(this.siteService.getAdminPostFormPage(post, post.platform), req));
+  }
+
+  @Post('/admin/posts/:id/edit')
+  async adminPostUpdate(@Req() req: Request, @Res() res: Response, @Param('id') id: string, @Body() body: Record<string, string>) {
+    if (!this.tryRequireSuperadmin(req, res)) return;
+    await this.postService.update(id, {
+      title: body.title,
+      slug: body.slug,
+      excerpt: body.excerpt,
+      content: body.content,
+      coverImage: body.coverImage,
+      published: body.published === 'on',
+    });
+    return res.redirect('/admin/posts');
+  }
+
+  @Post('/admin/posts/:id/delete')
+  async adminPostDelete(@Req() req: Request, @Res() res: Response, @Param('id') id: string) {
+    if (!this.tryRequireSuperadmin(req, res)) return;
+    await this.postService.delete(id);
+    return res.redirect('/admin/posts');
   }
 
   @Get('/admin/apps')
@@ -144,7 +197,7 @@ export class SiteController {
   }
 
   @Get('/login/google')
-  loginGoogle(@Req() req: Request, @Res() res: Response) {
+  async loginGoogle(@Req() req: Request, @Res() res: Response) {
     const site = this.siteService.resolveHost(req.hostname);
     if (site !== 'main') {
       throw new NotFoundException();
@@ -155,7 +208,7 @@ export class SiteController {
       return res.redirect(desktopAuthUrl);
     }
 
-    const authUrl = this.authService.buildGoogleWebAuthUrl(req, 'login');
+    const authUrl = await this.authService.buildGoogleWebAuthUrl(req, 'login');
     this.authService.setOAuthStateCookie(res, authUrl, req);
     return res.redirect(authUrl);
   }
@@ -191,13 +244,13 @@ export class SiteController {
   }
 
   @Post('/profile/edit')
-  profileUpdate(@Req() req: Request, @Res() res: Response, @Body() body: Record<string, string>) {
+  async profileUpdate(@Req() req: Request, @Res() res: Response, @Body() body: Record<string, string>) {
     const site = this.siteService.resolveHost(req.hostname);
     if (site !== 'main') {
       throw new NotFoundException();
     }
 
-    this.authService.updateCurrentUserProfile(req, {
+    await this.authService.updateCurrentUserProfile(req, {
       firstName: body.firstName,
       lastName: body.lastName,
       profileTitle: body.profileTitle,
@@ -244,8 +297,8 @@ export class SiteController {
   }
 
   @Get('/logout')
-  logout(@Req() req: Request, @Res() res: Response) {
-    this.authService.logout(req, res);
+  async logout(@Req() req: Request, @Res() res: Response) {
+    await this.authService.logout(req, res);
     return res.redirect('/');
   }
 
@@ -274,8 +327,19 @@ export class SiteController {
   }
 
   @Get('/skillsminds')
-  skillsmindsProject(@Req() req: Request, @Res() res: Response) {
-    return this.renderStaticHtmlFile(req, res, join(process.cwd(), 'articles', 'index.html'));
+  async skillsmindsProject(@Req() req: Request, @Res() res: Response) {
+    const user = this.authService.getCurrentUser(req);
+    if (!user) return res.redirect('/login');
+    const posts = await this.postService.listPublished('skillsminds');
+    return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getPostsHubPage('skillsminds', posts), req));
+  }
+
+  @Get('/skillsminds/post/:slug')
+  async skillsmindsPost(@Req() req: Request, @Res() res: Response, @Param('slug') slug: string) {
+    const user = this.authService.getCurrentUser(req);
+    if (!user) return res.redirect('/login');
+    const post = await this.postService.getBySlug('skillsminds', slug);
+    return res.render('pages/post-detail', this.withSharedModel(this.siteService.getPostDetailPage(post), req));
   }
 
   @Get('/programming/:file')
@@ -296,9 +360,25 @@ export class SiteController {
   }
 
   @Get('/nofacethinker')
-  @Render('pages/host-router')
-  nofacethinkerProject(@Req() req: Request) {
-    return this.withSharedModel(this.siteService.getComingSoonPage('nofacethinker'), req);
+  async nofacethinkerProject(@Req() req: Request, @Res() res: Response) {
+    const user = this.authService.getCurrentUser(req);
+    if (!user) return res.redirect('/login');
+    const isSubscribed = user.thinkerSubscriptionStatus === 'active' || user.thinkerSubscriptionStatus === 'trialing';
+    if (!isSubscribed) {
+      return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getThinkerPaywallPage(), req));
+    }
+    const posts = await this.postService.listPublished('nofacethinker');
+    return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getPostsHubPage('nofacethinker', posts), req));
+  }
+
+  @Get('/nofacethinker/post/:slug')
+  async nofacethinkerPost(@Req() req: Request, @Res() res: Response, @Param('slug') slug: string) {
+    const user = this.authService.getCurrentUser(req);
+    if (!user) return res.redirect('/login');
+    const isSubscribed = user.thinkerSubscriptionStatus === 'active' || user.thinkerSubscriptionStatus === 'trialing';
+    if (!isSubscribed) return res.redirect('/nofacethinker');
+    const post = await this.postService.getBySlug('nofacethinker', slug);
+    return res.render('pages/post-detail', this.withSharedModel(this.siteService.getPostDetailPage(post), req));
   }
 
   @Get('/courses')
@@ -436,8 +516,22 @@ export class SiteController {
         role: user.role,
         paddleSubscriptionStatus: user.paddleSubscriptionStatus ?? null,
         paddleSubscribedAt: user.paddleSubscribedAt ?? null,
+        thinkerSubscriptionStatus: user.thinkerSubscriptionStatus ?? null,
+        thinkerSubscribedAt: user.thinkerSubscribedAt ?? null,
       },
     };
+  }
+
+  @Post('/api/paddle/thinker/verify-checkout')
+  async paddleThinkerVerifyCheckout(@Req() req: Request) {
+    const user = await this.authService.verifyThinkerCheckoutAndSave(req);
+    return { subscriptionStatus: user.thinkerSubscriptionStatus, subscribedAt: user.thinkerSubscribedAt };
+  }
+
+  @Post('/api/paddle/thinker/cancel')
+  async paddleThinkerCancel(@Req() req: Request) {
+    await this.authService.cancelThinkerSubscription(req);
+    return { canceled: true };
   }
 
   @Post('/api/paddle/webhook')

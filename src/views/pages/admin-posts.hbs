@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  <link rel="icon" type="image/png" href="/favicon.png?v=20260331c">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/templatemo-first-portfolio-style.css" rel="stylesheet">
+  <link href="/static/styles/legal.css" rel="stylesheet">
+  <style>
+    body { background: #f0f4f8; }
+    .admin-shell { max-width: 1000px; margin: 0 auto; padding: 110px 24px 72px; }
+    .admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+    .admin-header h1 { font-size: 1.8rem; margin: 0; }
+    .btn-new-post { display: inline-flex; align-items: center; gap: 7px; padding: 10px 20px; border-radius: 8px; background: #535da1; color: #fff; font-weight: 700; text-decoration: none; font-size: 0.9rem; }
+    .btn-new-post:hover { background: #3d4680; color: #fff; }
+    .posts-table { background: #fff; border-radius: 12px; border: 1px solid rgba(24,35,44,0.1); overflow: hidden; }
+    .posts-table table { width: 100%; border-collapse: collapse; }
+    .posts-table th { background: #f5f7fa; padding: 12px 16px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: #5e6c79; font-weight: 700; text-align: left; }
+    .posts-table td { padding: 14px 16px; border-top: 1px solid #f0f2f8; font-size: 0.9rem; vertical-align: middle; }
+    .posts-table tr:hover td { background: #fafbff; }
+    .badge-platform { font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+    .badge-skillsminds { background: rgba(83,93,161,0.1); color: #535da1; }
+    .badge-thinker { background: rgba(20,183,138,0.1); color: #0e8a63; }
+    .badge-published { background: rgba(20,183,138,0.12); color: #0e8a63; font-size: 0.72rem; padding: 2px 8px; border-radius: 99px; }
+    .badge-draft { background: rgba(24,35,44,0.08); color: #8a96a0; font-size: 0.72rem; padding: 2px 8px; border-radius: 99px; }
+    .post-actions { display: flex; gap: 8px; }
+    .btn-edit { font-size: 0.8rem; padding: 4px 12px; border-radius: 6px; background: rgba(83,93,161,0.1); color: #535da1; border: none; text-decoration: none; font-weight: 600; }
+    .btn-edit:hover { background: rgba(83,93,161,0.2); color: #535da1; }
+    .btn-del { font-size: 0.8rem; padding: 4px 12px; border-radius: 6px; background: rgba(192,57,43,0.08); color: #c0392b; border: none; font-weight: 600; cursor: pointer; }
+    .btn-del:hover { background: rgba(192,57,43,0.15); }
+    .filter-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .filter-tab { padding: 6px 16px; border-radius: 99px; font-size: 0.82rem; font-weight: 600; cursor: pointer; border: 1.5px solid transparent; background: rgba(255,255,255,0.8); color: #5e6c79; }
+    .filter-tab.active, .filter-tab:hover { border-color: #535da1; color: #535da1; }
+    .empty-state { text-align: center; padding: 48px; color: #8a96a0; }
+    @media (max-width: 991px) { .admin-shell { padding-top: 205px; } }
+    @media (max-width: 640px) { .posts-table th:nth-child(3), .posts-table td:nth-child(3) { display: none; } }
+  </style>
+</head>
+<body>
+  {{> header}}
+
+  <div class="admin-shell">
+    <div class="admin-header">
+      <div>
+        <a href="/admin" style="font-size:0.82rem;color:#535da1;text-decoration:none;font-weight:600"><i class="bi bi-arrow-left"></i> Admin</a>
+        <h1 style="margin-top:6px">Posts</h1>
+      </div>
+      <div style="display:flex;gap:10px">
+        <a class="btn-new-post" href="/admin/posts/new?platform=skillsminds"><i class="bi bi-plus-lg"></i> Skills & Minds</a>
+        <a class="btn-new-post" href="/admin/posts/new?platform=nofacethinker" style="background:#0e8a63"><i class="bi bi-plus-lg"></i> Thinker</a>
+      </div>
+    </div>
+
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="filterPosts('all')">All</button>
+      <button class="filter-tab" onclick="filterPosts('skillsminds')">Skills & Minds</button>
+      <button class="filter-tab" onclick="filterPosts('nofacethinker')">Thinker</button>
+      <button class="filter-tab" onclick="filterPosts('published')">Published</button>
+      <button class="filter-tab" onclick="filterPosts('draft')">Drafts</button>
+    </div>
+
+    <div class="posts-table">
+      {{#if posts.length}}
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Platform</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="posts-tbody">
+          {{#each posts}}
+          <tr data-platform="{{this.platform}}" data-published="{{this.published}}">
+            <td style="font-weight:600;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{this.title}}</td>
+            <td><span class="badge-platform {{#if (eq this.platform 'skillsminds')}}badge-skillsminds{{else}}badge-thinker{{/if}}">{{#if (eq this.platform 'skillsminds')}}Skills & Minds{{else}}Thinker{{/if}}</span></td>
+            <td>{{#if this.published}}<span class="badge-published">Published</span>{{else}}<span class="badge-draft">Draft</span>{{/if}}</td>
+            <td style="color:#8a96a0;font-size:0.82rem">{{this.createdAt}}</td>
+            <td>
+              <div class="post-actions">
+                <a class="btn-edit" href="/admin/posts/{{this.id}}/edit"><i class="bi bi-pencil"></i> Edit</a>
+                <form method="post" action="/admin/posts/{{this.id}}/delete" style="display:inline" onsubmit="return confirm('Delete this post?')">
+                  <button class="btn-del" type="submit"><i class="bi bi-trash"></i> Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+      {{else}}
+      <div class="empty-state"><i class="bi bi-file-earmark-text" style="font-size:2rem;display:block;margin-bottom:10px"></i>No posts yet. Create the first one.</div>
+      {{/if}}
+    </div>
+  </div>
+
+  {{> footer}}
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/jquery.sticky.js"></script>
+  <script src="/js/custom.js?v=20260428-profile-i18n"></script>
+  <script>
+    function filterPosts(filter) {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      document.querySelectorAll('#posts-tbody tr').forEach(row => {
+        const platform = row.dataset.platform;
+        const published = row.dataset.published === 'true';
+        if (filter === 'all') { row.style.display = ''; return; }
+        if (filter === 'skillsminds') { row.style.display = platform === 'skillsminds' ? '' : 'none'; return; }
+        if (filter === 'nofacethinker') { row.style.display = platform === 'nofacethinker' ? '' : 'none'; return; }
+        if (filter === 'published') { row.style.display = published ? '' : 'none'; return; }
+        if (filter === 'draft') { row.style.display = !published ? '' : 'none'; return; }
+      });
+    }
+  </script>
+</body>
+</html>

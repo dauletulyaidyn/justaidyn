@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  <meta name="description" content="{{description}}">
+  <link rel="icon" type="image/png" href="/favicon.png?v=20260331c">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/templatemo-first-portfolio-style.css" rel="stylesheet">
+  <link href="/static/styles/legal.css" rel="stylesheet">
+  <style>
+    body { background: linear-gradient(rgba(240,242,250,0.92), rgba(240,242,250,0.97)), url("/images/portrait-happy-excited-man-holding-laptop-computer.png") center / cover no-repeat fixed; }
+    .post-shell { max-width: 780px; margin: 0 auto; padding: 110px 24px 72px; }
+    .post-back { display: inline-flex; align-items: center; gap: 6px; font-size: 0.88rem; color: #535da1; text-decoration: none; margin-bottom: 28px; font-weight: 600; }
+    .post-back:hover { color: #3d4680; }
+    .post-article { background: rgba(255,255,255,0.95); border: 1px solid rgba(24,35,44,0.1); border-radius: 14px; padding: 48px 52px; }
+    .post-platform-badge { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #535da1; background: rgba(83,93,161,0.1); border-radius: 99px; padding: 2px 10px; display: inline-block; margin-bottom: 16px; }
+    .post-article h1 { font-size: clamp(1.6rem,3.5vw,2.2rem); margin-bottom: 12px; line-height: 1.2; }
+    .post-meta { font-size: 0.8rem; color: #8a96a0; margin-bottom: 32px; }
+    .post-content { color: #2d3748; line-height: 1.8; font-size: 1rem; }
+    .post-content h2 { font-size: 1.4rem; margin-top: 2rem; }
+    .post-content h3 { font-size: 1.15rem; margin-top: 1.5rem; }
+    .post-content p { margin-bottom: 1.1em; }
+    .post-content ul, .post-content ol { padding-left: 1.5rem; margin-bottom: 1.1em; }
+    .post-content blockquote { border-left: 3px solid #535da1; padding-left: 1rem; color: #5e6c79; margin: 1.5em 0; font-style: italic; }
+    .post-content pre { background: #f5f7fa; padding: 16px; border-radius: 8px; overflow-x: auto; }
+    .post-content code { font-family: monospace; font-size: 0.9em; background: #f0f2f8; padding: 2px 5px; border-radius: 4px; }
+    .post-content pre code { background: none; padding: 0; }
+    .post-edit-link { font-size: 0.8rem; color: #8a96a0; text-decoration: none; margin-left: 12px; }
+    .post-edit-link:hover { color: #535da1; }
+    @media (max-width: 991px) { .post-shell { padding-top: 205px; } }
+    @media (max-width: 600px) { .post-article { padding: 28px 20px; } }
+  </style>
+</head>
+<body>
+  {{> header}}
+
+  <div class="post-shell">
+    <a class="post-back" href="/{{platform}}">
+      <i class="bi bi-arrow-left"></i>
+      {{#if (eq platform 'skillsminds')}}Skills and Minds Hub{{else}}no Face Thinker{{/if}}
+    </a>
+
+    <article class="post-article">
+      <span class="post-platform-badge">{{#if (eq platform 'skillsminds')}}Skills & Minds{{else}}no Face Thinker{{/if}}</span>
+      {{#if (eq currentUser.role 'superadmin')}}
+        <a class="post-edit-link" href="/admin/posts/{{post.id}}/edit"><i class="bi bi-pencil"></i> Edit</a>
+      {{/if}}
+      <h1>{{post.title}}</h1>
+      <div class="post-meta">{{post.publishedAt}}</div>
+      <div class="post-content">{{{post.content}}}</div>
+    </article>
+  </div>
+
+  {{> footer}}
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/jquery.sticky.js"></script>
+  <script src="/js/custom.js?v=20260428-profile-i18n"></script>
+</body>
+</html>

@@ -18,10 +18,12 @@ const fs_1 = require("fs");
 const path_1 = require("path");
 const auth_service_1 = require("./auth.service");
 const site_service_1 = require("./site.service");
+const post_service_1 = require("./post.service");
 let SiteController = class SiteController {
-    constructor(siteService, authService) {
+    constructor(siteService, authService, postService) {
         this.siteService = siteService;
         this.authService = authService;
+        this.postService = postService;
     }
     root(req, res) {
         const site = this.siteService.resolveHost(req.hostname);
@@ -54,12 +56,12 @@ let SiteController = class SiteController {
         }
         return this.withSharedModel(this.siteService.getAdminLoginPage(), req);
     }
-    adminLoginPost(req, res, body) {
+    async adminLoginPost(req, res, body) {
         const site = this.siteService.resolveHost(req.hostname);
         if (site !== 'main') {
             throw new common_1.NotFoundException();
         }
-        this.authService.loginSuperadmin(req, res, body.email, body.password);
+        await this.authService.loginSuperadmin(req, res, body.email, body.password);
         return res.redirect('/admin');
     }
     adminPasswordReset(req) {
@@ -72,8 +74,8 @@ let SiteController = class SiteController {
     adminPasswordResetSet(req, token) {
         return this.withSharedModel(this.siteService.getAdminPasswordResetSetPage(token), req);
     }
-    adminPasswordResetSetPost(req, res, token, body) {
-        this.authService.resetSuperadminPassword(token, body.password);
+    async adminPasswordResetSetPost(req, res, token, body) {
+        await this.authService.resetSuperadminPassword(token, body.password);
         return res.redirect('/admin/login');
     }
     adminDashboard(req, res) {
@@ -82,14 +84,63 @@ let SiteController = class SiteController {
         }
         return res.render('pages/host-router', this.withSharedModel(this.siteService.getAdminDashboardPage(), req));
     }
-    adminUsers(req, res) {
-        if (!this.tryRequireSuperadmin(req, res)) {
+    async adminUsers(req, res) {
+        if (!this.tryRequireSuperadmin(req, res))
             return;
-        }
-        return res.render('pages/host-router', this.withSharedModel(this.siteService.getAdminUsersPage(this.authService.listUsersForSuperadmin(req)), req));
+        const users = await this.authService.listUsersForSuperadmin(req);
+        return res.render('pages/host-router', this.withSharedModel(this.siteService.getAdminUsersPage(users), req));
     }
-    adminPosts(req, res) {
-        return this.renderAdminSection(req, res, 'Posts');
+    async adminPosts(req, res) {
+        if (!this.tryRequireSuperadmin(req, res))
+            return;
+        const posts = await this.postService.listAll();
+        return res.render('pages/admin-posts', this.withSharedModel(this.siteService.getAdminPostsPage(posts), req));
+    }
+    adminPostNew(req, res) {
+        if (!this.tryRequireSuperadmin(req, res))
+            return;
+        const platform = req.query.platform || 'skillsminds';
+        return res.render('pages/admin-post-form', this.withSharedModel(this.siteService.getAdminPostFormPage(null, platform), req));
+    }
+    async adminPostCreate(req, res, body) {
+        if (!this.tryRequireSuperadmin(req, res))
+            return;
+        const platform = body.platform === 'nofacethinker' ? 'nofacethinker' : 'skillsminds';
+        await this.postService.create({
+            platform,
+            title: body.title,
+            slug: body.slug,
+            excerpt: body.excerpt,
+            content: body.content,
+            coverImage: body.coverImage,
+            published: body.published === 'on',
+        });
+        return res.redirect('/admin/posts');
+    }
+    async adminPostEdit(req, res, id) {
+        if (!this.tryRequireSuperadmin(req, res))
+            return;
+        const post = await this.postService.getById(id);
+        return res.render('pages/admin-post-form', this.withSharedModel(this.siteService.getAdminPostFormPage(post, post.platform), req));
+    }
+    async adminPostUpdate(req, res, id, body) {
+        if (!this.tryRequireSuperadmin(req, res))
+            return;
+        await this.postService.update(id, {
+            title: body.title,
+            slug: body.slug,
+            excerpt: body.excerpt,
+            content: body.content,
+            coverImage: body.coverImage,
+            published: body.published === 'on',
+        });
+        return res.redirect('/admin/posts');
+    }
+    async adminPostDelete(req, res, id) {
+        if (!this.tryRequireSuperadmin(req, res))
+            return;
+        await this.postService.delete(id);
+        return res.redirect('/admin/posts');
     }
     adminApps(req, res) {
         return this.renderAdminSection(req, res, 'Apps');
@@ -107,7 +158,7 @@ let SiteController = class SiteController {
         }
         return res.redirect('/login');
     }
-    loginGoogle(req, res) {
+    async loginGoogle(req, res) {
         const site = this.siteService.resolveHost(req.hostname);
         if (site !== 'main') {
             throw new common_1.NotFoundException();
@@ -116,7 +167,7 @@ let SiteController = class SiteController {
         if (desktopAuthUrl) {
             return res.redirect(desktopAuthUrl);
         }
-        const authUrl = this.authService.buildGoogleWebAuthUrl(req, 'login');
+        const authUrl = await this.authService.buildGoogleWebAuthUrl(req, 'login');
         this.authService.setOAuthStateCookie(res, authUrl, req);
         return res.redirect(authUrl);
     }
@@ -142,12 +193,12 @@ let SiteController = class SiteController {
         }
         return res.render('pages/host-router', this.withSharedModel(this.siteService.getProfileEditPage(user), req));
     }
-    profileUpdate(req, res, body) {
+    async profileUpdate(req, res, body) {
         const site = this.siteService.resolveHost(req.hostname);
         if (site !== 'main') {
             throw new common_1.NotFoundException();
         }
-        this.authService.updateCurrentUserProfile(req, {
+        await this.authService.updateCurrentUserProfile(req, {
             firstName: body.firstName,
             lastName: body.lastName,
             profileTitle: body.profileTitle,
@@ -182,8 +233,8 @@ let SiteController = class SiteController {
         await this.authService.handleGoogleCallback(req, res);
         return res.redirect('/profile');
     }
-    logout(req, res) {
-        this.authService.logout(req, res);
+    async logout(req, res) {
+        await this.authService.logout(req, res);
         return res.redirect('/');
     }
     projectAlias(req, res) {
@@ -207,8 +258,19 @@ let SiteController = class SiteController {
                 throw new common_1.NotFoundException();
         }
     }
-    skillsmindsProject(req, res) {
-        return this.renderStaticHtmlFile(req, res, (0, path_1.join)(process.cwd(), 'articles', 'index.html'));
+    async skillsmindsProject(req, res) {
+        const user = this.authService.getCurrentUser(req);
+        if (!user)
+            return res.redirect('/login');
+        const posts = await this.postService.listPublished('skillsminds');
+        return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getPostsHubPage('skillsminds', posts), req));
+    }
+    async skillsmindsPost(req, res, slug) {
+        const user = this.authService.getCurrentUser(req);
+        if (!user)
+            return res.redirect('/login');
+        const post = await this.postService.getBySlug('skillsminds', slug);
+        return res.render('pages/post-detail', this.withSharedModel(this.siteService.getPostDetailPage(post), req));
     }
     programmingArticleShortcut(req, res) {
         const rawFile = req.params.file;
@@ -222,8 +284,26 @@ let SiteController = class SiteController {
         }
         return res.redirect(301, `/articles/programming/${file}`);
     }
-    nofacethinkerProject(req) {
-        return this.withSharedModel(this.siteService.getComingSoonPage('nofacethinker'), req);
+    async nofacethinkerProject(req, res) {
+        const user = this.authService.getCurrentUser(req);
+        if (!user)
+            return res.redirect('/login');
+        const isSubscribed = user.thinkerSubscriptionStatus === 'active' || user.thinkerSubscriptionStatus === 'trialing';
+        if (!isSubscribed) {
+            return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getThinkerPaywallPage(), req));
+        }
+        const posts = await this.postService.listPublished('nofacethinker');
+        return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getPostsHubPage('nofacethinker', posts), req));
+    }
+    async nofacethinkerPost(req, res, slug) {
+        const user = this.authService.getCurrentUser(req);
+        if (!user)
+            return res.redirect('/login');
+        const isSubscribed = user.thinkerSubscriptionStatus === 'active' || user.thinkerSubscriptionStatus === 'trialing';
+        if (!isSubscribed)
+            return res.redirect('/nofacethinker');
+        const post = await this.postService.getBySlug('nofacethinker', slug);
+        return res.render('pages/post-detail', this.withSharedModel(this.siteService.getPostDetailPage(post), req));
     }
     coursesProject(req, res) {
         return res.redirect('/courses/ai-agents-course.html');
@@ -310,8 +390,18 @@ let SiteController = class SiteController {
                 role: user.role,
                 paddleSubscriptionStatus: user.paddleSubscriptionStatus ?? null,
                 paddleSubscribedAt: user.paddleSubscribedAt ?? null,
+                thinkerSubscriptionStatus: user.thinkerSubscriptionStatus ?? null,
+                thinkerSubscribedAt: user.thinkerSubscribedAt ?? null,
             },
         };
+    }
+    async paddleThinkerVerifyCheckout(req) {
+        const user = await this.authService.verifyThinkerCheckoutAndSave(req);
+        return { subscriptionStatus: user.thinkerSubscriptionStatus, subscribedAt: user.thinkerSubscribedAt };
+    }
+    async paddleThinkerCancel(req) {
+        await this.authService.cancelThinkerSubscription(req);
+        return { canceled: true };
     }
     paddleWebhook(body, res) {
         try {
@@ -596,7 +686,7 @@ __decorate([
     __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], SiteController.prototype, "adminLoginPost", null);
 __decorate([
     (0, common_1.Get)('/admin/password-reset'),
@@ -631,7 +721,7 @@ __decorate([
     __param(3, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object, String, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], SiteController.prototype, "adminPasswordResetSetPost", null);
 __decorate([
     (0, common_1.Get)('/admin'),
@@ -647,7 +737,7 @@ __decorate([
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], SiteController.prototype, "adminUsers", null);
 __decorate([
     (0, common_1.Get)('/admin/posts'),
@@ -655,8 +745,53 @@ __decorate([
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], SiteController.prototype, "adminPosts", null);
+__decorate([
+    (0, common_1.Get)('/admin/posts/new'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "adminPostNew", null);
+__decorate([
+    (0, common_1.Post)('/admin/posts/new'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "adminPostCreate", null);
+__decorate([
+    (0, common_1.Get)('/admin/posts/:id/edit'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, String]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "adminPostEdit", null);
+__decorate([
+    (0, common_1.Post)('/admin/posts/:id/edit'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Param)('id')),
+    __param(3, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, String, Object]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "adminPostUpdate", null);
+__decorate([
+    (0, common_1.Post)('/admin/posts/:id/delete'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, String]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "adminPostDelete", null);
 __decorate([
     (0, common_1.Get)('/admin/apps'),
     __param(0, (0, common_1.Req)()),
@@ -695,7 +830,7 @@ __decorate([
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], SiteController.prototype, "loginGoogle", null);
 __decorate([
     (0, common_1.Get)('/profile'),
@@ -720,7 +855,7 @@ __decorate([
     __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], SiteController.prototype, "profileUpdate", null);
 __decorate([
     (0, common_1.Post)('/profile/delete'),
@@ -752,7 +887,7 @@ __decorate([
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], SiteController.prototype, "logout", null);
 __decorate([
     (0, common_1.Get)('/p/:project'),
@@ -768,8 +903,17 @@ __decorate([
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], SiteController.prototype, "skillsmindsProject", null);
+__decorate([
+    (0, common_1.Get)('/skillsminds/post/:slug'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Param)('slug')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, String]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "skillsmindsPost", null);
 __decorate([
     (0, common_1.Get)('/programming/:file'),
     __param(0, (0, common_1.Req)()),
@@ -780,12 +924,21 @@ __decorate([
 ], SiteController.prototype, "programmingArticleShortcut", null);
 __decorate([
     (0, common_1.Get)('/nofacethinker'),
-    (0, common_1.Render)('pages/host-router'),
     __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
 ], SiteController.prototype, "nofacethinkerProject", null);
+__decorate([
+    (0, common_1.Get)('/nofacethinker/post/:slug'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Param)('slug')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, String]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "nofacethinkerPost", null);
 __decorate([
     (0, common_1.Get)('/courses'),
     __param(0, (0, common_1.Req)()),
@@ -928,6 +1081,20 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "apiMe", null);
 __decorate([
+    (0, common_1.Post)('/api/paddle/thinker/verify-checkout'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "paddleThinkerVerifyCheckout", null);
+__decorate([
+    (0, common_1.Post)('/api/paddle/thinker/cancel'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "paddleThinkerCancel", null);
+__decorate([
     (0, common_1.Post)('/api/paddle/webhook'),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)()),
@@ -990,5 +1157,6 @@ __decorate([
 exports.SiteController = SiteController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [site_service_1.SiteService,
-        auth_service_1.AuthService])
+        auth_service_1.AuthService,
+        post_service_1.PostService])
 ], SiteController);

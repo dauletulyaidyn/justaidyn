@@ -11,6 +11,7 @@ const common_1 = require("@nestjs/common");
 const serve_static_1 = require("@nestjs/serve-static");
 const path_1 = require("path");
 const site_module_1 = require("./site/site.module");
+const prisma_service_1 = require("./prisma.service");
 const rootPath = process.cwd();
 let AppModule = class AppModule {
 };
@@ -21,5 +22,7 @@ exports.AppModule = AppModule = __decorate([
             serve_static_1.ServeStaticModule.forRoot({ rootPath: (0, path_1.join)(rootPath, 'public'), serveRoot: '/static' }, { rootPath: (0, path_1.join)(rootPath, 'css'), serveRoot: '/css' }, { rootPath: (0, path_1.join)(rootPath, 'js'), serveRoot: '/js' }, { rootPath: (0, path_1.join)(rootPath, 'images'), serveRoot: '/images' }, { rootPath: (0, path_1.join)(rootPath, 'fonts'), serveRoot: '/fonts' }, { rootPath: (0, path_1.join)(rootPath, 'downloads'), serveRoot: '/downloads' }, { rootPath: (0, path_1.join)(rootPath, 'data'), serveRoot: '/data' }, { rootPath: (0, path_1.join)(rootPath, 'articles'), serveRoot: '/articles' }),
             site_module_1.SiteModule,
         ],
+        providers: [prisma_service_1.PrismaService],
+        exports: [prisma_service_1.PrismaService],
     })
 ], AppModule);

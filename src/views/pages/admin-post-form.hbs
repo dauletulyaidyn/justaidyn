@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  <link rel="icon" type="image/png" href="/favicon.png?v=20260331c">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/templatemo-first-portfolio-style.css" rel="stylesheet">
+  <link href="/static/styles/legal.css" rel="stylesheet">
+  <style>
+    body { background: #f0f4f8; }
+    .form-shell { max-width: 860px; margin: 0 auto; padding: 110px 24px 72px; }
+    .form-card { background: #fff; border-radius: 14px; border: 1px solid rgba(24,35,44,0.1); padding: 40px 48px; }
+    .form-card h1 { font-size: 1.6rem; margin-bottom: 28px; }
+    .form-label { font-weight: 600; font-size: 0.88rem; color: #18232c; margin-bottom: 6px; }
+    .form-control, .form-select { border-radius: 8px; border: 1.5px solid rgba(24,35,44,0.15); padding: 10px 14px; font-size: 0.92rem; }
+    .form-control:focus, .form-select:focus { border-color: #535da1; box-shadow: 0 0 0 3px rgba(83,93,161,0.12); }
+    textarea.form-control { min-height: 380px; font-family: 'Fira Code', 'Consolas', monospace; font-size: 0.87rem; }
+    .form-actions { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+    .btn-save { padding: 11px 28px; border-radius: 8px; background: #535da1; color: #fff; font-weight: 700; border: none; cursor: pointer; }
+    .btn-save:hover { background: #3d4680; }
+    .btn-cancel { padding: 11px 22px; border-radius: 8px; background: transparent; color: #535da1; font-weight: 700; border: 1.5px solid #535da1; text-decoration: none; display: inline-flex; align-items: center; }
+    .btn-cancel:hover { background: rgba(83,93,161,0.07); color: #535da1; }
+    .form-hint { font-size: 0.78rem; color: #8a96a0; margin-top: 4px; }
+    .slug-auto { font-size: 0.78rem; color: #535da1; cursor: pointer; text-decoration: underline; }
+    @media (max-width: 991px) { .form-shell { padding-top: 205px; } }
+    @media (max-width: 600px) { .form-card { padding: 24px 18px; } }
+  </style>
+</head>
+<body>
+  {{> header}}
+
+  <div class="form-shell">
+    <a href="/admin/posts" style="font-size:0.82rem;color:#535da1;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:5px;margin-bottom:20px">
+      <i class="bi bi-arrow-left"></i> Back to Posts
+    </a>
+
+    <div class="form-card">
+      <h1>{{#if editPost}}Edit Post{{else}}New Post{{/if}}</h1>
+
+      <form method="post" action="{{#if editPost}}/admin/posts/{{editPost.id}}/edit{{else}}/admin/posts/new{{/if}}">
+        <div class="mb-4">
+          <label class="form-label">Platform</label>
+          <select class="form-select" name="platform" {{#if editPost}}disabled{{/if}}>
+            <option value="skillsminds" {{#if (eq postPlatform 'skillsminds')}}selected{{/if}}>Skills and Minds Hub</option>
+            <option value="nofacethinker" {{#if (eq postPlatform 'nofacethinker')}}selected{{/if}}>no Face Thinker</option>
+          </select>
+          {{#if editPost}}<input type="hidden" name="platform" value="{{editPost.platform}}">{{/if}}
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Title</label>
+          <input class="form-control" name="title" id="post-title" value="{{#if editPost}}{{editPost.title}}{{/if}}" required maxlength="200" oninput="autoSlug()">
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Slug <span class="slug-auto" onclick="generateSlug()">auto</span></label>
+          <input class="form-control" name="slug" id="post-slug" value="{{#if editPost}}{{editPost.slug}}{{/if}}" required maxlength="100" pattern="[a-z0-9\-]+">
+          <div class="form-hint">URL: /{{postPlatform}}/post/<span id="slug-preview">{{#if editPost}}{{editPost.slug}}{{/if}}</span></div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Excerpt</label>
+          <input class="form-control" name="excerpt" value="{{#if editPost}}{{editPost.excerpt}}{{/if}}" maxlength="300" placeholder="Short description shown in the list">
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Cover image URL (optional)</label>
+          <input class="form-control" name="coverImage" value="{{#if editPost}}{{editPost.coverImage}}{{/if}}" placeholder="/images/your-image.png">
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Content (HTML)</label>
+          <textarea class="form-control" name="content" placeholder="<p>Your content here...</p>">{{#if editPost}}{{editPost.content}}{{/if}}</textarea>
+          <div class="form-hint">HTML is supported. Use &lt;h2&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;code&gt;, &lt;blockquote&gt; etc.</div>
+        </div>
+
+        <div class="mb-4">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="published" id="published" {{#if editPost}}{{#if editPost.published}}checked{{/if}}{{/if}}>
+            <label class="form-check-label" for="published" style="font-weight:600">Publish immediately</label>
+          </div>
+          <div class="form-hint">Unpublished posts are only visible to superadmin.</div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-save" type="submit">
+            <i class="bi bi-check-lg"></i> {{#if editPost}}Save changes{{else}}Create post{{/if}}
+          </button>
+          <a class="btn-cancel" href="/admin/posts">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {{> footer}}
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/jquery.sticky.js"></script>
+  <script src="/js/custom.js?v=20260428-profile-i18n"></script>
+  <script>
+    var autoSlugEnabled = {{#if editPost}}false{{else}}true{{/if}};
+    function slugify(str) {
+      return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80);
+    }
+    function autoSlug() {
+      if (!autoSlugEnabled) return;
+      var slug = slugify(document.getElementById('post-title').value);
+      document.getElementById('post-slug').value = slug;
+      document.getElementById('slug-preview').textContent = slug;
+    }
+    function generateSlug() {
+      autoSlugEnabled = true;
+      autoSlug();
+      autoSlugEnabled = false;
+    }
+    document.getElementById('post-slug').addEventListener('input', function() {
+      autoSlugEnabled = false;
+      document.getElementById('slug-preview').textContent = this.value;
+    });
+  </script>
+</body>
+</html>
