@@ -14,6 +14,7 @@ async function bootstrap() {
   app.setViewEngine('hbs');
   hbs.registerPartials(join(viewsPath, 'partials'));
   hbs.registerHelper('eq', (left: unknown, right: unknown) => left === right);
+  hbs.registerHelper('or', (...args: unknown[]) => args.slice(0, -1).some(Boolean));
 
   const root = process.cwd();
   app.use('/css', express.static(join(root, 'css')));

@@ -80,6 +80,190 @@
         </div>
       </section>
       {{else}}
+      {{#if (eq pageKey 'admin-login')}}
+      <section class="platform-auth-section" id="section_1">
+        <div class="container">
+          <div class="platform-auth-shell">
+            <div class="platform-auth-copy">
+              {{#if eyebrow}}<div class="platform-eyebrow">{{eyebrow}}</div>{{/if}}
+              <h1 class="platform-auth-title">{{heroTitle}}</h1>
+              <p class="platform-auth-text">{{heroText}}</p>
+            </div>
+            <form class="platform-card" method="post" action="/admin/login">
+              <h2>Superadmin</h2>
+              <div class="mb-3">
+                <label class="form-label" for="adminEmail">Email</label>
+                <input class="form-control" id="adminEmail" name="email" type="email" value="aidyn.daulet@gmail.com" autocomplete="username" required>
+              </div>
+              <div class="mb-4">
+                <label class="form-label" for="adminPassword">Password</label>
+                <input class="form-control" id="adminPassword" name="password" type="password" autocomplete="current-password" required>
+              </div>
+              <div class="platform-actions">
+                <button class="custom-btn btn" type="submit">Login</button>
+                <a class="custom-btn btn custom-border-btn" href="/admin/password-reset">Reset password</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+      {{else}}
+      {{#if (eq pageKey 'admin-reset-request')}}
+      <section class="platform-auth-section" id="section_1">
+        <div class="container">
+          <div class="platform-auth-shell">
+            <div class="platform-auth-copy">
+              {{#if eyebrow}}<div class="platform-eyebrow">{{eyebrow}}</div>{{/if}}
+              <h1 class="platform-auth-title">{{heroTitle}}</h1>
+              <p class="platform-auth-text">{{heroText}}</p>
+            </div>
+            <form class="platform-card" method="post" action="/admin/password-reset">
+              <h2>Password reset</h2>
+              <div class="mb-4">
+                <label class="form-label" for="resetEmail">Email</label>
+                <input class="form-control" id="resetEmail" name="email" type="email" value="aidyn.daulet@gmail.com" autocomplete="username" required>
+              </div>
+              <button class="custom-btn btn" type="submit">Send reset link</button>
+              {{#if adminResetUrl}}
+              <p class="mt-4">Development reset link: <a class="platform-inline-link" href="{{adminResetUrl}}">{{adminResetUrl}}</a></p>
+              {{/if}}
+            </form>
+          </div>
+        </div>
+      </section>
+      {{else}}
+      {{#if (eq pageKey 'admin-reset-set')}}
+      <section class="platform-auth-section" id="section_1">
+        <div class="container">
+          <div class="platform-auth-shell">
+            <div class="platform-auth-copy">
+              {{#if eyebrow}}<div class="platform-eyebrow">{{eyebrow}}</div>{{/if}}
+              <h1 class="platform-auth-title">{{heroTitle}}</h1>
+              <p class="platform-auth-text">{{heroText}}</p>
+            </div>
+            <form class="platform-card" method="post" action="/admin/password-reset/{{content}}">
+              <h2>New password</h2>
+              <div class="mb-4">
+                <label class="form-label" for="newPassword">Password</label>
+                <input class="form-control" id="newPassword" name="password" type="password" minlength="12" autocomplete="new-password" required>
+              </div>
+              <button class="custom-btn btn" type="submit">Set password</button>
+            </form>
+          </div>
+        </div>
+      </section>
+      {{else}}
+      {{#if (eq pageKey 'admin-users')}}
+      <section class="platform-auth-section" id="section_1">
+        <div class="container">
+          <div class="platform-auth-shell">
+            <div class="platform-auth-copy">
+              {{#if eyebrow}}<div class="platform-eyebrow">{{eyebrow}}</div>{{/if}}
+              <h1 class="platform-auth-title">{{heroTitle}}</h1>
+              <p class="platform-auth-text">{{heroText}}</p>
+              <div class="platform-actions">
+                <a class="custom-btn btn custom-border-btn" href="/admin">Back to Admin</a>
+              </div>
+            </div>
+            <div class="platform-auth-grid">
+              {{#each adminUsers}}
+              <article class="platform-card">
+                <h2>{{this.name}}</h2>
+                <p>{{this.email}}</p>
+                <p>Role: {{this.role}}</p>
+                <p>Last login: {{this.lastLoginAt}}</p>
+              </article>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+      </section>
+      {{else}}
+      {{#if (eq pageKey 'profile-edit')}}
+      <section class="platform-auth-section" id="section_1">
+        <div class="container">
+          <div class="platform-auth-shell">
+            <div class="platform-auth-copy">
+              {{#if eyebrow}}<div class="platform-eyebrow"{{#if eyebrowEn}} data-en="{{eyebrowEn}}" data-ru="{{eyebrowRu}}" data-kk="{{eyebrowKk}}"{{/if}}>{{eyebrow}}</div>{{/if}}
+              <h1 class="platform-auth-title"{{#if heroTitleEn}} data-en="{{heroTitleEn}}" data-ru="{{heroTitleRu}}" data-kk="{{heroTitleKk}}"{{/if}}>{{heroTitle}}</h1>
+              <p class="platform-auth-text"{{#if heroTextEn}} data-en="{{heroTextEn}}" data-ru="{{heroTextRu}}" data-kk="{{heroTextKk}}"{{/if}}>{{heroText}}</p>
+            </div>
+            <form class="platform-card" method="post" action="/profile/edit">
+              <h2 data-en="Basic profile" data-ru="Основной профиль" data-kk="Негізгі профиль">Basic profile</h2>
+              <div class="mb-3">
+                <label class="form-label" for="firstName" data-en="Name" data-ru="Имя" data-kk="Аты">Name</label>
+                <input class="form-control" id="firstName" name="firstName" maxlength="80" value="{{profileUser.firstName}}" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="lastName" data-en="Lastname" data-ru="Фамилия" data-kk="Тегі">Lastname</label>
+                <input class="form-control" id="lastName" name="lastName" maxlength="80" value="{{profileUser.lastName}}">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="profileTitle" data-en="Profile title" data-ru="Обращение" data-kk="Мәртебе">Profile title</label>
+                <input class="form-control" id="profileTitle" name="profileTitle" maxlength="80" value="{{profileUser.profileTitle}}" placeholder="Mr., Mrs., Dr., PhD, Student" data-placeholder-en="Mr., Mrs., Dr., PhD, Student" data-placeholder-ru="Mr., Mrs., Dr., PhD, студент" data-placeholder-kk="Mr., Mrs., Dr., PhD, студент">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="profileLabel" data-en="Profile label" data-ru="Профессиональная метка" data-kk="Кәсіби белгі">Profile label</label>
+                <input class="form-control" id="profileLabel" name="profileLabel" maxlength="120" value="{{profileUser.profileLabel}}" placeholder="Lecturer, Blogger, Founder" data-placeholder-en="Lecturer, Blogger, Founder" data-placeholder-ru="Преподаватель, блогер, основатель" data-placeholder-kk="Оқытушы, блогер, негізін қалаушы">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="shortBio" data-en="Short bio" data-ru="Кратко о себе" data-kk="Қысқаша өзіңіз туралы">Short bio</label>
+                <textarea class="form-control" id="shortBio" name="shortBio" maxlength="600" rows="5" placeholder="A short description shown on your profile." data-placeholder-en="A short description shown on your profile." data-placeholder-ru="Краткое описание, которое будет видно в профиле." data-placeholder-kk="Профильде көрсетілетін қысқаша сипаттама.">{{profileUser.shortBio}}</textarea>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="organization" data-en="Organization" data-ru="Организация" data-kk="Ұйым">Organization</label>
+                <input class="form-control" id="organization" name="organization" maxlength="160" value="{{profileUser.organization}}" placeholder="University, company, project" data-placeholder-en="University, company, project" data-placeholder-ru="Университет, компания, проект" data-placeholder-kk="Университет, компания, жоба">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="location" data-en="Location" data-ru="Локация" data-kk="Орналасуы">Location</label>
+                <input class="form-control" id="location" name="location" maxlength="160" value="{{profileUser.location}}" placeholder="City, country" data-placeholder-en="City, country" data-placeholder-ru="Город, страна" data-placeholder-kk="Қала, ел">
+              </div>
+              <div class="mb-4">
+                <label class="form-label" for="website" data-en="Website" data-ru="Сайт" data-kk="Сайт">Website</label>
+                <input class="form-control" id="website" name="website" maxlength="240" value="{{profileUser.website}}" placeholder="https://example.com">
+              </div>
+              <div class="platform-actions">
+                <button class="custom-btn btn" type="submit" data-en="Save profile" data-ru="Сохранить профиль" data-kk="Профильді сақтау">Save profile</button>
+                <a class="custom-btn btn custom-border-btn" href="/profile" data-en="Cancel" data-ru="Отмена" data-kk="Бас тарту">Cancel</a>
+              </div>
+            </form>
+            <form class="platform-card" method="post" action="/profile/delete" onsubmit="return confirmDeleteProfile({{#if (or (eq currentUser.paddleSubscriptionStatus 'active') (eq currentUser.paddleSubscriptionStatus 'trialing'))}}true{{else}}false{{/if}});">
+              <h2 data-en="Delete profile" data-ru="Удалить профиль" data-kk="Профильді жою">Delete profile</h2>
+              <p data-en="This permanently removes your JustAidyn profile and active sessions. Your Google account is not deleted." data-ru="Это навсегда удалит ваш профиль JustAidyn и активные сессии. Ваш Google аккаунт не удаляется." data-kk="Бұл JustAidyn профиліңізді және белсенді сессияларды біржола жояды. Google аккаунтыңыз жойылмайды.">This permanently removes your JustAidyn profile and active sessions. Your Google account is not deleted.</p>
+              {{#if (or (eq currentUser.paddleSubscriptionStatus 'active') (eq currentUser.paddleSubscriptionStatus 'trialing'))}}
+              <p style="color:#c0392b;font-weight:600;margin-bottom:0;"
+                 data-en="⚠ You have an active subscription. Deleting your profile will cancel it at the end of the current billing period. No refund will be issued for the remaining days."
+                 data-ru="⚠ У вас активная подписка. При удалении профиля она будет отменена в конце текущего платёжного периода. Возврат средств за оставшиеся дни не предусмотрен."
+                 data-kk="⚠ Сізде белсенді жазылым бар. Профильді жойғанда ол ағымдағы төлем кезеңінің соңында болдырылмайды. Қалған күндер үшін қайтарым жасалмайды.">
+                ⚠ You have an active subscription. Deleting your profile will cancel it at the end of the current billing period. No refund will be issued for the remaining days.
+              </p>
+              {{/if}}
+              <button class="custom-btn btn custom-border-btn" type="submit" data-en="Delete profile" data-ru="Удалить профиль" data-kk="Профильді жою">Delete profile</button>
+            </form>
+            <script>
+            function confirmDeleteProfile(hasSubscription) {
+              var lang = document.documentElement.lang;
+              var msg;
+              if (hasSubscription) {
+                msg = lang === 'ru'
+                  ? 'Ваша активная подписка будет отменена в конце периода, а профиль удалён навсегда. Возврат средств не предусмотрен. Продолжить?'
+                  : lang === 'kk'
+                  ? 'Белсенді жазылымыңыз кезең соңында болдырылмайды, профиль біржола жойылады. Қайтарым жасалмайды. Жалғастыру?'
+                  : 'Your active subscription will be cancelled at the end of the billing period, and your profile deleted permanently. No refund will be issued. Continue?';
+              } else {
+                msg = lang === 'ru'
+                  ? 'Удалить профиль навсегда?'
+                  : lang === 'kk'
+                  ? 'Профильді біржола жою керек пе?'
+                  : 'Delete your profile permanently?';
+              }
+              return confirm(msg);
+            }
+            </script>
+          </div>
+        </div>
+      </section>
+      {{else}}
       <section class="hero d-flex justify-content-center align-items-center platform-hero" id="section_1">
         <div class="container">
           <div class="row align-items-center">
@@ -94,18 +278,18 @@
                 </div>
                 {{/if}}
 
-                {{#if eyebrow}}<div class="platform-eyebrow">{{eyebrow}}</div>{{/if}}
+                {{#if eyebrow}}<div class="platform-eyebrow"{{#if eyebrowEn}} data-en="{{eyebrowEn}}" data-ru="{{eyebrowRu}}" data-kk="{{eyebrowKk}}"{{/if}}>{{eyebrow}}</div>{{/if}}
                 {{#if description}}<h2 class="mb-4 platform-subtitle">{{description}}</h2>{{/if}}
-                {{#if heroText}}<p class="platform-copy">{{heroText}}</p>{{/if}}
+                {{#if heroText}}<p class="platform-copy"{{#if heroTextEn}} data-en="{{heroTextEn}}" data-ru="{{heroTextRu}}" data-kk="{{heroTextKk}}"{{/if}}>{{heroText}}</p>{{/if}}
                 {{#if primaryAction}}
                 <div class="platform-actions">
-                  <a class="custom-btn btn" href="{{primaryAction.url}}">{{primaryAction.label}}</a>
-                  {{#if secondaryAction}}<a class="custom-btn btn custom-border-btn" href="{{secondaryAction.url}}">{{secondaryAction.label}}</a>{{/if}}
+                  <a class="custom-btn btn" href="{{primaryAction.url}}"{{#if primaryAction.labelEn}} data-en="{{primaryAction.labelEn}}" data-ru="{{primaryAction.labelRu}}" data-kk="{{primaryAction.labelKk}}"{{/if}}>{{primaryAction.label}}</a>
+                  {{#if secondaryAction}}<a class="custom-btn btn custom-border-btn" href="{{secondaryAction.url}}"{{#if secondaryAction.labelEn}} data-en="{{secondaryAction.labelEn}}" data-ru="{{secondaryAction.labelRu}}" data-kk="{{secondaryAction.labelKk}}"{{/if}}>{{secondaryAction.label}}</a>{{/if}}
                 </div>
                 {{else}}
                 {{#if secondaryAction}}
                 <div class="platform-actions">
-                  <a class="custom-btn btn custom-border-btn" href="{{secondaryAction.url}}">{{secondaryAction.label}}</a>
+                  <a class="custom-btn btn custom-border-btn" href="{{secondaryAction.url}}"{{#if secondaryAction.labelEn}} data-en="{{secondaryAction.labelEn}}" data-ru="{{secondaryAction.labelRu}}" data-kk="{{secondaryAction.labelKk}}"{{/if}}>{{secondaryAction.label}}</a>
                 </div>
                 {{/if}}
                 {{/if}}
@@ -124,7 +308,11 @@
           <div class="row">
             <div class="col-lg-8 col-md-8 col-12 ms-auto">
               <div class="section-title-wrap d-flex justify-content-center align-items-center mb-4">
-                <h2 class="text-white mb-0">Project Overview</h2>
+                {{#if (eq pageKey 'profile')}}
+                <h2 class="text-white mb-0" data-en="Profile details" data-ru="Данные профиля" data-kk="Профиль деректері">Profile details</h2>
+                {{else}}
+                <h2 class="text-white mb-0" data-en="Project Overview" data-ru="Обзор проекта" data-kk="Жобаға шолу">Project Overview</h2>
+                {{/if}}
               </div>
             </div>
 
@@ -135,15 +323,88 @@
             {{#each cards}}
               <div class="col-lg-4 col-md-6">
                 <article class="platform-card">
-                  <h2>{{this.title}}</h2>
+                  <h2{{#if this.titleEn}} data-en="{{this.titleEn}}" data-ru="{{this.titleRu}}" data-kk="{{this.titleKk}}"{{/if}}>{{this.title}}</h2>
                   <p>{{this.text}}</p>
-                  {{#if this.href}}<a class="platform-inline-link" href="{{this.href}}">{{this.cta}}</a>{{/if}}
+                  {{#if this.href}}<a class="platform-inline-link" href="{{this.href}}"{{#if this.ctaEn}} data-en="{{this.ctaEn}}" data-ru="{{this.ctaRu}}" data-kk="{{this.ctaKk}}"{{/if}}>{{this.cta}}</a>{{/if}}
                 </article>
               </div>
             {{/each}}
           </div>
         </div>
       </section>
+      {{/if}}
+
+      {{#if (eq pageKey 'profile')}}
+      {{#if (or (eq currentUser.paddleSubscriptionStatus 'active') (eq currentUser.paddleSubscriptionStatus 'trialing'))}}
+      <section class="projects section-padding platform-section" id="section_subscriptions">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8 col-md-8 col-12 ms-auto">
+              <div class="section-title-wrap d-flex justify-content-center align-items-center mb-4">
+                <h2 class="text-white mb-0" data-en="My Subscriptions" data-ru="Мои подписки" data-kk="Менің жазылымдарым">My Subscriptions</h2>
+              </div>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+          <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+              <article class="platform-card">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                  <h2 style="margin:0">ScreenCam Monthly</h2>
+                  <span style="font-size:0.78rem;font-weight:700;padding:3px 10px;border-radius:99px;
+                    {{#if (eq currentUser.paddleSubscriptionStatus 'trialing')}}background:rgba(83,93,161,0.12);color:#535da1;{{else}}background:rgba(20,183,138,0.12);color:#0e8a63;{{/if}}">
+                    {{#if (eq currentUser.paddleSubscriptionStatus 'trialing')}}
+                    <span data-en="Trial" data-ru="Пробный период" data-kk="Сынақ кезеңі">Trial</span>
+                    {{else}}
+                    <span data-en="Active" data-ru="Активна" data-kk="Белсенді">Active</span>
+                    {{/if}}
+                  </span>
+                </div>
+                <p style="color:#5e6c79;font-size:0.9rem;margin-bottom:16px;"
+                   data-en="Your subscription is active. Cancellation stops future renewals — access continues until the current period ends."
+                   data-ru="Ваша подписка активна. Отмена прекратит будущие списания — доступ продолжается до конца текущего периода."
+                   data-kk="Жазылымыңыз белсенді. Болдырмау болашақ есептеулерді тоқтатады — қолжетімділік ағымдағы кезең аяқталғанша жалғасады.">
+                  Your subscription is active. Cancellation stops future renewals — access continues until the current period ends.
+                </p>
+                <button id="profile-cancel-btn" onclick="profileCancelSubscription()" class="custom-btn btn custom-border-btn" style="font-size:0.9rem;"
+                        data-en="Cancel subscription" data-ru="Отменить подписку" data-kk="Жазылымды болдырмау">
+                  Cancel subscription
+                </button>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+      <script>
+      function profileCancelSubscription() {
+        var lang = document.documentElement.lang;
+        var msg = lang === 'ru'
+          ? 'Отменить подписку? Доступ продолжится до конца текущего периода. Возврат средств не предусмотрен.'
+          : lang === 'kk'
+          ? 'Жазылымды болдырмау? Қолжетімділік ағымдағы кезең соңына дейін жалғасады. Қайтарым жасалмайды.'
+          : 'Cancel subscription? Access continues until the current period ends. No refund will be issued.';
+        if (!confirm(msg)) return;
+        var btn = document.getElementById('profile-cancel-btn');
+        btn.disabled = true;
+        fetch('/api/paddle/subscription/cancel', { method: 'POST' })
+          .then(function(r) { return r.json(); })
+          .then(function() {
+            var section = document.getElementById('section_subscriptions');
+            if (section) section.remove();
+          })
+          .catch(function() {
+            btn.disabled = false;
+            alert(lang === 'ru' ? 'Ошибка. Попробуйте снова.' : lang === 'kk' ? 'Қате. Қайталап көріңіз.' : 'Error. Please try again.');
+          });
+      }
+      </script>
+      {{/if}}
+      {{/if}}
+
+      {{/if}}
+      {{/if}}
+      {{/if}}
+      {{/if}}
       {{/if}}
       {{/if}}
       {{/if}}
@@ -152,6 +413,6 @@
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/jquery.sticky.js"></script>
-    <script src="/js/custom.js?v=20260422-menuall"></script>
+    <script src="/js/custom.js?v=20260428-profile-i18n"></script>
   </body>
   </html>

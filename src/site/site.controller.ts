@@ -1,12 +1,16 @@
-import { Controller, Get, NotFoundException, Param, Render, Req, Res } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Render, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
+import { AuthService } from './auth.service';
 import { PageModel, SiteService } from './site.service';
 
 @Controller()
 export class SiteController {
-  constructor(private readonly siteService: SiteService) {}
+  constructor(
+    private readonly siteService: SiteService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Get('/')
   root(@Req() req: Request, @Res() res: Response) {
@@ -45,59 +49,204 @@ export class SiteController {
     return this.withSharedModel(this.siteService.getLoginPage(), req);
   }
 
-  @Get('/register')
+  @Get('/admin/login')
   @Render('pages/host-router')
-  register(@Req() req: Request) {
+  adminLogin(@Req() req: Request) {
     const site = this.siteService.resolveHost(req.hostname);
     if (site !== 'main') {
       throw new NotFoundException();
     }
 
-    return this.withSharedModel(this.siteService.getRegisterPage(), req);
+    return this.withSharedModel(this.siteService.getAdminLoginPage(), req);
+  }
+
+  @Post('/admin/login')
+  adminLoginPost(@Req() req: Request, @Res() res: Response, @Body() body: Record<string, string>) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site !== 'main') {
+      throw new NotFoundException();
+    }
+
+    this.authService.loginSuperadmin(req, res, body.email, body.password);
+    return res.redirect('/admin');
+  }
+
+  @Get('/admin/password-reset')
+  @Render('pages/host-router')
+  adminPasswordReset(@Req() req: Request) {
+    return this.withSharedModel(this.siteService.getAdminPasswordResetRequestPage(), req);
+  }
+
+  @Post('/admin/password-reset')
+  async adminPasswordResetPost(@Req() req: Request, @Body() body: Record<string, string>) {
+    const result = await this.authService.requestSuperadminPasswordReset(req, body.email);
+    return this.withSharedModel(this.siteService.getAdminPasswordResetRequestPage(result.resetUrl), req);
+  }
+
+  @Get('/admin/password-reset/:token')
+  @Render('pages/host-router')
+  adminPasswordResetSet(@Req() req: Request, @Param('token') token: string) {
+    return this.withSharedModel(this.siteService.getAdminPasswordResetSetPage(token), req);
+  }
+
+  @Post('/admin/password-reset/:token')
+  adminPasswordResetSetPost(@Req() req: Request, @Res() res: Response, @Param('token') token: string, @Body() body: Record<string, string>) {
+    this.authService.resetSuperadminPassword(token, body.password);
+    return res.redirect('/admin/login');
+  }
+
+  @Get('/admin')
+  adminDashboard(@Req() req: Request, @Res() res: Response) {
+    if (!this.tryRequireSuperadmin(req, res)) {
+      return;
+    }
+
+    return res.render('pages/host-router', this.withSharedModel(this.siteService.getAdminDashboardPage(), req));
+  }
+
+  @Get('/admin/users')
+  adminUsers(@Req() req: Request, @Res() res: Response) {
+    if (!this.tryRequireSuperadmin(req, res)) {
+      return;
+    }
+
+    return res.render('pages/host-router', this.withSharedModel(this.siteService.getAdminUsersPage(this.authService.listUsersForSuperadmin(req)), req));
+  }
+
+  @Get('/admin/posts')
+  adminPosts(@Req() req: Request, @Res() res: Response) {
+    return this.renderAdminSection(req, res, 'Posts');
+  }
+
+  @Get('/admin/apps')
+  adminApps(@Req() req: Request, @Res() res: Response) {
+    return this.renderAdminSection(req, res, 'Apps');
+  }
+
+  @Get('/admin/games')
+  adminGames(@Req() req: Request, @Res() res: Response) {
+    return this.renderAdminSection(req, res, 'Games');
+  }
+
+  @Get('/admin/courses')
+  adminCourses(@Req() req: Request, @Res() res: Response) {
+    return this.renderAdminSection(req, res, 'Courses');
+  }
+
+  @Get('/register')
+  register(@Req() req: Request, @Res() res: Response) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site !== 'main') {
+      throw new NotFoundException();
+    }
+
+    return res.redirect('/login');
   }
 
   @Get('/login/google')
-  @Render('pages/host-router')
-  loginGoogle(@Req() req: Request) {
+  loginGoogle(@Req() req: Request, @Res() res: Response) {
     const site = this.siteService.resolveHost(req.hostname);
     if (site !== 'main') {
       throw new NotFoundException();
     }
 
-    return this.withSharedModel(this.siteService.getAuthProviderPage('login', 'google'), req);
+    const desktopAuthUrl = this.buildGoogleDesktopAuthUrl(req, 'login');
+    if (desktopAuthUrl) {
+      return res.redirect(desktopAuthUrl);
+    }
+
+    const authUrl = this.authService.buildGoogleWebAuthUrl(req, 'login');
+    this.authService.setOAuthStateCookie(res, authUrl, req);
+    return res.redirect(authUrl);
   }
 
-  @Get('/login/apple')
-  @Render('pages/host-router')
-  loginApple(@Req() req: Request) {
+  @Get('/profile')
+  profile(@Req() req: Request, @Res() res: Response) {
     const site = this.siteService.resolveHost(req.hostname);
     if (site !== 'main') {
       throw new NotFoundException();
     }
 
-    return this.withSharedModel(this.siteService.getAuthProviderPage('login', 'apple'), req);
+    const user = this.authService.getCurrentUser(req);
+    if (!user) {
+      return res.redirect('/login');
+    }
+
+    return res.render('pages/host-router', this.withSharedModel(this.siteService.getProfilePage(user), req));
+  }
+
+  @Get('/profile/edit')
+  profileEdit(@Req() req: Request, @Res() res: Response) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site !== 'main') {
+      throw new NotFoundException();
+    }
+
+    const user = this.authService.getCurrentUser(req);
+    if (!user) {
+      return res.redirect('/login');
+    }
+
+    return res.render('pages/host-router', this.withSharedModel(this.siteService.getProfileEditPage(user), req));
+  }
+
+  @Post('/profile/edit')
+  profileUpdate(@Req() req: Request, @Res() res: Response, @Body() body: Record<string, string>) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site !== 'main') {
+      throw new NotFoundException();
+    }
+
+    this.authService.updateCurrentUserProfile(req, {
+      firstName: body.firstName,
+      lastName: body.lastName,
+      profileTitle: body.profileTitle,
+      profileLabel: body.profileLabel,
+      shortBio: body.shortBio,
+      organization: body.organization,
+      location: body.location,
+      website: body.website,
+    });
+
+    return res.redirect('/profile');
+  }
+
+  @Post('/profile/delete')
+  async profileDelete(@Req() req: Request, @Res() res: Response) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site !== 'main') {
+      throw new NotFoundException();
+    }
+
+    await this.authService.deleteCurrentUser(req, res);
+    return res.redirect('/');
   }
 
   @Get('/register/google')
-  @Render('pages/host-router')
-  registerGoogle(@Req() req: Request) {
+  registerGoogle(@Req() req: Request, @Res() res: Response) {
     const site = this.siteService.resolveHost(req.hostname);
     if (site !== 'main') {
       throw new NotFoundException();
     }
 
-    return this.withSharedModel(this.siteService.getAuthProviderPage('register', 'google'), req);
+    return res.redirect('/login/google');
   }
 
-  @Get('/register/apple')
-  @Render('pages/host-router')
-  registerApple(@Req() req: Request) {
+  @Get('/auth/google/callback')
+  async googleCallback(@Req() req: Request, @Res() res: Response) {
     const site = this.siteService.resolveHost(req.hostname);
     if (site !== 'main') {
       throw new NotFoundException();
     }
 
-    return this.withSharedModel(this.siteService.getAuthProviderPage('register', 'apple'), req);
+    await this.authService.handleGoogleCallback(req, res);
+    return res.redirect('/profile');
+  }
+
+  @Get('/logout')
+  logout(@Req() req: Request, @Res() res: Response) {
+    this.authService.logout(req, res);
+    return res.redirect('/');
   }
 
   @Get('/p/:project')
@@ -106,7 +255,7 @@ export class SiteController {
 
     switch (project) {
       case 'skillsminds':
-        return res.sendFile(join(process.cwd(), 'articles', 'index.html'));
+        return this.renderStaticHtmlFile(req, res, join(process.cwd(), 'articles', 'index.html'));
       case 'nofacethinker':
         return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('nofacethinker'), req));
       case 'courses':
@@ -125,8 +274,8 @@ export class SiteController {
   }
 
   @Get('/skillsminds')
-  skillsmindsProject(@Res() res: Response) {
-    return res.sendFile(join(process.cwd(), 'articles', 'index.html'));
+  skillsmindsProject(@Req() req: Request, @Res() res: Response) {
+    return this.renderStaticHtmlFile(req, res, join(process.cwd(), 'articles', 'index.html'));
   }
 
   @Get('/programming/:file')
@@ -158,8 +307,8 @@ export class SiteController {
   }
 
   @Get('/apps')
-  appsProject(@Res() res: Response) {
-    return res.sendFile(join(process.cwd(), 'apps', 'index.html'));
+  appsProject(@Req() req: Request, @Res() res: Response) {
+    return this.renderStaticHtmlFile(req, res, join(process.cwd(), 'apps', 'index.html'));
   }
 
   @Get('/games')
@@ -192,8 +341,8 @@ export class SiteController {
   }
 
   @Get('/apps/justaidyn-screencam')
-  appDetailPath(@Res() res: Response) {
-    return res.sendFile(join(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
+  appDetailPath(@Req() req: Request, @Res() res: Response) {
+    return this.renderStaticHtmlFile(req, res, join(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
   }
 
   @Get('/p/apps/justaidyn-screencam')
@@ -269,6 +418,53 @@ export class SiteController {
     };
   }
 
+  @Get('/api/me')
+  apiMe(@Req() req: Request) {
+    const user = this.authService.getCurrentUser(req);
+    if (!user) {
+      return { authenticated: false };
+    }
+
+    return {
+      authenticated: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        paddleSubscriptionStatus: user.paddleSubscriptionStatus ?? null,
+        paddleSubscribedAt: user.paddleSubscribedAt ?? null,
+      },
+    };
+  }
+
+  @Post('/api/paddle/webhook')
+  paddleWebhook(@Body() body: Record<string, unknown>, @Res() res: Response) {
+    try {
+      this.authService.handlePaddleWebhook(body);
+    } catch {
+      // never reject — Paddle retries on non-2xx
+    }
+    return res.status(200).json({ received: true });
+  }
+
+  @Post('/api/paddle/verify-checkout')
+  async paddleVerifyCheckout(@Req() req: Request) {
+    const user = await this.authService.verifyCheckoutAndSave(req);
+    return {
+      subscriptionStatus: user.paddleSubscriptionStatus,
+      subscribedAt: user.paddleSubscribedAt,
+    };
+  }
+
+  @Post('/api/paddle/subscription/cancel')
+  async paddleCancelSubscription(@Req() req: Request) {
+    await this.authService.cancelUserSubscription(req);
+    return { canceled: true };
+  }
+
   @Get([
     '/skillsminds/:file',
     '/nofacethinker/:file',
@@ -302,6 +498,10 @@ export class SiteController {
     const found = join(root, sectionMap[section], file);
     if (!existsSync(found)) {
       throw new NotFoundException();
+    }
+
+    if (/\.html$/i.test(file)) {
+      return this.renderStaticHtmlFile(req, res, found);
     }
 
     return res.sendFile(found);
@@ -377,23 +577,7 @@ export class SiteController {
     const standalonePages = ['kaspiqr.html', 'programming-course.html'];
 
     if (/\.html$/i.test(file) && site === 'main' && !standalonePages.includes(file)) {
-      try {
-        const html = readFileSync(found, 'utf-8');
-        const mainMatch = html.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
-        const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
-        if (mainMatch) {
-          const content = mainMatch[1]
-            .replace(/src="images\//g, 'src="/images/')
-            .replace(/href="images\//g, 'href="/images/');
-          const title = titleMatch ? titleMatch[1].trim() : 'JustAidyn';
-          return res.render('pages/static-wrapper', this.withSharedModel(
-            this.siteService.getStaticPageModel(title, content),
-            req,
-          ));
-        }
-      } catch {
-        // fallthrough to sendFile
-      }
+      return this.renderStaticHtmlFile(req, res, found);
     }
 
     return res.sendFile(found);
@@ -439,11 +623,125 @@ export class SiteController {
     return {
       ...page,
       year: new Date().getFullYear(),
+      currentUser: req ? this.authService.getCurrentUser(req) : null,
       projectLinks: this.siteService.getProjects(),
       mainSiteUrl,
       projectsUrl: `${mainSiteUrl}/projects`,
       articlesUrl: `${mainSiteUrl}/articles/`,
       downloadsUrl: `${mainSiteUrl}/downloads/`,
     };
+  }
+
+  private renderStaticHtmlFile(req: Request, res: Response, filePath: string) {
+    try {
+      const html = readFileSync(filePath, 'utf-8');
+      const mainMatch = html.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
+      const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+      if (!mainMatch) {
+        return res.sendFile(filePath);
+      }
+
+      const content = mainMatch[1]
+        .replace(/src="images\//g, 'src="/images/')
+        .replace(/href="images\//g, 'href="/images/')
+        .replace(/src="\.\.\/images\//g, 'src="/images/')
+        .replace(/href="\.\.\/images\//g, 'href="/images/');
+      const title = titleMatch ? titleMatch[1].trim() : 'JustAidyn';
+
+      return res.render(
+        'pages/static-wrapper',
+        this.withSharedModel(this.siteService.getStaticPageModel(title, content), req),
+      );
+    } catch {
+      return res.sendFile(filePath);
+    }
+  }
+
+  private renderAdminSection(req: Request, res: Response, section: 'Posts' | 'Apps' | 'Games' | 'Courses') {
+    if (!this.tryRequireSuperadmin(req, res)) {
+      return;
+    }
+
+    return res.render('pages/host-router', this.withSharedModel(this.siteService.getAdminSectionPage(section), req));
+  }
+
+  private tryRequireSuperadmin(req: Request, res: Response): boolean {
+    try {
+      this.authService.getSuperadminUser(req);
+      return true;
+    } catch {
+      res.redirect('/admin/login');
+      return false;
+    }
+  }
+
+  private buildGoogleDesktopAuthUrl(req: Request, mode: 'login' | 'register'): string | null {
+    const redirectUri = this.getQueryValue(req.query.redirect_uri);
+    const codeChallenge = this.getQueryValue(req.query.code_challenge);
+    const state = this.getQueryValue(req.query.state);
+
+    if (!redirectUri && !codeChallenge) {
+      return null;
+    }
+
+    if (!redirectUri || !codeChallenge) {
+      throw new BadRequestException('Desktop Google OAuth requires redirect_uri and code_challenge.');
+    }
+
+    const redirectUrl = this.parseDesktopRedirectUri(redirectUri);
+    if (!redirectUrl) {
+      throw new BadRequestException('redirect_uri must be http://127.0.0.1:<port>/oauth2callback or http://localhost:<port>/oauth2callback.');
+    }
+
+    if (!/^[A-Za-z0-9._~-]{43,128}$/.test(codeChallenge)) {
+      throw new BadRequestException('code_challenge must be a valid PKCE S256 challenge.');
+    }
+
+    if (state && state.length > 2048) {
+      throw new BadRequestException('state is too long.');
+    }
+
+    const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+    authUrl.searchParams.set('client_id', '1032118127228-9oin1kharh2kp6i9dg85r7i0s0j2tq5u.apps.googleusercontent.com');
+    authUrl.searchParams.set('redirect_uri', redirectUrl.toString());
+    authUrl.searchParams.set('response_type', 'code');
+    authUrl.searchParams.set('scope', 'openid email profile');
+    authUrl.searchParams.set('access_type', 'offline');
+    authUrl.searchParams.set('prompt', 'consent');
+    authUrl.searchParams.set('code_challenge', codeChallenge);
+    authUrl.searchParams.set('code_challenge_method', 'S256');
+
+    if (state) {
+      authUrl.searchParams.set('state', state);
+    } else {
+      authUrl.searchParams.set('state', `justaidyn:${mode}:desktop`);
+    }
+
+    return authUrl.toString();
+  }
+
+  private parseDesktopRedirectUri(value: string): URL | null {
+    try {
+      const url = new URL(value);
+      const port = Number(url.port);
+      const isLoopback = url.hostname === '127.0.0.1' || url.hostname === 'localhost';
+      const isValidPort = Number.isInteger(port) && port >= 1 && port <= 65535;
+
+      if (url.protocol !== 'http:' || !isLoopback || !isValidPort || url.pathname !== '/oauth2callback') {
+        return null;
+      }
+
+      return url;
+    } catch {
+      return null;
+    }
+  }
+
+  private getQueryValue(value: unknown): string | undefined {
+    if (Array.isArray(value)) {
+      return typeof value[0] === 'string' ? value[0] : undefined;
+    }
+
+    return typeof value === 'string' ? value : undefined;
   }
 }

@@ -141,6 +141,80 @@
       transition: background 0.15s;
     }
     .btn-back:hover { background: var(--accent-light); color: var(--accent-dark); }
+    .btn-subscribe {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 48px;
+      padding: 11px 24px;
+      border-radius: 10px;
+      background: #14b78a;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-subscribe:hover { background: #0e8a63; color: #fff; }
+
+    /* Pricing card */
+    .pricing-card {
+      background: var(--panel);
+      border: 2px solid var(--accent);
+      border-radius: 14px;
+      padding: 36px 40px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .pricing-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #14b78a;
+      background: rgba(20,183,138,0.10);
+      border-radius: 99px;
+      padding: 4px 12px;
+      margin-bottom: 16px;
+    }
+    .pricing-card h2 { margin: 0 0 8px; font-size: 1.4rem; }
+    .pricing-price {
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+      margin: 16px 0 4px;
+    }
+    .pricing-price sup { font-size: 1.4rem; vertical-align: super; }
+    .pricing-period { font-size: 0.95rem; color: var(--muted); margin-bottom: 8px; }
+    .pricing-trial {
+      display: inline-block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #14b78a;
+      background: rgba(20,183,138,0.10);
+      border-radius: 99px;
+      padding: 3px 12px;
+      margin-bottom: 24px;
+    }
+    .subscribed-badge {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      min-height: 48px;
+      padding: 11px 24px;
+      border-radius: 10px;
+      background: rgba(20,183,138,0.12);
+      color: #0e8a63;
+      font-weight: 700;
+      font-size: 1rem;
+      border: 1.5px solid #14b78a;
+    }
 
     /* ── Content sections ── */
     .content-section {
@@ -338,7 +412,7 @@
                   <li><a class="dropdown-item" href="https://justaidyn.com/" data-en="JustAidyn Home" data-ru="Главная JustAidyn" data-kk="Басты бет">JustAidyn Home</a></li>
                   <li><hr class="dropdown-divider"></li>
                   <li><a class="dropdown-item" href="https://justaidyn.com/articles/" data-en="Skills and Minds Hub" data-ru="Skills and Minds Hub" data-kk="Skills and Minds Hub">Skills and Minds Hub</a></li>
-                  <li><a class="dropdown-item" href="https://justaidyn.com/nofacethinker" data-en="No Face Thinker" data-ru="No Face Thinker" data-kk="No Face Thinker">No Face Thinker</a></li>
+                  <li><a class="dropdown-item" href="https://justaidyn.com/nofacethinker" data-en="no Face Thinker" data-ru="no Face Thinker" data-kk="no Face Thinker">no Face Thinker</a></li>
                   <li><a class="dropdown-item active" href="/apps" data-en="Apps" data-ru="Приложения" data-kk="Қосымшалар">Apps</a></li>
                   <li><a class="dropdown-item" href="/games" data-en="Games" data-ru="Игры" data-kk="Ойындар">Games</a></li>
                   <li><a class="dropdown-item" href="/shop" data-en="Shop" data-ru="Магазин" data-kk="Дүкен">Shop</a></li>
@@ -350,9 +424,8 @@
                 <button type="button" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')">EN</button>
                 <button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')">RU</button>
               </div>
-              <div class="navbar-top-auth-links">
-                <a class="navbar-top-tool-btn" href="https://justaidyn.com/login" data-en="Login" data-ru="Войти" data-kk="Кіру">Login</a>
-                <a class="navbar-top-tool-btn" href="https://justaidyn.com/register" data-en="Register" data-ru="Регистрация" data-kk="Тіркелу">Register</a>
+              <div class="navbar-top-auth-links" id="sc-auth-links">
+                <a class="navbar-top-tool-btn" href="/login" data-en="Sign in with Google" data-ru="Войти через Google" data-kk="Google арқылы кіру">Sign in with Google</a>
               </div>
             </div>
           </div>
@@ -393,6 +466,14 @@
             <i class="bi bi-download"></i>
             <span data-en="Download for Windows" data-ru="Скачать для Windows" data-kk="Windows үшін жүктеу">Download for Windows</span>
           </a>
+          <button class="btn-subscribe subscribe-action" onclick="openSubscribeCheckout()">
+            <i class="bi bi-star"></i>
+            <span data-en="Subscribe — $5.90/mo" data-ru="Подписаться — $5.90/мес" data-kk="Жазылу — $5.90/ай">Subscribe — $5.90/mo</span>
+          </button>
+          <span class="subscribed-badge">
+            <i class="bi bi-check-circle-fill"></i>
+            <span data-en="Subscribed" data-ru="Подписка активна" data-kk="Жазылым белсенді">Subscribed</span>
+          </span>
           <a class="btn-back" href="/apps/">
             <i class="bi bi-grid-3x3-gap"></i>
             <span data-en="All Apps" data-ru="Все приложения" data-kk="Барлық қосымшалар">All Apps</span>
@@ -605,6 +686,27 @@
       </div>
     </section>
 
+    <!-- Pricing -->
+    <section class="pricing-card">
+      <div class="pricing-badge"><i class="bi bi-star-fill"></i> <span data-en="Subscription" data-ru="Подписка" data-kk="Жазылым">Subscription</span></div>
+      <h2 data-en="ScreenCam Monthly" data-ru="ScreenCam Monthly" data-kk="ScreenCam Monthly">ScreenCam Monthly</h2>
+      <div class="pricing-price"><sup>$</sup>5.90</div>
+      <div class="pricing-period" data-en="per month" data-ru="в месяц" data-kk="айына">per month</div>
+      <div class="pricing-trial" data-en="14-day free trial" data-ru="14 дней бесплатно" data-kk="14 күн тегін">14-day free trial</div>
+      <br>
+      <button class="btn-subscribe subscribe-action" onclick="openSubscribeCheckout()">
+        <i class="bi bi-star"></i>
+        <span data-en="Start Free Trial" data-ru="Начать бесплатный период" data-kk="Тегін кезеңді бастау">Start Free Trial</span>
+      </button>
+      <div class="subscribed-badge" style="justify-content:center; margin-top:8px; flex-direction:column; gap:12px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <i class="bi bi-check-circle-fill" style="font-size:1.3rem"></i>
+          <span style="font-size:1.05rem" data-en="Your subscription is active" data-ru="Ваша подписка активна" data-kk="Жазылымыңыз белсенді">Your subscription is active</span>
+        </div>
+        <button onclick="cancelSubscription()" style="background:none;border:none;color:#888;font-size:0.82rem;cursor:pointer;text-decoration:underline;padding:0;" data-en="Cancel subscription" data-ru="Отменить подписку" data-kk="Жазылымды болдырмау">Cancel subscription</button>
+      </div>
+    </section>
+
     <!-- Bottom CTA -->
     <div style="text-align:center; margin-top:36px;">
       <a class="btn-download" href="/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.1.msi">
@@ -618,7 +720,7 @@
   <script src="/js/jquery.min.js"></script>
   <script src="/js/bootstrap.min.js"></script>
   <script src="/js/jquery.sticky.js"></script>
-  <script src="/js/custom.js"></script>
+  <script src="/js/custom.js?v=20260428-profile-i18n"></script>
   <script>
     fetch('/api/stats/downloads').then(r => r.json()).then(data => {
       const count = data['justaidyn-screencam'];
@@ -628,6 +730,79 @@
       }
     }).catch(() => {});
   </script>  <script src="/js/legal.js"></script>
+  <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+  <script>
+    Paddle.Environment.set('sandbox');
+    Paddle.Initialize({
+      token: 'test_16c22427a493b4298c916610736',
+      eventCallback: function(event) {
+        if (event.name === 'checkout.completed') {
+          showSubscribed();
+          updateNavbarStar(true);
+          fetch('/api/paddle/verify-checkout', { method: 'POST' })
+            .catch(() => {});
+        }
+      }
+    });
+
+    function openSubscribeCheckout() {
+      Paddle.Checkout.open({
+        items: [{ priceId: 'pri_01kq8jr52z64sztq8dp2dg1nyg', quantity: 1 }]
+      });
+    }
+
+    function showSubscribed() {
+      document.querySelectorAll('.subscribe-action').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.subscribed-badge').forEach(el => el.style.display = '');
+    }
+
+    function updateNavbarStar(subscribed) {
+      const authLinks = document.getElementById('sc-auth-links');
+      if (!authLinks) return;
+      const profileLink = authLinks.querySelector('a[href="/profile"]');
+      if (!profileLink) return;
+      const existing = profileLink.querySelector('.sub-star');
+      if (subscribed && !existing) {
+        profileLink.insertAdjacentHTML('beforeend', ' <i class="bi bi-star-fill sub-star" style="color:#14b78a;font-size:0.75em;vertical-align:middle" title="Subscribed"></i>');
+      } else if (!subscribed && existing) {
+        existing.remove();
+      }
+    }
+
+    function cancelSubscription() {
+      if (!confirm('Cancel your ScreenCam Monthly subscription?')) return;
+      fetch('/api/paddle/subscription/cancel', { method: 'POST' })
+        .then(r => r.json())
+        .then(() => {
+          document.querySelectorAll('.subscribed-badge').forEach(el => el.style.display = 'none');
+          document.querySelectorAll('.subscribe-action').forEach(el => el.style.display = '');
+          updateNavbarStar(false);
+        })
+        .catch(() => alert('Failed to cancel. Please try again.'));
+    }
+
+    // Check subscription status on page load
+    fetch('/api/me').then(r => r.json()).then(data => {
+      const user = data?.user;
+      const status = user?.paddleSubscriptionStatus;
+      const isSubscribed = status === 'active' || status === 'trialing';
+
+      // Update navbar auth links
+      const authLinks = document.getElementById('sc-auth-links');
+      if (authLinks && user) {
+        const starHtml = isSubscribed
+          ? ' <i class="bi bi-star-fill sub-star" style="color:#14b78a;font-size:0.75em;vertical-align:middle" title="Subscribed"></i>'
+          : '';
+        authLinks.innerHTML =
+          `<a class="navbar-top-tool-btn" href="/profile">${user.name}${starHtml}</a>` +
+          `<a class="navbar-top-tool-btn" href="/logout" data-en="Logout" data-ru="Выйти" data-kk="Шығу">Logout</a>`;
+      }
+
+      if (isSubscribed) {
+        showSubscribed();
+      }
+    }).catch(() => {});
+  </script>
 
 </body>
 </html>

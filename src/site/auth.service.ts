@@ -50,6 +50,10 @@ export interface AuthUser {
   passwordHash?: string;
   passwordUpdatedAt?: string;
   role: 'client' | 'superadmin';
+  paddleSubscriptionId?: string;
+  paddleSubscriptionStatus?: 'active' | 'trialing' | 'canceled' | 'paused' | 'past_due';
+  paddleSubscribedAt?: string;
+  paddleSubscriptionUpdatedAt?: string;
   createdAt: string;
   updatedAt: string;
   lastLoginAt: string;
@@ -118,6 +122,7 @@ export class AuthService {
   private readonly usersFile = join(this.dataDir, 'auth-users.json');
   private readonly sessionsFile = join(this.dataDir, 'auth-sessions.json');
   private readonly oauthStatesFile = join(this.dataDir, 'auth-oauth-states.json');
+  private readonly paddleConfigFile = join(process.cwd(), 'paddle-config.json');
   private readonly passwordResetTokensFile = join(this.dataDir, 'auth-password-reset-tokens.json');
 
   buildGoogleWebAuthUrl(req: Request, mode: AuthMode): string {
@@ -257,7 +262,7 @@ export class AuthService {
     return user;
   }
 
-  deleteCurrentUser(req: Request, res: Response) {
+  async deleteCurrentUser(req: Request, res: Response): Promise<void> {
     const currentUser = this.getCurrentUser(req);
     if (!currentUser) {
       throw new UnauthorizedException('Login is required.');
@@ -265,6 +270,10 @@ export class AuthService {
 
     if (currentUser.email.toLowerCase() === this.superadminEmail) {
       throw new ForbiddenException('The superadmin account cannot be deleted.');
+    }
+
+    if (currentUser.paddleSubscriptionId && (currentUser.paddleSubscriptionStatus === 'active' || currentUser.paddleSubscriptionStatus === 'trialing')) {
+      await this.cancelSubscriptionById(currentUser.paddleSubscriptionId);
     }
 
     const usersFile = this.readUsersFile();
@@ -482,6 +491,20 @@ export class AuthService {
     };
 
     usersFile.users.push(user);
+
+    // Re-link any existing Paddle subscription for this email (e.g. after account re-creation)
+    this.findActiveSubscriptionByEmail(googleUser.email).then((sub) => {
+      if (!sub) return;
+      const file = this.readUsersFile();
+      const dbUser = file.users.find((u) => u.id === user.id);
+      if (!dbUser) return;
+      dbUser.paddleSubscriptionId = sub.id;
+      dbUser.paddleSubscriptionStatus = sub.status as AuthUser['paddleSubscriptionStatus'];
+      dbUser.paddleSubscribedAt = sub.createdAt;
+      dbUser.paddleSubscriptionUpdatedAt = new Date().toISOString();
+      this.writeJson(this.usersFile, file);
+    }).catch(() => {});
+
     this.writeJson(this.usersFile, usersFile);
     return user;
   }
@@ -720,11 +743,146 @@ export class AuthService {
     return randomBytes(bytes).toString('base64url');
   }
 
+  private getPaddleConfig(): { apiKey: string; environment: string } {
+    const envKey = process.env.PADDLE_API_KEY;
+    const envEnv = process.env.PADDLE_ENV;
+    if (envKey) return { apiKey: envKey, environment: envEnv ?? 'production' };
+    if (!existsSync(this.paddleConfigFile)) throw new InternalServerErrorException('Paddle is not configured.');
+    return JSON.parse(readFileSync(this.paddleConfigFile, 'utf-8')) as { apiKey: string; environment: string };
+  }
+
+  private getPaddleApiUrl(): string {
+    const { environment } = this.getPaddleConfig();
+    return environment === 'sandbox' ? 'https://sandbox-api.paddle.com' : 'https://api.paddle.com';
+  }
+
+  private async paddleGet(path: string): Promise<Record<string, unknown>> {
+    const { apiKey } = this.getPaddleConfig();
+    const res = await fetch(`${this.getPaddleApiUrl()}${path}`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    const json = (await res.json()) as Record<string, unknown>;
+    if (!res.ok) throw new BadRequestException((json.error as Record<string, unknown>)?.detail ?? 'Paddle API error.');
+    return (json.data ?? json) as Record<string, unknown>;
+  }
+
+  private async paddlePost(path: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
+    const { apiKey } = this.getPaddleConfig();
+    const res = await fetch(`${this.getPaddleApiUrl()}${path}`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const json = (await res.json()) as Record<string, unknown>;
+    if (!res.ok) throw new BadRequestException((json.error as Record<string, unknown>)?.detail ?? 'Paddle API error.');
+    return (json.data ?? json) as Record<string, unknown>;
+  }
+
+  async verifyCheckoutAndSave(req: Request): Promise<AuthUser> {
+    const currentUser = this.getCurrentUser(req);
+    if (!currentUser) throw new UnauthorizedException('Login is required.');
+
+    const sub = await this.findActiveSubscriptionByEmail(currentUser.email);
+    if (!sub) throw new BadRequestException('No active subscription found. Please wait a moment and try again.');
+
+    const usersFile = this.readUsersFile();
+    const dbUser = usersFile.users.find((u) => u.id === currentUser.id);
+    if (!dbUser) throw new UnauthorizedException('User not found.');
+
+    const now = new Date().toISOString();
+    dbUser.paddleSubscriptionId = sub.id;
+    dbUser.paddleSubscriptionStatus = sub.status as AuthUser['paddleSubscriptionStatus'];
+    dbUser.paddleSubscribedAt = dbUser.paddleSubscribedAt ?? now;
+    dbUser.paddleSubscriptionUpdatedAt = now;
+    this.writeJson(this.usersFile, usersFile);
+    return dbUser;
+  }
+
+  async cancelUserSubscription(req: Request): Promise<void> {
+    const currentUser = this.getCurrentUser(req);
+    if (!currentUser) throw new UnauthorizedException('Login is required.');
+    if (!currentUser.paddleSubscriptionId) throw new BadRequestException('No active subscription found.');
+
+    await this.paddlePost(`/subscriptions/${currentUser.paddleSubscriptionId}/cancel`, { effective_from: 'next_billing_period' });
+
+    const usersFile = this.readUsersFile();
+    const dbUser = usersFile.users.find((u) => u.id === currentUser.id);
+    if (dbUser) {
+      dbUser.paddleSubscriptionStatus = 'canceled';
+      dbUser.paddleSubscriptionUpdatedAt = new Date().toISOString();
+      this.writeJson(this.usersFile, usersFile);
+    }
+  }
+
+  private async cancelSubscriptionById(subscriptionId: string): Promise<void> {
+    try {
+      await this.paddlePost(`/subscriptions/${subscriptionId}/cancel`, { effective_from: 'next_billing_period' });
+    } catch {
+      // best-effort
+    }
+  }
+
+  private async findActiveSubscriptionByEmail(email: string): Promise<{ id: string; status: string; createdAt: string } | null> {
+    try {
+      const customers = (await this.paddleGet(`/customers?search=${encodeURIComponent(email)}`)) as unknown;
+      const list = Array.isArray(customers) ? customers : ((customers as Record<string, unknown>).items as unknown[]) ?? [];
+      const customer = (list as Array<Record<string, unknown>>).find((c) => (c.email as string)?.toLowerCase() === email.toLowerCase());
+      if (!customer) return null;
+
+      const subs = (await this.paddleGet(`/subscriptions?customer_id=${customer.id}`)) as unknown;
+      const subList = Array.isArray(subs) ? subs : ((subs as Record<string, unknown>).items as unknown[]) ?? [];
+      const active = (subList as Array<Record<string, unknown>>).find((s) => s.status === 'active' || s.status === 'trialing');
+      if (!active) return null;
+
+      return { id: active.id as string, status: active.status as string, createdAt: active.created_at as string };
+    } catch {
+      return null;
+    }
+  }
+
   private getQueryValue(value: unknown): string | undefined {
     if (Array.isArray(value)) {
       return typeof value[0] === 'string' ? value[0] : undefined;
     }
 
     return typeof value === 'string' ? value : undefined;
+  }
+
+  handlePaddleWebhook(body: Record<string, unknown>): void {
+    const eventType = body.event_type as string | undefined;
+    if (!eventType) return;
+
+    const data = body.data as Record<string, unknown> | undefined;
+    if (!data) return;
+
+    const statusMap: Record<string, AuthUser['paddleSubscriptionStatus']> = {
+      active: 'active',
+      trialing: 'trialing',
+      canceled: 'canceled',
+      paused: 'paused',
+      past_due: 'past_due',
+    };
+
+    if (['subscription.created', 'subscription.updated', 'subscription.canceled', 'subscription.paused', 'subscription.resumed'].includes(eventType)) {
+      const subscriptionId = data.id as string | undefined;
+      const status = statusMap[data.status as string] ?? 'active';
+      const customer = data.customer as Record<string, unknown> | undefined;
+      const email = customer?.email as string | undefined;
+
+      if (!email || !subscriptionId) return;
+
+      const usersFile = this.readUsersFile();
+      const user = usersFile.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+      if (!user) return;
+
+      const now = new Date().toISOString();
+      user.paddleSubscriptionId = subscriptionId;
+      user.paddleSubscriptionStatus = status;
+      user.paddleSubscriptionUpdatedAt = now;
+      if (eventType === 'subscription.created') {
+        user.paddleSubscribedAt = now;
+      }
+      this.writeJson(this.usersFile, usersFile);
+    }
   }
 }

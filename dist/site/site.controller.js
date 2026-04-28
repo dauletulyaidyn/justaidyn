@@ -16,10 +16,12 @@ exports.SiteController = void 0;
 const common_1 = require("@nestjs/common");
 const fs_1 = require("fs");
 const path_1 = require("path");
+const auth_service_1 = require("./auth.service");
 const site_service_1 = require("./site.service");
 let SiteController = class SiteController {
-    constructor(siteService) {
+    constructor(siteService, authService) {
         this.siteService = siteService;
+        this.authService = authService;
     }
     root(req, res) {
         const site = this.siteService.resolveHost(req.hostname);
@@ -45,46 +47,150 @@ let SiteController = class SiteController {
         }
         return this.withSharedModel(this.siteService.getLoginPage(), req);
     }
-    register(req) {
+    adminLogin(req) {
         const site = this.siteService.resolveHost(req.hostname);
         if (site !== 'main') {
             throw new common_1.NotFoundException();
         }
-        return this.withSharedModel(this.siteService.getRegisterPage(), req);
+        return this.withSharedModel(this.siteService.getAdminLoginPage(), req);
     }
-    loginGoogle(req) {
+    adminLoginPost(req, res, body) {
         const site = this.siteService.resolveHost(req.hostname);
         if (site !== 'main') {
             throw new common_1.NotFoundException();
         }
-        return this.withSharedModel(this.siteService.getAuthProviderPage('login', 'google'), req);
+        this.authService.loginSuperadmin(req, res, body.email, body.password);
+        return res.redirect('/admin');
     }
-    loginApple(req) {
-        const site = this.siteService.resolveHost(req.hostname);
-        if (site !== 'main') {
-            throw new common_1.NotFoundException();
-        }
-        return this.withSharedModel(this.siteService.getAuthProviderPage('login', 'apple'), req);
+    adminPasswordReset(req) {
+        return this.withSharedModel(this.siteService.getAdminPasswordResetRequestPage(), req);
     }
-    registerGoogle(req) {
-        const site = this.siteService.resolveHost(req.hostname);
-        if (site !== 'main') {
-            throw new common_1.NotFoundException();
-        }
-        return this.withSharedModel(this.siteService.getAuthProviderPage('register', 'google'), req);
+    async adminPasswordResetPost(req, body) {
+        const result = await this.authService.requestSuperadminPasswordReset(req, body.email);
+        return this.withSharedModel(this.siteService.getAdminPasswordResetRequestPage(result.resetUrl), req);
     }
-    registerApple(req) {
+    adminPasswordResetSet(req, token) {
+        return this.withSharedModel(this.siteService.getAdminPasswordResetSetPage(token), req);
+    }
+    adminPasswordResetSetPost(req, res, token, body) {
+        this.authService.resetSuperadminPassword(token, body.password);
+        return res.redirect('/admin/login');
+    }
+    adminDashboard(req, res) {
+        if (!this.tryRequireSuperadmin(req, res)) {
+            return;
+        }
+        return res.render('pages/host-router', this.withSharedModel(this.siteService.getAdminDashboardPage(), req));
+    }
+    adminUsers(req, res) {
+        if (!this.tryRequireSuperadmin(req, res)) {
+            return;
+        }
+        return res.render('pages/host-router', this.withSharedModel(this.siteService.getAdminUsersPage(this.authService.listUsersForSuperadmin(req)), req));
+    }
+    adminPosts(req, res) {
+        return this.renderAdminSection(req, res, 'Posts');
+    }
+    adminApps(req, res) {
+        return this.renderAdminSection(req, res, 'Apps');
+    }
+    adminGames(req, res) {
+        return this.renderAdminSection(req, res, 'Games');
+    }
+    adminCourses(req, res) {
+        return this.renderAdminSection(req, res, 'Courses');
+    }
+    register(req, res) {
         const site = this.siteService.resolveHost(req.hostname);
         if (site !== 'main') {
             throw new common_1.NotFoundException();
         }
-        return this.withSharedModel(this.siteService.getAuthProviderPage('register', 'apple'), req);
+        return res.redirect('/login');
+    }
+    loginGoogle(req, res) {
+        const site = this.siteService.resolveHost(req.hostname);
+        if (site !== 'main') {
+            throw new common_1.NotFoundException();
+        }
+        const desktopAuthUrl = this.buildGoogleDesktopAuthUrl(req, 'login');
+        if (desktopAuthUrl) {
+            return res.redirect(desktopAuthUrl);
+        }
+        const authUrl = this.authService.buildGoogleWebAuthUrl(req, 'login');
+        this.authService.setOAuthStateCookie(res, authUrl, req);
+        return res.redirect(authUrl);
+    }
+    profile(req, res) {
+        const site = this.siteService.resolveHost(req.hostname);
+        if (site !== 'main') {
+            throw new common_1.NotFoundException();
+        }
+        const user = this.authService.getCurrentUser(req);
+        if (!user) {
+            return res.redirect('/login');
+        }
+        return res.render('pages/host-router', this.withSharedModel(this.siteService.getProfilePage(user), req));
+    }
+    profileEdit(req, res) {
+        const site = this.siteService.resolveHost(req.hostname);
+        if (site !== 'main') {
+            throw new common_1.NotFoundException();
+        }
+        const user = this.authService.getCurrentUser(req);
+        if (!user) {
+            return res.redirect('/login');
+        }
+        return res.render('pages/host-router', this.withSharedModel(this.siteService.getProfileEditPage(user), req));
+    }
+    profileUpdate(req, res, body) {
+        const site = this.siteService.resolveHost(req.hostname);
+        if (site !== 'main') {
+            throw new common_1.NotFoundException();
+        }
+        this.authService.updateCurrentUserProfile(req, {
+            firstName: body.firstName,
+            lastName: body.lastName,
+            profileTitle: body.profileTitle,
+            profileLabel: body.profileLabel,
+            shortBio: body.shortBio,
+            organization: body.organization,
+            location: body.location,
+            website: body.website,
+        });
+        return res.redirect('/profile');
+    }
+    async profileDelete(req, res) {
+        const site = this.siteService.resolveHost(req.hostname);
+        if (site !== 'main') {
+            throw new common_1.NotFoundException();
+        }
+        await this.authService.deleteCurrentUser(req, res);
+        return res.redirect('/');
+    }
+    registerGoogle(req, res) {
+        const site = this.siteService.resolveHost(req.hostname);
+        if (site !== 'main') {
+            throw new common_1.NotFoundException();
+        }
+        return res.redirect('/login/google');
+    }
+    async googleCallback(req, res) {
+        const site = this.siteService.resolveHost(req.hostname);
+        if (site !== 'main') {
+            throw new common_1.NotFoundException();
+        }
+        await this.authService.handleGoogleCallback(req, res);
+        return res.redirect('/profile');
+    }
+    logout(req, res) {
+        this.authService.logout(req, res);
+        return res.redirect('/');
     }
     projectAlias(req, res) {
         const project = Array.isArray(req.params.project) ? req.params.project[0] : req.params.project;
         switch (project) {
             case 'skillsminds':
-                return res.sendFile((0, path_1.join)(process.cwd(), 'articles', 'index.html'));
+                return this.renderStaticHtmlFile(req, res, (0, path_1.join)(process.cwd(), 'articles', 'index.html'));
             case 'nofacethinker':
                 return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('nofacethinker'), req));
             case 'courses':
@@ -101,8 +207,8 @@ let SiteController = class SiteController {
                 throw new common_1.NotFoundException();
         }
     }
-    skillsmindsProject(res) {
-        return res.sendFile((0, path_1.join)(process.cwd(), 'articles', 'index.html'));
+    skillsmindsProject(req, res) {
+        return this.renderStaticHtmlFile(req, res, (0, path_1.join)(process.cwd(), 'articles', 'index.html'));
     }
     programmingArticleShortcut(req, res) {
         const rawFile = req.params.file;
@@ -122,8 +228,8 @@ let SiteController = class SiteController {
     coursesProject(req, res) {
         return res.redirect('/courses/ai-agents-course.html');
     }
-    appsProject(res) {
-        return res.sendFile((0, path_1.join)(process.cwd(), 'apps', 'index.html'));
+    appsProject(req, res) {
+        return this.renderStaticHtmlFile(req, res, (0, path_1.join)(process.cwd(), 'apps', 'index.html'));
     }
     gamesProject(req) {
         return this.withSharedModel(this.siteService.getComingSoonPage('games'), req);
@@ -141,8 +247,8 @@ let SiteController = class SiteController {
         }
         return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);
     }
-    appDetailPath(res) {
-        return res.sendFile((0, path_1.join)(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
+    appDetailPath(req, res) {
+        return this.renderStaticHtmlFile(req, res, (0, path_1.join)(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
     }
     appDetailAlias(req) {
         return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);
@@ -188,6 +294,44 @@ let SiteController = class SiteController {
             timestamp: new Date().toISOString(),
         };
     }
+    apiMe(req) {
+        const user = this.authService.getCurrentUser(req);
+        if (!user) {
+            return { authenticated: false };
+        }
+        return {
+            authenticated: true,
+            user: {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                role: user.role,
+                paddleSubscriptionStatus: user.paddleSubscriptionStatus ?? null,
+                paddleSubscribedAt: user.paddleSubscribedAt ?? null,
+            },
+        };
+    }
+    paddleWebhook(body, res) {
+        try {
+            this.authService.handlePaddleWebhook(body);
+        }
+        catch {
+        }
+        return res.status(200).json({ received: true });
+    }
+    async paddleVerifyCheckout(req) {
+        const user = await this.authService.verifyCheckoutAndSave(req);
+        return {
+            subscriptionStatus: user.paddleSubscriptionStatus,
+            subscribedAt: user.paddleSubscribedAt,
+        };
+    }
+    async paddleCancelSubscription(req) {
+        await this.authService.cancelUserSubscription(req);
+        return { canceled: true };
+    }
     serveSectionLegacyFile(req, res) {
         const rawSection = req.path.split('/').filter(Boolean)[0];
         const rawFile = req.params.file;
@@ -209,6 +353,9 @@ let SiteController = class SiteController {
         const found = (0, path_1.join)(root, sectionMap[section], file);
         if (!(0, fs_1.existsSync)(found)) {
             throw new common_1.NotFoundException();
+        }
+        if (/\.html$/i.test(file)) {
+            return this.renderStaticHtmlFile(req, res, found);
         }
         return res.sendFile(found);
     }
@@ -270,20 +417,7 @@ let SiteController = class SiteController {
         }
         const standalonePages = ['kaspiqr.html', 'programming-course.html'];
         if (/\.html$/i.test(file) && site === 'main' && !standalonePages.includes(file)) {
-            try {
-                const html = (0, fs_1.readFileSync)(found, 'utf-8');
-                const mainMatch = html.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
-                const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
-                if (mainMatch) {
-                    const content = mainMatch[1]
-                        .replace(/src="images\//g, 'src="/images/')
-                        .replace(/href="images\//g, 'href="/images/');
-                    const title = titleMatch ? titleMatch[1].trim() : 'JustAidyn';
-                    return res.render('pages/static-wrapper', this.withSharedModel(this.siteService.getStaticPageModel(title, content), req));
-                }
-            }
-            catch {
-            }
+            return this.renderStaticHtmlFile(req, res, found);
         }
         return res.sendFile(found);
     }
@@ -319,12 +453,107 @@ let SiteController = class SiteController {
         return {
             ...page,
             year: new Date().getFullYear(),
+            currentUser: req ? this.authService.getCurrentUser(req) : null,
             projectLinks: this.siteService.getProjects(),
             mainSiteUrl,
             projectsUrl: `${mainSiteUrl}/projects`,
             articlesUrl: `${mainSiteUrl}/articles/`,
             downloadsUrl: `${mainSiteUrl}/downloads/`,
         };
+    }
+    renderStaticHtmlFile(req, res, filePath) {
+        try {
+            const html = (0, fs_1.readFileSync)(filePath, 'utf-8');
+            const mainMatch = html.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
+            const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+            if (!mainMatch) {
+                return res.sendFile(filePath);
+            }
+            const content = mainMatch[1]
+                .replace(/src="images\//g, 'src="/images/')
+                .replace(/href="images\//g, 'href="/images/')
+                .replace(/src="\.\.\/images\//g, 'src="/images/')
+                .replace(/href="\.\.\/images\//g, 'href="/images/');
+            const title = titleMatch ? titleMatch[1].trim() : 'JustAidyn';
+            return res.render('pages/static-wrapper', this.withSharedModel(this.siteService.getStaticPageModel(title, content), req));
+        }
+        catch {
+            return res.sendFile(filePath);
+        }
+    }
+    renderAdminSection(req, res, section) {
+        if (!this.tryRequireSuperadmin(req, res)) {
+            return;
+        }
+        return res.render('pages/host-router', this.withSharedModel(this.siteService.getAdminSectionPage(section), req));
+    }
+    tryRequireSuperadmin(req, res) {
+        try {
+            this.authService.getSuperadminUser(req);
+            return true;
+        }
+        catch {
+            res.redirect('/admin/login');
+            return false;
+        }
+    }
+    buildGoogleDesktopAuthUrl(req, mode) {
+        const redirectUri = this.getQueryValue(req.query.redirect_uri);
+        const codeChallenge = this.getQueryValue(req.query.code_challenge);
+        const state = this.getQueryValue(req.query.state);
+        if (!redirectUri && !codeChallenge) {
+            return null;
+        }
+        if (!redirectUri || !codeChallenge) {
+            throw new common_1.BadRequestException('Desktop Google OAuth requires redirect_uri and code_challenge.');
+        }
+        const redirectUrl = this.parseDesktopRedirectUri(redirectUri);
+        if (!redirectUrl) {
+            throw new common_1.BadRequestException('redirect_uri must be http://127.0.0.1:<port>/oauth2callback or http://localhost:<port>/oauth2callback.');
+        }
+        if (!/^[A-Za-z0-9._~-]{43,128}$/.test(codeChallenge)) {
+            throw new common_1.BadRequestException('code_challenge must be a valid PKCE S256 challenge.');
+        }
+        if (state && state.length > 2048) {
+            throw new common_1.BadRequestException('state is too long.');
+        }
+        const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+        authUrl.searchParams.set('client_id', '1032118127228-9oin1kharh2kp6i9dg85r7i0s0j2tq5u.apps.googleusercontent.com');
+        authUrl.searchParams.set('redirect_uri', redirectUrl.toString());
+        authUrl.searchParams.set('response_type', 'code');
+        authUrl.searchParams.set('scope', 'openid email profile');
+        authUrl.searchParams.set('access_type', 'offline');
+        authUrl.searchParams.set('prompt', 'consent');
+        authUrl.searchParams.set('code_challenge', codeChallenge);
+        authUrl.searchParams.set('code_challenge_method', 'S256');
+        if (state) {
+            authUrl.searchParams.set('state', state);
+        }
+        else {
+            authUrl.searchParams.set('state', `justaidyn:${mode}:desktop`);
+        }
+        return authUrl.toString();
+    }
+    parseDesktopRedirectUri(value) {
+        try {
+            const url = new URL(value);
+            const port = Number(url.port);
+            const isLoopback = url.hostname === '127.0.0.1' || url.hostname === 'localhost';
+            const isValidPort = Number.isInteger(port) && port >= 1 && port <= 65535;
+            if (url.protocol !== 'http:' || !isLoopback || !isValidPort || url.pathname !== '/oauth2callback') {
+                return null;
+            }
+            return url;
+        }
+        catch {
+            return null;
+        }
+    }
+    getQueryValue(value) {
+        if (Array.isArray(value)) {
+            return typeof value[0] === 'string' ? value[0] : undefined;
+        }
+        return typeof value === 'string' ? value : undefined;
     }
 };
 exports.SiteController = SiteController;
@@ -353,45 +582,178 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "login", null);
 __decorate([
-    (0, common_1.Get)('/register'),
+    (0, common_1.Get)('/admin/login'),
     (0, common_1.Render)('pages/host-router'),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "adminLogin", null);
+__decorate([
+    (0, common_1.Post)('/admin/login'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "adminLoginPost", null);
+__decorate([
+    (0, common_1.Get)('/admin/password-reset'),
+    (0, common_1.Render)('pages/host-router'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "adminPasswordReset", null);
+__decorate([
+    (0, common_1.Post)('/admin/password-reset'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "adminPasswordResetPost", null);
+__decorate([
+    (0, common_1.Get)('/admin/password-reset/:token'),
+    (0, common_1.Render)('pages/host-router'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('token')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "adminPasswordResetSet", null);
+__decorate([
+    (0, common_1.Post)('/admin/password-reset/:token'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Param)('token')),
+    __param(3, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, String, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "adminPasswordResetSetPost", null);
+__decorate([
+    (0, common_1.Get)('/admin'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "adminDashboard", null);
+__decorate([
+    (0, common_1.Get)('/admin/users'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "adminUsers", null);
+__decorate([
+    (0, common_1.Get)('/admin/posts'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "adminPosts", null);
+__decorate([
+    (0, common_1.Get)('/admin/apps'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "adminApps", null);
+__decorate([
+    (0, common_1.Get)('/admin/games'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "adminGames", null);
+__decorate([
+    (0, common_1.Get)('/admin/courses'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "adminCourses", null);
+__decorate([
+    (0, common_1.Get)('/register'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "register", null);
 __decorate([
     (0, common_1.Get)('/login/google'),
-    (0, common_1.Render)('pages/host-router'),
     __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "loginGoogle", null);
 __decorate([
-    (0, common_1.Get)('/login/apple'),
-    (0, common_1.Render)('pages/host-router'),
+    (0, common_1.Get)('/profile'),
     __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
-], SiteController.prototype, "loginApple", null);
+], SiteController.prototype, "profile", null);
+__decorate([
+    (0, common_1.Get)('/profile/edit'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "profileEdit", null);
+__decorate([
+    (0, common_1.Post)('/profile/edit'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "profileUpdate", null);
+__decorate([
+    (0, common_1.Post)('/profile/delete'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "profileDelete", null);
 __decorate([
     (0, common_1.Get)('/register/google'),
-    (0, common_1.Render)('pages/host-router'),
     __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "registerGoogle", null);
 __decorate([
-    (0, common_1.Get)('/register/apple'),
-    (0, common_1.Render)('pages/host-router'),
+    (0, common_1.Get)('/auth/google/callback'),
     __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "googleCallback", null);
+__decorate([
+    (0, common_1.Get)('/logout'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
-], SiteController.prototype, "registerApple", null);
+], SiteController.prototype, "logout", null);
 __decorate([
     (0, common_1.Get)('/p/:project'),
     __param(0, (0, common_1.Req)()),
@@ -402,9 +764,10 @@ __decorate([
 ], SiteController.prototype, "projectAlias", null);
 __decorate([
     (0, common_1.Get)('/skillsminds'),
-    __param(0, (0, common_1.Res)()),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "skillsmindsProject", null);
 __decorate([
@@ -433,9 +796,10 @@ __decorate([
 ], SiteController.prototype, "coursesProject", null);
 __decorate([
     (0, common_1.Get)('/apps'),
-    __param(0, (0, common_1.Res)()),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "appsProject", null);
 __decorate([
@@ -472,9 +836,10 @@ __decorate([
 ], SiteController.prototype, "appDetail", null);
 __decorate([
     (0, common_1.Get)('/apps/justaidyn-screencam'),
-    __param(0, (0, common_1.Res)()),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "appDetailPath", null);
 __decorate([
@@ -556,6 +921,35 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "apiHealthPath", null);
 __decorate([
+    (0, common_1.Get)('/api/me'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "apiMe", null);
+__decorate([
+    (0, common_1.Post)('/api/paddle/webhook'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "paddleWebhook", null);
+__decorate([
+    (0, common_1.Post)('/api/paddle/verify-checkout'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "paddleVerifyCheckout", null);
+__decorate([
+    (0, common_1.Post)('/api/paddle/subscription/cancel'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "paddleCancelSubscription", null);
+__decorate([
     (0, common_1.Get)([
         '/skillsminds/:file',
         '/nofacethinker/:file',
@@ -595,5 +989,6 @@ __decorate([
 ], SiteController.prototype, "trackDownload", null);
 exports.SiteController = SiteController = __decorate([
     (0, common_1.Controller)(),
-    __metadata("design:paramtypes", [site_service_1.SiteService])
+    __metadata("design:paramtypes", [site_service_1.SiteService,
+        auth_service_1.AuthService])
 ], SiteController);

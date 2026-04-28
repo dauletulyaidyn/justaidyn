@@ -24,6 +24,7 @@ let AuthService = class AuthService {
         this.usersFile = (0, path_1.join)(this.dataDir, 'auth-users.json');
         this.sessionsFile = (0, path_1.join)(this.dataDir, 'auth-sessions.json');
         this.oauthStatesFile = (0, path_1.join)(this.dataDir, 'auth-oauth-states.json');
+        this.paddleConfigFile = (0, path_1.join)(process.cwd(), 'paddle-config.json');
         this.passwordResetTokensFile = (0, path_1.join)(this.dataDir, 'auth-password-reset-tokens.json');
     }
     buildGoogleWebAuthUrl(req, mode) {
@@ -138,13 +139,16 @@ let AuthService = class AuthService {
         this.writeJson(this.usersFile, usersFile);
         return user;
     }
-    deleteCurrentUser(req, res) {
+    async deleteCurrentUser(req, res) {
         const currentUser = this.getCurrentUser(req);
         if (!currentUser) {
             throw new common_1.UnauthorizedException('Login is required.');
         }
         if (currentUser.email.toLowerCase() === this.superadminEmail) {
             throw new common_1.ForbiddenException('The superadmin account cannot be deleted.');
+        }
+        if (currentUser.paddleSubscriptionId && (currentUser.paddleSubscriptionStatus === 'active' || currentUser.paddleSubscriptionStatus === 'trialing')) {
+            await this.cancelSubscriptionById(currentUser.paddleSubscriptionId);
         }
         const usersFile = this.readUsersFile();
         usersFile.users = usersFile.users.filter((user) => user.id !== currentUser.id);
@@ -327,6 +331,19 @@ let AuthService = class AuthService {
             lastLoginAt: now,
         };
         usersFile.users.push(user);
+        this.findActiveSubscriptionByEmail(googleUser.email).then((sub) => {
+            if (!sub)
+                return;
+            const file = this.readUsersFile();
+            const dbUser = file.users.find((u) => u.id === user.id);
+            if (!dbUser)
+                return;
+            dbUser.paddleSubscriptionId = sub.id;
+            dbUser.paddleSubscriptionStatus = sub.status;
+            dbUser.paddleSubscribedAt = sub.createdAt;
+            dbUser.paddleSubscriptionUpdatedAt = new Date().toISOString();
+            this.writeJson(this.usersFile, file);
+        }).catch(() => { });
         this.writeJson(this.usersFile, usersFile);
         return user;
     }
@@ -516,11 +533,140 @@ let AuthService = class AuthService {
     randomToken(bytes) {
         return (0, crypto_1.randomBytes)(bytes).toString('base64url');
     }
+    getPaddleConfig() {
+        const envKey = process.env.PADDLE_API_KEY;
+        const envEnv = process.env.PADDLE_ENV;
+        if (envKey)
+            return { apiKey: envKey, environment: envEnv ?? 'production' };
+        if (!(0, fs_1.existsSync)(this.paddleConfigFile))
+            throw new common_1.InternalServerErrorException('Paddle is not configured.');
+        return JSON.parse((0, fs_1.readFileSync)(this.paddleConfigFile, 'utf-8'));
+    }
+    getPaddleApiUrl() {
+        const { environment } = this.getPaddleConfig();
+        return environment === 'sandbox' ? 'https://sandbox-api.paddle.com' : 'https://api.paddle.com';
+    }
+    async paddleGet(path) {
+        const { apiKey } = this.getPaddleConfig();
+        const res = await fetch(`${this.getPaddleApiUrl()}${path}`, {
+            headers: { Authorization: `Bearer ${apiKey}` },
+        });
+        const json = (await res.json());
+        if (!res.ok)
+            throw new common_1.BadRequestException(json.error?.detail ?? 'Paddle API error.');
+        return (json.data ?? json);
+    }
+    async paddlePost(path, body) {
+        const { apiKey } = this.getPaddleConfig();
+        const res = await fetch(`${this.getPaddleApiUrl()}${path}`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+        const json = (await res.json());
+        if (!res.ok)
+            throw new common_1.BadRequestException(json.error?.detail ?? 'Paddle API error.');
+        return (json.data ?? json);
+    }
+    async verifyCheckoutAndSave(req) {
+        const currentUser = this.getCurrentUser(req);
+        if (!currentUser)
+            throw new common_1.UnauthorizedException('Login is required.');
+        const sub = await this.findActiveSubscriptionByEmail(currentUser.email);
+        if (!sub)
+            throw new common_1.BadRequestException('No active subscription found. Please wait a moment and try again.');
+        const usersFile = this.readUsersFile();
+        const dbUser = usersFile.users.find((u) => u.id === currentUser.id);
+        if (!dbUser)
+            throw new common_1.UnauthorizedException('User not found.');
+        const now = new Date().toISOString();
+        dbUser.paddleSubscriptionId = sub.id;
+        dbUser.paddleSubscriptionStatus = sub.status;
+        dbUser.paddleSubscribedAt = dbUser.paddleSubscribedAt ?? now;
+        dbUser.paddleSubscriptionUpdatedAt = now;
+        this.writeJson(this.usersFile, usersFile);
+        return dbUser;
+    }
+    async cancelUserSubscription(req) {
+        const currentUser = this.getCurrentUser(req);
+        if (!currentUser)
+            throw new common_1.UnauthorizedException('Login is required.');
+        if (!currentUser.paddleSubscriptionId)
+            throw new common_1.BadRequestException('No active subscription found.');
+        await this.paddlePost(`/subscriptions/${currentUser.paddleSubscriptionId}/cancel`, { effective_from: 'next_billing_period' });
+        const usersFile = this.readUsersFile();
+        const dbUser = usersFile.users.find((u) => u.id === currentUser.id);
+        if (dbUser) {
+            dbUser.paddleSubscriptionStatus = 'canceled';
+            dbUser.paddleSubscriptionUpdatedAt = new Date().toISOString();
+            this.writeJson(this.usersFile, usersFile);
+        }
+    }
+    async cancelSubscriptionById(subscriptionId) {
+        try {
+            await this.paddlePost(`/subscriptions/${subscriptionId}/cancel`, { effective_from: 'next_billing_period' });
+        }
+        catch {
+        }
+    }
+    async findActiveSubscriptionByEmail(email) {
+        try {
+            const customers = (await this.paddleGet(`/customers?search=${encodeURIComponent(email)}`));
+            const list = Array.isArray(customers) ? customers : customers.items ?? [];
+            const customer = list.find((c) => c.email?.toLowerCase() === email.toLowerCase());
+            if (!customer)
+                return null;
+            const subs = (await this.paddleGet(`/subscriptions?customer_id=${customer.id}`));
+            const subList = Array.isArray(subs) ? subs : subs.items ?? [];
+            const active = subList.find((s) => s.status === 'active' || s.status === 'trialing');
+            if (!active)
+                return null;
+            return { id: active.id, status: active.status, createdAt: active.created_at };
+        }
+        catch {
+            return null;
+        }
+    }
     getQueryValue(value) {
         if (Array.isArray(value)) {
             return typeof value[0] === 'string' ? value[0] : undefined;
         }
         return typeof value === 'string' ? value : undefined;
+    }
+    handlePaddleWebhook(body) {
+        const eventType = body.event_type;
+        if (!eventType)
+            return;
+        const data = body.data;
+        if (!data)
+            return;
+        const statusMap = {
+            active: 'active',
+            trialing: 'trialing',
+            canceled: 'canceled',
+            paused: 'paused',
+            past_due: 'past_due',
+        };
+        if (['subscription.created', 'subscription.updated', 'subscription.canceled', 'subscription.paused', 'subscription.resumed'].includes(eventType)) {
+            const subscriptionId = data.id;
+            const status = statusMap[data.status] ?? 'active';
+            const customer = data.customer;
+            const email = customer?.email;
+            if (!email || !subscriptionId)
+                return;
+            const usersFile = this.readUsersFile();
+            const user = usersFile.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+            if (!user)
+                return;
+            const now = new Date().toISOString();
+            user.paddleSubscriptionId = subscriptionId;
+            user.paddleSubscriptionStatus = status;
+            user.paddleSubscriptionUpdatedAt = now;
+            if (eventType === 'subscription.created') {
+                user.paddleSubscribedAt = now;
+            }
+            this.writeJson(this.usersFile, usersFile);
+        }
     }
 };
 exports.AuthService = AuthService;
