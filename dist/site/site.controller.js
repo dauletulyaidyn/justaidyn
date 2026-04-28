@@ -440,11 +440,14 @@ let SiteController = class SiteController {
         if (!sectionMap[section] || !/\.(html|txt|xml|png)$/i.test(file)) {
             throw new common_1.NotFoundException();
         }
+        if (section === 'courses' && /\.html$/i.test(file)) {
+            return res.redirect(301, `/${file}`);
+        }
         const found = (0, path_1.join)(root, sectionMap[section], file);
         if (!(0, fs_1.existsSync)(found)) {
             throw new common_1.NotFoundException();
         }
-        if (/\.html$/i.test(file) && section !== 'courses') {
+        if (/\.html$/i.test(file)) {
             return this.renderStaticHtmlFile(req, res, found);
         }
         return res.sendFile(found);

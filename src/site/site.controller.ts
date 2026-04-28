@@ -589,12 +589,17 @@ export class SiteController {
       throw new NotFoundException();
     }
 
+    // Course HTML files are served via the root coursePageMap (/:file handler)
+    if (section === 'courses' && /\.html$/i.test(file)) {
+      return res.redirect(301, `/${file}`);
+    }
+
     const found = join(root, sectionMap[section], file);
     if (!existsSync(found)) {
       throw new NotFoundException();
     }
 
-    if (/\.html$/i.test(file) && section !== 'courses') {
+    if (/\.html$/i.test(file)) {
       return this.renderStaticHtmlFile(req, res, found);
     }
 
