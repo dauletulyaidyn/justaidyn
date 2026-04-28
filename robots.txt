@@ -1,4 +1,11 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://justaidyn.vercel.app/sitemap.xml
+Disallow: /admin
+Disallow: /profile
+Disallow: /login
+Disallow: /logout
+Disallow: /auth/
+Disallow: /api/
+
+Sitemap: https://justaidyn.com/sitemap.xml

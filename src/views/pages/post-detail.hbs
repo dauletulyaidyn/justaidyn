@@ -5,6 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{title}}</title>
   <meta name="description" content="{{description}}">
+  <link rel="canonical" href="https://justaidyn.com/{{platform}}/post/{{post.slug}}">
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{{title}}">
+  <meta property="og:description" content="{{description}}">
+  <meta property="og:url" content="https://justaidyn.com/{{platform}}/post/{{post.slug}}">
+  <meta property="og:site_name" content="JustAidyn">
+  {{#if post.coverImage}}<meta property="og:image" content="https://justaidyn.com{{post.coverImage}}">{{/if}}
+  {{#if post.publishedAt}}<meta property="article:published_time" content="{{post.publishedAt}}">{{/if}}
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{title}}">
+  <meta name="twitter:description" content="{{description}}">
+  {{#if post.coverImage}}<meta name="twitter:image" content="https://justaidyn.com{{post.coverImage}}">{{/if}}
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "{{post.title}}",
+    "description": "{{post.excerpt}}",
+    {{#if post.coverImage}}"image": "https://justaidyn.com{{post.coverImage}}",{{/if}}
+    "datePublished": "{{post.publishedAt}}",
+    "dateModified": "{{post.updatedAt}}",
+    "author": { "@type": "Person", "name": "Dauletuly Aidyn", "url": "https://justaidyn.com" },
+    "publisher": { "@type": "Organization", "name": "JustAidyn", "url": "https://justaidyn.com" },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://justaidyn.com/{{platform}}/post/{{post.slug}}" }
+  }
+  </script>
   <link rel="icon" type="image/png" href="/favicon.png?v=20260331c">
   <link href="/css/bootstrap.min.css" rel="stylesheet">
   <link href="/css/bootstrap-icons.css" rel="stylesheet">
@@ -14,23 +43,18 @@
     body { background: linear-gradient(rgba(240,242,250,0.92), rgba(240,242,250,0.97)), url("/images/portrait-happy-excited-man-holding-laptop-computer.png") center / cover no-repeat fixed; }
     .post-page { padding: 160px 0 72px; }
     @media (max-width: 991px) { .post-page { padding-top: 205px; } }
-
     .post-back { display: inline-flex; align-items: center; gap: 6px; font-size: 0.88rem; color: #535da1; text-decoration: none; margin-bottom: 24px; font-weight: 600; }
     .post-back:hover { color: #3d4680; }
-
     .post-article { background: rgba(255,255,255,0.97); border: 1px solid rgba(24,35,44,0.1); border-radius: 16px; overflow: hidden; }
-
     .post-cover { width: 100%; max-height: 420px; object-fit: cover; display: block; }
-
     .post-body { padding: 40px 52px 52px; }
     @media (max-width: 767px) { .post-body { padding: 28px 24px 36px; } }
-
     .post-platform-badge { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #535da1; background: rgba(83,93,161,0.1); border-radius: 99px; padding: 2px 10px; display: inline-block; margin-bottom: 14px; }
     .post-body h1 { font-size: clamp(1.5rem,3.5vw,2.2rem); margin-bottom: 10px; line-height: 1.25; }
     .post-meta { font-size: 0.8rem; color: #8a96a0; margin-bottom: 32px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .post-edit-link { font-size: 0.78rem; color: #535da1; text-decoration: none; }
     .post-edit-link:hover { text-decoration: underline; }
-
+    .post-excerpt { font-size: 1.05rem; color: #5e6c79; line-height: 1.75; margin-bottom: 32px; border-left: 3px solid #535da1; padding-left: 16px; }
     .post-content { color: #2d3748; line-height: 1.85; font-size: 1rem; max-width: 740px; }
     .post-content h2 { font-size: 1.35rem; margin-top: 2.2rem; margin-bottom: 0.6rem; }
     .post-content h3 { font-size: 1.1rem; margin-top: 1.8rem; margin-bottom: 0.5rem; }
@@ -39,13 +63,20 @@
     .post-content li { margin-bottom: 0.3em; }
     .post-content blockquote { border-left: 3px solid #535da1; padding-left: 1rem; color: #5e6c79; margin: 1.5em 0; font-style: italic; }
     .post-content pre { background: #f5f7fa; padding: 18px 20px; border-radius: 10px; overflow-x: auto; margin-bottom: 1.2em; }
-    .post-content code { font-family: 'Fira Code', 'Consolas', monospace; font-size: 0.88em; background: #f0f2f8; padding: 2px 6px; border-radius: 4px; }
+    .post-content code { font-family: 'Fira Code','Consolas',monospace; font-size: 0.88em; background: #f0f2f8; padding: 2px 6px; border-radius: 4px; }
     .post-content pre code { background: none; padding: 0; font-size: 0.87em; }
     .post-content img { max-width: 100%; border-radius: 8px; margin: 1em 0; }
     .post-content a { color: #535da1; }
     .post-content table { width: 100%; border-collapse: collapse; margin-bottom: 1.2em; font-size: 0.92em; }
     .post-content th, .post-content td { padding: 8px 12px; border: 1px solid #e2e8f0; }
     .post-content th { background: #f5f7fa; font-weight: 700; }
+    /* Paywall overlay */
+    .paywall-overlay { margin-top: 32px; background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.97) 40%); padding: 80px 0 0; position: relative; }
+    .paywall-box { background: #fff; border: 2px solid #535da1; border-radius: 16px; padding: 40px; text-align: center; }
+    .paywall-box h3 { font-size: 1.3rem; margin-bottom: 10px; }
+    .paywall-box p { color: #5e6c79; margin-bottom: 24px; }
+    .btn-thinker { display: inline-flex; align-items: center; gap: 8px; padding: 13px 28px; border-radius: 10px; background: #535da1; color: #fff; font-weight: 700; font-size: 1rem; border: none; cursor: pointer; transition: background 0.15s; }
+    .btn-thinker:hover { background: #3d4680; }
   </style>
 </head>
 <body>
@@ -77,20 +108,36 @@
         {{#if (eq platform 'skillsminds')}}Skills and Minds Hub{{else}}no Face Thinker{{/if}}
       </a>
 
-      <article class="post-article">
+      <article class="post-article" itemscope itemtype="https://schema.org/Article">
         {{#if post.coverImage}}
-          <img class="post-cover" src="{{post.coverImage}}" alt="{{post.title}}">
+          <img class="post-cover" src="{{post.coverImage}}" alt="{{post.title}}" itemprop="image" width="1200" height="420">
         {{/if}}
         <div class="post-body">
           <span class="post-platform-badge">{{#if (eq platform 'skillsminds')}}Skills & Minds{{else}}no Face Thinker{{/if}}</span>
-          <h1>{{post.title}}</h1>
+          <h1 itemprop="headline">{{post.title}}</h1>
           <div class="post-meta">
-            <span>{{post.publishedAt}}</span>
+            <span itemprop="datePublished" content="{{post.publishedAt}}">{{post.publishedAt}}</span>
             {{#if (eq currentUser.role 'superadmin')}}
               <a class="post-edit-link" href="/admin/posts/{{post.id}}/edit"><i class="bi bi-pencil"></i> Edit</a>
             {{/if}}
           </div>
-          <div class="post-content">{{{post.content}}}</div>
+
+          {{#if isPaywall}}
+            {{#if post.excerpt}}<p class="post-excerpt">{{post.excerpt}}</p>{{/if}}
+            <div class="paywall-overlay">
+              <div class="paywall-box">
+                <i class="bi bi-star-fill" style="font-size:2rem;color:#535da1;display:block;margin-bottom:14px"></i>
+                <h3 data-en="Continue reading with a subscription" data-ru="Продолжить чтение с подпиской" data-kk="Жазылыммен оқуды жалғастыру">Continue reading with a subscription</h3>
+                <p data-en="Subscribe to no Face Thinker — $3.90/month with a 7-day free trial." data-ru="Подпишитесь на no Face Thinker — $3.90/мес, 7 дней бесплатно." data-kk="no Face Thinker-ге жазылыңыз — айына $3.90, 7 күн тегін.">Subscribe to no Face Thinker — $3.90/month with a 7-day free trial.</p>
+                <button class="btn-thinker" onclick="openThinkerCheckout()">
+                  <i class="bi bi-star"></i>
+                  <span data-en="Start 7-day Free Trial" data-ru="7 дней бесплатно" data-kk="7 күн тегін">Start 7-day Free Trial</span>
+                </button>
+              </div>
+            </div>
+          {{else}}
+            <div class="post-content" itemprop="articleBody">{{{post.content}}}</div>
+          {{/if}}
         </div>
       </article>
     </div>
@@ -101,5 +148,24 @@
   <script src="/js/bootstrap.min.js"></script>
   <script src="/js/jquery.sticky.js"></script>
   <script src="/js/custom.js?v=20260428-profile-i18n"></script>
+  {{#if isPaywall}}
+  <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+  <script>
+    Paddle.Environment.set('sandbox');
+    Paddle.Initialize({
+      token: 'test_16c22427a493b4298c916610736',
+      eventCallback: function(event) {
+        if (event.name === 'checkout.completed') {
+          fetch('/api/paddle/thinker/verify-checkout', { method: 'POST' })
+            .then(function() { window.location.reload(); })
+            .catch(function() { window.location.reload(); });
+        }
+      }
+    });
+    function openThinkerCheckout() {
+      Paddle.Checkout.open({ items: [{ priceId: 'pri_01kq8ty439m33xebxp8hjy9ar9', quantity: 1 }] });
+    }
+  </script>
+  {{/if}}
 </body>
 </html>

@@ -328,16 +328,12 @@ export class SiteController {
 
   @Get('/skillsminds')
   async skillsmindsProject(@Req() req: Request, @Res() res: Response) {
-    const user = this.authService.getCurrentUser(req);
-    if (!user) return res.redirect('/login');
     const posts = await this.postService.listPublished('skillsminds');
     return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getPostsHubPage('skillsminds', posts), req));
   }
 
   @Get('/skillsminds/post/:slug')
   async skillsmindsPost(@Req() req: Request, @Res() res: Response, @Param('slug') slug: string) {
-    const user = this.authService.getCurrentUser(req);
-    if (!user) return res.redirect('/login');
     const post = await this.postService.getBySlug('skillsminds', slug);
     return res.render('pages/post-detail', this.withSharedModel(this.siteService.getPostDetailPage(post), req));
   }
@@ -362,23 +358,23 @@ export class SiteController {
   @Get('/nofacethinker')
   async nofacethinkerProject(@Req() req: Request, @Res() res: Response) {
     const user = this.authService.getCurrentUser(req);
-    if (!user) return res.redirect('/login');
-    const isSubscribed = user.thinkerSubscriptionStatus === 'active' || user.thinkerSubscriptionStatus === 'trialing';
-    if (!isSubscribed) {
-      return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getThinkerPaywallPage(), req));
-    }
+    const isSubscribed = user && (user.thinkerSubscriptionStatus === 'active' || user.thinkerSubscriptionStatus === 'trialing');
     const posts = await this.postService.listPublished('nofacethinker');
+    if (!isSubscribed) {
+      return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getThinkerPreviewListPage(posts), req));
+    }
     return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getPostsHubPage('nofacethinker', posts), req));
   }
 
   @Get('/nofacethinker/post/:slug')
   async nofacethinkerPost(@Req() req: Request, @Res() res: Response, @Param('slug') slug: string) {
     const user = this.authService.getCurrentUser(req);
-    if (!user) return res.redirect('/login');
-    const isSubscribed = user.thinkerSubscriptionStatus === 'active' || user.thinkerSubscriptionStatus === 'trialing';
-    if (!isSubscribed) return res.redirect('/nofacethinker');
+    const isSubscribed = user && (user.thinkerSubscriptionStatus === 'active' || user.thinkerSubscriptionStatus === 'trialing');
     const post = await this.postService.getBySlug('nofacethinker', slug);
-    return res.render('pages/post-detail', this.withSharedModel(this.siteService.getPostDetailPage(post), req));
+    if (!isSubscribed) {
+      return res.render('pages/post-detail', this.withSharedModel(this.siteService.getPostDetailPage(post, true), req));
+    }
+    return res.render('pages/post-detail', this.withSharedModel(this.siteService.getPostDetailPage(post, false), req));
   }
 
   @Get('/courses')
@@ -532,6 +528,31 @@ export class SiteController {
   async paddleThinkerCancel(@Req() req: Request) {
     await this.authService.cancelThinkerSubscription(req);
     return { canceled: true };
+  }
+
+  @Get('/sitemap.xml')
+  async sitemap(@Res() res: Response) {
+    const base = 'https://justaidyn.com';
+    const [skillsPosts, thinkerPosts] = await Promise.all([
+      this.postService.listPublished('skillsminds'),
+      this.postService.listPublished('nofacethinker'),
+    ]);
+    const staticUrls: { loc: string; priority: string; changefreq: string; lastmod?: string }[] = [
+      { loc: base, priority: '1.0', changefreq: 'weekly' },
+      { loc: `${base}/skillsminds`, priority: '0.9', changefreq: 'daily' },
+      { loc: `${base}/nofacethinker`, priority: '0.8', changefreq: 'daily' },
+      { loc: `${base}/apps`, priority: '0.7', changefreq: 'weekly' },
+      { loc: `${base}/apps/justaidyn-screencam/`, priority: '0.7', changefreq: 'monthly' },
+      { loc: `${base}/courses/ai-agents-course.html`, priority: '0.8', changefreq: 'monthly' },
+    ];
+    const postUrls = [
+      ...skillsPosts.map(p => ({ loc: `${base}/skillsminds/post/${p.slug}`, priority: '0.8', changefreq: 'monthly', lastmod: p.publishedAt?.slice(0, 10) })),
+      ...thinkerPosts.map(p => ({ loc: `${base}/nofacethinker/post/${p.slug}`, priority: '0.6', changefreq: 'monthly', lastmod: p.publishedAt?.slice(0, 10) })),
+    ];
+    const allUrls = [...staticUrls, ...postUrls];
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${allUrls.map(u => `  <url><loc>${u.loc}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}<changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}\n</urlset>`;
+    res.set('Content-Type', 'application/xml; charset=utf-8');
+    return res.send(xml);
   }
 
   @Post('/api/paddle/webhook')

@@ -698,7 +698,7 @@ export class SiteService {
     };
   }
 
-  getPostDetailPage(post: PostDto): PageModel {
+  getPostDetailPage(post: PostDto, isPreview = false): PageModel {
     const platform = post.platform;
     const isSkills = platform === 'skillsminds';
     return {
@@ -714,6 +714,23 @@ export class SiteService {
       heroText: post.excerpt,
       platform,
       post,
+      isPaywall: isPreview,
+    };
+  }
+
+  getThinkerPreviewListPage(posts: PostDto[]): PageModel {
+    return {
+      lowerNav: [{ labelEn: 'no Face Thinker', labelRu: 'no Face Thinker', labelKk: 'no Face Thinker', url: '/nofacethinker', active: true }],
+      view: 'pages/posts-hub',
+      title: 'no Face Thinker | JustAidyn',
+      description: 'Exclusive posts for Thinker subscribers. Subscribe to get full access.',
+      pageKey: 'posts-hub',
+      heroTitle: 'no Face Thinker',
+      heroText: '',
+      platform: 'nofacethinker',
+      posts,
+      isPaywall: true,
+      thinkerPriceId: 'pri_01kq8ty439m33xebxp8hjy9ar9',
     };
   }
 
