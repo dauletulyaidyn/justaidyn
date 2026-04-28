@@ -444,7 +444,7 @@ let SiteController = class SiteController {
         if (!(0, fs_1.existsSync)(found)) {
             throw new common_1.NotFoundException();
         }
-        if (/\.html$/i.test(file)) {
+        if (/\.html$/i.test(file) && section !== 'courses') {
             return this.renderStaticHtmlFile(req, res, found);
         }
         return res.sendFile(found);
