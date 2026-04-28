@@ -243,7 +243,7 @@ let SiteController = class SiteController {
             case 'skillsminds':
                 return this.renderStaticHtmlFile(req, res, (0, path_1.join)(process.cwd(), 'articles', 'index.html'));
             case 'nofacethinker':
-                return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('nofacethinker'), req));
+                return res.redirect('/nofacethinker');
             case 'courses':
                 return res.redirect('/courses/ai-agents-course.html');
             case 'apps':

@@ -131,7 +131,7 @@
       if (path === '/' || path === '/index.html' || path === '') return 'home';
       if (path === '/projects' || path.endsWith('/projects.html')) return 'projects';
       if (path === '/login') return 'login';
-      if (path === '/register') return 'register';
+      if (path === '/register') return 'login';
       if (path.startsWith('/courses')) return 'courses';
       if (path.startsWith('/ai-agents') || path === '/faq.html') return 'courses';
       if (path.startsWith('/apps')) return 'apps';
@@ -145,10 +145,61 @@
       return '';
     }
 
+    function escapeHtml(value) {
+      return String(value || '').replace(/[&<>"']/g, function(character) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        }[character];
+      });
+    }
+
+    function getSignedOutAuthHtml(currentSection) {
+      var isLogin = currentSection === 'login';
+      return `<a class="navbar-top-tool-btn ${isLogin ? 'active' : ''}" href="/login" data-en="Sign in with Google" data-ru="Sign in with Google" data-kk="Sign in with Google">Sign in with Google</a>`;
+    }
+
+    function getSignedInAuthHtml(user) {
+      var displayName = escapeHtml(user && user.name ? user.name : 'Profile');
+      var adminLink = user && user.role === 'superadmin'
+        ? '<a class="navbar-top-tool-btn" href="/admin" data-en="Admin" data-ru="Admin" data-kk="Admin">Admin</a>'
+        : '';
+
+      return `${adminLink}<a class="navbar-top-tool-btn" href="/profile" data-en="${displayName}" data-ru="${displayName}" data-kk="${displayName}">${displayName}</a><a class="navbar-top-tool-btn" href="/logout" data-en="Logout" data-ru="Logout" data-kk="Logout">Logout</a>`;
+    }
+
+    function setAuthLinksHtml(html) {
+      document.querySelectorAll('.navbar-top-auth-links, .navbar-mobile-auth').forEach(function(container) {
+        container.innerHTML = html;
+      });
+    }
+
+    function updateAuthLinksFromSession() {
+      if (!window.fetch || window.location.protocol === 'file:') {
+        return;
+      }
+
+      fetch('/api/me', { credentials: 'same-origin' })
+        .then(function(response) {
+          return response.ok ? response.json() : { authenticated: false };
+        })
+        .then(function(data) {
+          var authHtml = data && data.authenticated
+            ? getSignedInAuthHtml(data.user)
+            : getSignedOutAuthHtml(detectCurrentSection());
+          setAuthLinksHtml(authHtml);
+          applyLanguageToDocument(readSavedLanguage() || document.documentElement.lang || 'en');
+        })
+        .catch(function() {
+          setAuthLinksHtml(getSignedOutAuthHtml(detectCurrentSection()));
+        });
+    }
+
     function getSharedStaticNavHtml(currentSection) {
       var isHome = currentSection === 'home';
-      var isLogin = currentSection === 'login';
-      var isRegister = currentSection === 'register';
       var languageButtons = `<button type="button" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')" aria-label="English" title="English">EN</button><button type="button" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')" aria-label="Kazakh" title="Kazakh">KK</button><button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')" aria-label="Russian" title="Russian">RU</button>`;
 
       return `
@@ -163,7 +214,6 @@
             <i class="navbar-icon bi-whatsapp me-3"></i>
             <a class="custom-btn btn" href="https://wa.me/77769889889" target="_blank" rel="noopener" data-en="Chat on WhatsApp" data-ru="Написать в WhatsApp" data-kk="WhatsApp-та жазу">Chat on WhatsApp</a>
           </div>
-
           <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-split-layout w-100">
               <div class="navbar-top-contact d-none d-lg-flex">
@@ -188,8 +238,8 @@
                     <ul class="dropdown-menu" aria-labelledby="projectsDropdownTop">
                       <li><a class="dropdown-item" href="/" data-en="JustAidyn Home" data-ru="JustAidyn Home" data-kk="JustAidyn Home">JustAidyn Home</a></li>
                       <li><hr class="dropdown-divider"></li>
-                      <li><a class="dropdown-item" href="/skillsminds" data-en="SkillsMinds" data-ru="SkillsMinds" data-kk="SkillsMinds">SkillsMinds</a></li>
-                      <li><a class="dropdown-item" href="#" data-en="NoFaceThinker" data-ru="NoFaceThinker" data-kk="NoFaceThinker">NoFaceThinker</a></li>
+                      <li><a class="dropdown-item" href="/skillsminds" data-en="Skills and Minds Hub" data-ru="Skills and Minds Hub" data-kk="Skills and Minds Hub">Skills and Minds Hub</a></li>
+                      <li><a class="dropdown-item" href="/nofacethinker" data-en="no Face Thinker" data-ru="no Face Thinker" data-kk="no Face Thinker">no Face Thinker</a></li>
                       <li class="dropdown-submenu" data-show-langs="ru,kk">
                         <a class="dropdown-item dropdown-toggle" href="#" data-en="Courses" data-ru="Курсы" data-kk="Курстар">Courses</a>
                         <ul class="dropdown-menu">
@@ -215,8 +265,7 @@
                     ${languageButtons}
                   </div>
                   <div class="navbar-top-auth-links">
-                    <a class="navbar-top-tool-btn ${isLogin ? 'active' : ''}" href="#" data-en="Login" data-ru="Войти" data-kk="Кіру">Кіру</a>
-                    <a class="navbar-top-tool-btn ${isRegister ? 'active' : ''}" href="#" data-en="Register" data-ru="Регистрация" data-kk="Тіркелу">Тіркелу</a>
+                    ${getSignedOutAuthHtml(currentSection)}
                   </div>
                 </div>
               </div>
@@ -239,8 +288,16 @@
       var currentSection = detectCurrentSection();
 
       document.querySelectorAll('.navbar.navbar-split').forEach(function(navbar) {
+        var existingAuth = navbar.querySelector('.navbar-top-auth-links');
+        var signedInAuthHtml = existingAuth && existingAuth.querySelector('a[href$="/logout"]') ? existingAuth.innerHTML : '';
         navbar.classList.remove('course-navbar');
         navbar.innerHTML = getSharedStaticNavHtml(currentSection);
+        if (signedInAuthHtml) {
+          var renderedAuth = navbar.querySelector('.navbar-top-auth-links');
+          if (renderedAuth) {
+            renderedAuth.innerHTML = signedInAuthHtml;
+          }
+        }
       });
     }
 
@@ -276,6 +333,13 @@
         }
       });
 
+      document.querySelectorAll('[data-placeholder-' + uiLang + ']').forEach(function(element) {
+        var value = element.getAttribute('data-placeholder-' + uiLang);
+        if (value !== null) {
+          element.setAttribute('placeholder', value);
+        }
+      });
+
       document.querySelectorAll('[data-show-langs]').forEach(function(element) {
         var languages = (element.getAttribute('data-show-langs') || '')
           .split(',')
@@ -302,8 +366,10 @@
         var layout = navbar.querySelector('.navbar-split-layout');
         if (layout && !layout.querySelector('.navbar-mobile-panel')) {
           var currentSection = detectCurrentSection();
-          var isLogin = currentSection === 'login';
-          var isRegister = currentSection === 'register';
+          var signedInAuth = navbar.querySelector('.navbar-top-auth-links a[href$="/logout"]');
+          var mobileAuthHtml = signedInAuth
+            ? (navbar.querySelector('.navbar-top-auth-links') || {}).innerHTML
+            : getSignedOutAuthHtml(currentSection);
           layout.insertAdjacentHTML('beforeend', `
             <div class="navbar-mobile-panel d-lg-none">
               <div class="navbar-mobile-actions" aria-label="Mobile contact actions">
@@ -330,8 +396,7 @@
               </div>
 
               <div class="navbar-mobile-auth">
-                <a class="navbar-top-tool-btn ${isLogin ? 'active' : ''}" href="#" data-en="Login" data-ru="Login" data-kk="Login">Login</a>
-                <a class="navbar-top-tool-btn ${isRegister ? 'active' : ''}" href="#" data-en="Register" data-ru="Register" data-kk="Register">Register</a>
+                ${mobileAuthHtml}
               </div>
 
               <div class="nav-item dropdown navbar-mobile-projects">
@@ -345,8 +410,8 @@
                   </li>
                   <li><hr class="dropdown-divider"></li>
                   <li><a class="dropdown-item" href="/" data-en="JustAidyn Home" data-ru="JustAidyn Home" data-kk="JustAidyn Home">JustAidyn Home</a></li>
-                  <li><a class="dropdown-item" href="/skillsminds" data-en="SkillsMinds" data-ru="SkillsMinds" data-kk="SkillsMinds">SkillsMinds</a></li>
-                  <li><a class="dropdown-item" href="/nofacethinker" data-en="NoFaceThinker" data-ru="NoFaceThinker" data-kk="NoFaceThinker">NoFaceThinker</a></li>
+                  <li><a class="dropdown-item" href="/skillsminds" data-en="Skills and Minds Hub" data-ru="Skills and Minds Hub" data-kk="Skills and Minds Hub">Skills and Minds Hub</a></li>
+                  <li><a class="dropdown-item" href="/nofacethinker" data-en="no Face Thinker" data-ru="no Face Thinker" data-kk="no Face Thinker">no Face Thinker</a></li>
                   <li><a class="dropdown-item" href="/courses/ai-agents-course.html" data-en="AI Agents" data-ru="AI Agents" data-kk="AI Agents">AI Agents</a></li>
                   <li><a class="dropdown-item" href="/apps" data-en="Apps" data-ru="Apps" data-kk="Apps">Apps</a></li>
                   <li><a class="dropdown-item" href="/games" data-en="Games" data-ru="Games" data-kk="Games">Games</a></li>
@@ -418,6 +483,7 @@
       ensureSiteFavicon();
       renderSharedNavbars();
       enhanceMobileSplitNavbars();
+      updateAuthLinksFromSession();
       renderSharedFooters();
       if (isCoursePage) {
         var savedCourseLang = readSavedLanguage();
