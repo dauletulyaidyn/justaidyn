@@ -335,7 +335,7 @@
       {{/if}}
 
       {{#if (eq pageKey 'profile')}}
-      {{#if (or (eq currentUser.paddleSubscriptionStatus 'active') (eq currentUser.paddleSubscriptionStatus 'trialing'))}}
+      {{#if (or (or (eq currentUser.paddleSubscriptionStatus 'active') (eq currentUser.paddleSubscriptionStatus 'trialing')) (or (eq currentUser.thinkerSubscriptionStatus 'active') (eq currentUser.thinkerSubscriptionStatus 'trialing')))}}
       <section class="projects section-padding platform-section" id="section_subscriptions">
         <div class="container">
           <div class="row">
@@ -347,6 +347,7 @@
             <div class="clearfix"></div>
           </div>
           <div class="row g-4">
+            {{#if (or (eq currentUser.paddleSubscriptionStatus 'active') (eq currentUser.paddleSubscriptionStatus 'trialing'))}}
             <div class="col-lg-4 col-md-6">
               <article class="platform-card">
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
@@ -372,6 +373,38 @@
                 </button>
               </article>
             </div>
+            {{/if}}
+            {{#if (or (eq currentUser.thinkerSubscriptionStatus 'active') (eq currentUser.thinkerSubscriptionStatus 'trialing'))}}
+            <div class="col-lg-4 col-md-6">
+              <article class="platform-card">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                  <h2 style="margin:0">no Face Thinker</h2>
+                  <span style="font-size:0.78rem;font-weight:700;padding:3px 10px;border-radius:99px;
+                    {{#if (eq currentUser.thinkerSubscriptionStatus 'trialing')}}background:rgba(83,93,161,0.12);color:#535da1;{{else}}background:rgba(20,183,138,0.12);color:#0e8a63;{{/if}}">
+                    {{#if (eq currentUser.thinkerSubscriptionStatus 'trialing')}}
+                    <span data-en="Trial" data-ru="Пробный период" data-kk="Сынақ кезеңі">Trial</span>
+                    {{else}}
+                    <span data-en="Active" data-ru="Активна" data-kk="Белсенді">Active</span>
+                    {{/if}}
+                  </span>
+                </div>
+                <p style="color:#5e6c79;font-size:0.9rem;margin-bottom:16px;"
+                   data-en="Your no Face Thinker subscription is active. You have full access to all posts."
+                   data-ru="Ваша подписка no Face Thinker активна. У вас полный доступ ко всем постам."
+                   data-kk="no Face Thinker жазылымыңыз белсенді. Барлық постқа толық қолжетімділігіңіз бар.">
+                  Your no Face Thinker subscription is active. You have full access to all posts.
+                </p>
+                <a href="/nofacethinker" class="custom-btn btn custom-border-btn" style="font-size:0.9rem;display:inline-block;"
+                   data-en="Open no Face Thinker" data-ru="Открыть no Face Thinker" data-kk="no Face Thinker ашу">
+                  Open no Face Thinker
+                </a>
+                <button id="profile-thinker-cancel-btn" onclick="profileCancelThinkerSubscription()" class="custom-btn btn custom-border-btn" style="font-size:0.9rem;margin-top:10px;"
+                        data-en="Cancel subscription" data-ru="Отменить подписку" data-kk="Жазылымды болдырмау">
+                  Cancel subscription
+                </button>
+              </article>
+            </div>
+            {{/if}}
           </div>
         </div>
       </section>
@@ -387,6 +420,27 @@
         var btn = document.getElementById('profile-cancel-btn');
         btn.disabled = true;
         fetch('/api/paddle/subscription/cancel', { method: 'POST' })
+          .then(function(r) { return r.json(); })
+          .then(function() {
+            var section = document.getElementById('section_subscriptions');
+            if (section) section.remove();
+          })
+          .catch(function() {
+            btn.disabled = false;
+            alert(lang === 'ru' ? 'Ошибка. Попробуйте снова.' : lang === 'kk' ? 'Қате. Қайталап көріңіз.' : 'Error. Please try again.');
+          });
+      }
+      function profileCancelThinkerSubscription() {
+        var lang = document.documentElement.lang;
+        var msg = lang === 'ru'
+          ? 'Отменить подписку no Face Thinker? Доступ продолжится до конца текущего периода. Возврат средств не предусмотрен.'
+          : lang === 'kk'
+          ? 'no Face Thinker жазылымын болдырмау? Қолжетімділік ағымдағы кезең соңына дейін жалғасады. Қайтарым жасалмайды.'
+          : 'Cancel no Face Thinker subscription? Access continues until the current period ends. No refund will be issued.';
+        if (!confirm(msg)) return;
+        var btn = document.getElementById('profile-thinker-cancel-btn');
+        btn.disabled = true;
+        fetch('/api/paddle/thinker/cancel', { method: 'POST' })
           .then(function(r) { return r.json(); })
           .then(function() {
             var section = document.getElementById('section_subscriptions');

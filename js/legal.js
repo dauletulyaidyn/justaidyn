@@ -298,9 +298,9 @@
           kk: ["Ақылы контентке, қосымшаларға, ойындарға, жүктеулерге немесе жабық бөлімдерге кіру үшін аккаунт қажет болуы мүмкін. Сіз нақты деректер беруге, кіру деректерін қауіпсіз сақтауға және рұқсатсыз қолжетімділік туралы хабарлауға тиіссіз.", "Қауіпсіздік шараларын тиісінше қолданбауымыздан туындамаған жағдайда, аккаунтыңыздағы әрекеттерге өзіңіз жауаптысыз."]
         }],
         ["products", { en: "Services and Subscriptions", ru: "Сервисы и подписки", kk: "Сервистер және жазылымдар" }, {
-          en: ["SkillsAndMindsHub is free access to digital content such as text, images, and videos. NoFaceThinker is a paid digital content subscription. Individual application subscriptions provide paid access or license rights to a specific app. The all-games subscription provides paid access to eligible JustAidyn games.", "Content, features, prices, and availability may change. Material changes to paid subscriptions will be communicated where required by law."],
-          ru: ["SkillsAndMindsHub предоставляет бесплатный доступ к цифровому контенту: текстам, изображениям и видео. NoFaceThinker является платной подпиской на цифровой контент. Подписка на отдельное приложение дает платный доступ или лицензию на конкретное приложение. Единая подписка на игры дает платный доступ к подходящим играм JustAidyn.", "Контент, функции, цены и доступность могут меняться. О существенных изменениях платных подписок мы сообщаем там, где это требуется законом."],
-          kk: ["SkillsAndMindsHub мәтін, сурет және видео сияқты цифрлық контентке тегін қолжетімділік береді. NoFaceThinker цифрлық контентке ақылы жазылым болып табылады. Жеке қосымша жазылымы нақты қосымшаға ақылы қолжетімділік немесе лицензия береді. Барлық ойындарға арналған жазылым JustAidyn ойындарына ақылы қолжетімділік береді.", "Контент, функциялар, бағалар және қолжетімділік өзгеруі мүмкін. Ақылы жазылымдардағы маңызды өзгерістер туралы заң талап еткен жағдайда хабарлаймыз."]
+          en: ["Skills and Minds Hub is free access to digital content such as text, images, and videos. no Face Thinker is a paid digital content subscription. Individual application subscriptions provide paid access or license rights to a specific app. The all-games subscription provides paid access to eligible JustAidyn games.", "Content, features, prices, and availability may change. Material changes to paid subscriptions will be communicated where required by law."],
+          ru: ["Skills and Minds Hub предоставляет бесплатный доступ к цифровому контенту: текстам, изображениям и видео. no Face Thinker является платной подпиской на цифровой контент. Подписка на отдельное приложение дает платный доступ или лицензию на конкретное приложение. Единая подписка на игры дает платный доступ к подходящим играм JustAidyn.", "Контент, функции, цены и доступность могут меняться. О существенных изменениях платных подписок мы сообщаем там, где это требуется законом."],
+          kk: ["Skills and Minds Hub мәтін, сурет және видео сияқты цифрлық контентке тегін қолжетімділік береді. no Face Thinker цифрлық контентке ақылы жазылым болып табылады. Жеке қосымша жазылымы нақты қосымшаға ақылы қолжетімділік немесе лицензия береді. Барлық ойындарға арналған жазылым JustAidyn ойындарына ақылы қолжетімділік береді.", "Контент, функциялар, бағалар және қолжетімділік өзгеруі мүмкін. Ақылы жазылымдардағы маңызды өзгерістер туралы заң талап еткен жағдайда хабарлаймыз."]
         }],
         ["payments", { en: "Payments and Access", ru: "Оплата и доступ", kk: "Төлем және қолжетімділік" }, {
           en: ["Prices, billing periods, taxes, and payment methods are shown before purchase. Paid subscriptions may renew automatically when stated at checkout.", "Access normally starts immediately after successful payment or activation. Paid digital subscriptions are non-refundable after access begins, except where mandatory law requires otherwise."],
@@ -344,9 +344,9 @@
           kk: ["Болашақ ұзартуларды тоқтату үшін ақылы жазылымнан бас тарта аласыз. Бас тарту ағымдағы төленген кезең үшін ақшаны қайтармайды. Қолжетімділік әдетте төленген кезеңнің соңына дейін сақталады."]
         }],
         ["products", { en: "Covered Products", ru: "Какие продукты покрываются", kk: "Қамтылатын өнімдер" }, {
-          en: ["This policy covers NoFaceThinker, individual app subscriptions, all-games subscriptions, and future paid digital subscriptions that reference this policy."],
-          ru: ["Эта политика применяется к NoFaceThinker, подпискам на отдельные приложения, единой подписке на игры и будущим платным цифровым подпискам, которые ссылаются на эту политику."],
-          kk: ["Бұл саясат NoFaceThinker, жеке қосымша жазылымдары, барлық ойындарға арналған жазылым және осы саясатқа сілтеме жасайтын болашақ ақылы цифрлық жазылымдарға қолданылады."]
+          en: ["This policy covers no Face Thinker, individual app subscriptions, all-games subscriptions, and future paid digital subscriptions that reference this policy."],
+          ru: ["Эта политика применяется к no Face Thinker, подпискам на отдельные приложения, единой подписке на игры и будущим платным цифровым подпискам, которые ссылаются на эту политику."],
+          kk: ["Бұл саясат no Face Thinker, жеке қосымша жазылымдары, барлық ойындарға арналған жазылым және осы саясатқа сілтеме жасайтын болашақ ақылы цифрлық жазылымдарға қолданылады."]
         }],
         ["regional", { en: "Regional Terms", ru: "Региональные условия", kk: "Аймақтық шарттар" }, {
           en: ["The selected regional notice below explains how the no-refund policy is applied."],
@@ -365,9 +365,9 @@
       nav: [["plans", { en: "Plans", ru: "Планы", kk: "Жоспарлар" }], ["renewal", { en: "Renewal", ru: "Продление", kk: "Ұзарту" }], ["cancel", { en: "Cancellation", ru: "Отмена", kk: "Бас тарту" }], ["regional", { en: "Regional terms", ru: "Региональные условия", kk: "Аймақтық шарттар" }]],
       sections: [
         ["plans", { en: "Subscription Types", ru: "Типы подписок", kk: "Жазылым түрлері" }, {
-          en: ["SkillsAndMindsHub is free content access. NoFaceThinker is paid digital content access. Individual application subscriptions cover a named app. The all-games subscription covers eligible games."],
-          ru: ["SkillsAndMindsHub — бесплатный доступ к контенту. NoFaceThinker — платный цифровой контент. Подписка на отдельное приложение покрывает конкретное приложение. Единая игровая подписка покрывает подходящие игры."],
-          kk: ["SkillsAndMindsHub — контентке тегін қолжетімділік. NoFaceThinker — ақылы цифрлық контент. Жеке қосымша жазылымы нақты қосымшаны қамтиды. Барлық ойындарға арналған жазылым қолжетімді ойындарды қамтиды."]
+          en: ["Skills and Minds Hub is free content access. no Face Thinker is paid digital content access. Individual application subscriptions cover a named app. The all-games subscription covers eligible games."],
+          ru: ["Skills and Minds Hub — бесплатный доступ к контенту. no Face Thinker — платный цифровой контент. Подписка на отдельное приложение покрывает конкретное приложение. Единая игровая подписка покрывает подходящие игры."],
+          kk: ["Skills and Minds Hub — контентке тегін қолжетімділік. no Face Thinker — ақылы цифрлық контент. Жеке қосымша жазылымы нақты қосымшаны қамтиды. Барлық ойындарға арналған жазылым қолжетімді ойындарды қамтиды."]
         }],
         ["renewal", { en: "Auto-Renewal and Billing", ru: "Автопродление и списания", kk: "Автоматты ұзарту және төлем" }, {
           en: ["If a plan is recurring, it renews automatically at the end of each billing period until cancelled. Checkout must disclose price, period, renewal behavior, and cancellation method before payment."],

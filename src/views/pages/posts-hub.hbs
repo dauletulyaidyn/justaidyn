@@ -75,6 +75,15 @@
     </div>
   </nav>
 
+  <div id="subscribed-banner" style="display:none;background:#14b78a;color:#fff;text-align:center;padding:14px 20px;font-weight:600;font-size:1rem;">
+    <span data-en="✓ Subscription activated! Welcome to no Face Thinker." data-ru="✓ Подписка активирована! Добро пожаловать в no Face Thinker." data-kk="✓ Жазылым белсендірілді! no Face Thinker-ге қош келдіңіз.">✓ Subscription activated! Welcome to no Face Thinker.</span>
+  </div>
+  <script>
+    if (new URLSearchParams(window.location.search).get('subscribed') === '1') {
+      document.getElementById('subscribed-banner').style.display = 'block';
+      history.replaceState(null, '', window.location.pathname);
+    }
+  </script>
   <div class="posts-page">
     <div class="container">
       <div class="posts-header">
@@ -143,7 +152,7 @@
       eventCallback: function(event) {
         if (event.name === 'checkout.completed') {
           fetch('/api/paddle/thinker/verify-checkout', { method: 'POST' })
-            .then(function() { window.location.reload(); })
+            .then(function() { window.location.href = '/nofacethinker?subscribed=1'; })
             .catch(function() { window.location.reload(); });
         }
       }

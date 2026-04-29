@@ -265,7 +265,7 @@
                   <li><a class="dropdown-item" href="https://justaidyn.com/" data-en="JustAidyn Home" data-ru="Главная JustAidyn" data-kk="Басты бет">JustAidyn Home</a></li>
                   <li><hr class="dropdown-divider"></li>
                   <li><a class="dropdown-item" href="https://justaidyn.com/articles/" data-en="Skills and Minds Hub" data-ru="Skills and Minds Hub" data-kk="Skills and Minds Hub">Skills and Minds Hub</a></li>
-                  <li><a class="dropdown-item" href="https://justaidyn.com/nofacethinker" data-en="No Face Thinker" data-ru="No Face Thinker" data-kk="No Face Thinker">No Face Thinker</a></li>
+                  <li><a class="dropdown-item" href="https://justaidyn.com/nofacethinker" data-en="no Face Thinker" data-ru="no Face Thinker" data-kk="no Face Thinker">no Face Thinker</a></li>
                   <li><a class="dropdown-item active" href="/apps" data-en="Apps" data-ru="Приложения" data-kk="Қосымшалар">Apps</a></li>
                   <li><a class="dropdown-item" href="/games" data-en="Games" data-ru="Игры" data-kk="Ойындар">Games</a></li>
                   <li><a class="dropdown-item" href="/shop" data-en="Shop" data-ru="Магазин" data-kk="Дүкен">Shop</a></li>
@@ -278,8 +278,7 @@
                 <button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')">RU</button>
               </div>
               <div class="navbar-top-auth-links">
-                <a class="navbar-top-tool-btn" href="https://justaidyn.com/login" data-en="Login" data-ru="Войти" data-kk="Кіру">Login</a>
-                <a class="navbar-top-tool-btn" href="https://justaidyn.com/register" data-en="Register" data-ru="Регистрация" data-kk="Тіркелу">Register</a>
+                <a class="navbar-top-tool-btn" href="/login" data-en="Sign in with Google" data-ru="Войти через Google" data-kk="Google арқылы кіру">Sign in with Google</a>
               </div>
             </div>
           </div>
@@ -363,7 +362,7 @@
   <script src="/js/jquery.min.js"></script>
   <script src="/js/bootstrap.min.js"></script>
   <script src="/js/jquery.sticky.js"></script>
-  <script src="/js/custom.js"></script>
+  <script src="/js/custom.js?v=20260428-profile-i18n"></script>
   <script>
     fetch('/api/stats/downloads').then(r => r.json()).then(data => {
       const count = data['justaidyn-screencam'];
