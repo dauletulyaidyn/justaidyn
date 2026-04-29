@@ -390,6 +390,16 @@ export class SiteController {
     return res.redirect(301, '/privacy');
   }
 
+  @Get('/terms')
+  terms(@Req() req: Request, @Res() res: Response) {
+    return this.renderStaticHtmlFile(req, res, join(process.cwd(), 'terms.html'));
+  }
+
+  @Get('/terms.html')
+  termsHtml(@Req() req: Request, @Res() res: Response) {
+    return res.redirect(301, '/terms');
+  }
+
   @Get('/logout')
   async logout(@Req() req: Request, @Res() res: Response) {
     await this.authService.logout(req, res);

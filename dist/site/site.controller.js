@@ -311,6 +311,12 @@ let SiteController = class SiteController {
     privacyHtml(req, res) {
         return res.redirect(301, '/privacy');
     }
+    terms(req, res) {
+        return this.renderStaticHtmlFile(req, res, (0, path_1.join)(process.cwd(), 'terms.html'));
+    }
+    termsHtml(req, res) {
+        return res.redirect(301, '/terms');
+    }
     async logout(req, res) {
         await this.authService.logout(req, res);
         return res.redirect('/');
@@ -977,6 +983,22 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "privacyHtml", null);
+__decorate([
+    (0, common_1.Get)('/terms'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "terms", null);
+__decorate([
+    (0, common_1.Get)('/terms.html'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "termsHtml", null);
 __decorate([
     (0, common_1.Get)('/logout'),
     __param(0, (0, common_1.Req)()),
