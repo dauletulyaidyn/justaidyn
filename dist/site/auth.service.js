@@ -27,6 +27,8 @@ let AuthService = class AuthService {
         this.sessionCookie = 'ja_session';
         this.paddleConfigFile = (0, path_1.join)(process.cwd(), 'paddle-config.json');
         this.sessionTtlMs = 30 * 24 * 60 * 60 * 1000;
+        this.apiTokenTtlMs = 90 * 24 * 60 * 60 * 1000;
+        this.desktopChallengeCookie = 'ja_desktop_challenge';
     }
     mapUser(u) {
         return {
@@ -128,7 +130,7 @@ let AuthService = class AuthService {
             secure: this.isSecureRequest(req),
             maxAge: this.sessionTtlMs, path: '/',
         });
-        return user;
+        return { user, desktopRedirectUri: pendingState?.desktopRedirectUri };
     }
     async logout(req, res) {
         const sessionId = this.readCookie(req, this.sessionCookie);
@@ -375,8 +377,8 @@ let AuthService = class AuthService {
         await this.prisma.session.create({ data: { id, userId, expiresAt } });
         return { id };
     }
-    async saveOAuthState(state, mode) {
-        await this.prisma.oAuthState.create({ data: { state, mode } });
+    async saveOAuthState(state, mode, desktopRedirectUri) {
+        await this.prisma.oAuthState.create({ data: { state, mode, desktopRedirectUri } });
         await this.prisma.oAuthState.deleteMany({ where: { createdAt: { lt: new Date(Date.now() - 15 * 60 * 1000) } } });
     }
     async consumeOAuthState(state) {
@@ -384,7 +386,7 @@ let AuthService = class AuthService {
         if (!record || record.createdAt < new Date(Date.now() - 15 * 60 * 1000))
             return null;
         await this.prisma.oAuthState.delete({ where: { state } }).catch(() => { });
-        return { mode: record.mode };
+        return { mode: record.mode, desktopRedirectUri: record.desktopRedirectUri ?? undefined };
     }
     async upsertGoogleUser(googleUser, _mode) {
         const existingUser = await this.prisma.user.findFirst({
@@ -606,6 +608,70 @@ let AuthService = class AuthService {
     }
     randomToken(bytes) {
         return (0, crypto_1.randomBytes)(bytes).toString('base64url');
+    }
+    async buildGoogleWebAuthUrlForDesktop(req, res, mode, desktopRedirectUri, codeChallenge) {
+        const config = this.getGoogleOAuthConfig();
+        const redirectUri = this.getGoogleWebRedirectUri(req);
+        const state = `${mode}.${this.randomToken(32)}`;
+        const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+        authUrl.searchParams.set('client_id', config.clientId);
+        authUrl.searchParams.set('redirect_uri', redirectUri);
+        authUrl.searchParams.set('response_type', 'code');
+        authUrl.searchParams.set('scope', 'openid email profile');
+        authUrl.searchParams.set('access_type', 'offline');
+        authUrl.searchParams.set('prompt', 'consent');
+        authUrl.searchParams.set('state', state);
+        await this.saveOAuthState(state, mode, desktopRedirectUri);
+        res.cookie(this.desktopChallengeCookie, codeChallenge, {
+            httpOnly: true, sameSite: 'lax',
+            secure: this.isSecureRequest(req),
+            maxAge: 15 * 60 * 1000, path: '/',
+        });
+        return authUrl.toString();
+    }
+    readDesktopChallengeCookie(req, res) {
+        const challenge = this.readCookie(req, this.desktopChallengeCookie);
+        if (challenge)
+            res.clearCookie(this.desktopChallengeCookie, { path: '/' });
+        return challenge || undefined;
+    }
+    async createDesktopOtc(userId, redirectUri, codeChallenge) {
+        const token = this.randomToken(32);
+        const expiresAt = new Date(Date.now() + 60 * 1000);
+        await this.prisma.desktopOtc.create({ data: { token, userId, redirectUri, codeChallenge, expiresAt } });
+        await this.prisma.desktopOtc.deleteMany({ where: { expiresAt: { lt: new Date(Date.now() - 5 * 60 * 1000) } } });
+        return token;
+    }
+    async exchangeDesktopOtc(otcToken, codeVerifier) {
+        const record = await this.prisma.desktopOtc.findUnique({ where: { token: otcToken } });
+        if (!record || record.usedAt || record.expiresAt < new Date()) {
+            throw new common_1.UnauthorizedException('Invalid or expired one-time code.');
+        }
+        const expected = (0, crypto_1.createHash)('sha256').update(codeVerifier).digest('base64url');
+        if (expected !== record.codeChallenge) {
+            throw new common_1.UnauthorizedException('PKCE verification failed.');
+        }
+        await this.prisma.desktopOtc.update({ where: { id: record.id }, data: { usedAt: new Date() } });
+        const accessToken = this.randomToken(48);
+        const expiresAt = new Date(Date.now() + this.apiTokenTtlMs);
+        await this.prisma.apiToken.create({ data: { token: accessToken, userId: record.userId, expiresAt } });
+        const user = await this.prisma.user.findUnique({ where: { id: record.userId } });
+        if (!user)
+            throw new common_1.UnauthorizedException('User not found.');
+        return { accessToken, user: this.mapUser(user) };
+    }
+    async verifyBearerToken(req) {
+        const authHeader = req.headers.authorization;
+        if (!authHeader?.startsWith('Bearer '))
+            return null;
+        const token = authHeader.slice(7);
+        if (!token)
+            return null;
+        const record = await this.prisma.apiToken.findUnique({ where: { token }, include: { user: true } });
+        if (!record || record.expiresAt < new Date())
+            return null;
+        this.prisma.apiToken.update({ where: { id: record.id }, data: { lastUsedAt: new Date() } }).catch(() => { });
+        return this.mapUser(record.user);
     }
     getQueryValue(value) {
         if (Array.isArray(value))

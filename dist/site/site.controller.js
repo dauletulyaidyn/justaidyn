@@ -163,9 +163,22 @@ let SiteController = class SiteController {
         if (site !== 'main') {
             throw new common_1.NotFoundException();
         }
-        const desktopAuthUrl = this.buildGoogleDesktopAuthUrl(req, 'login');
-        if (desktopAuthUrl) {
-            return res.redirect(desktopAuthUrl);
+        const redirectUri = this.getQueryValue(req.query.redirect_uri);
+        const codeChallenge = this.getQueryValue(req.query.code_challenge);
+        if (redirectUri || codeChallenge) {
+            if (!redirectUri || !codeChallenge) {
+                throw new common_1.BadRequestException('Desktop OAuth requires both redirect_uri and code_challenge.');
+            }
+            const parsedUri = this.parseDesktopRedirectUri(redirectUri);
+            if (!parsedUri) {
+                throw new common_1.BadRequestException('redirect_uri must be http://127.0.0.1:<port>/oauth2callback or http://localhost:<port>/oauth2callback.');
+            }
+            if (!/^[A-Za-z0-9._~-]{43,128}$/.test(codeChallenge)) {
+                throw new common_1.BadRequestException('code_challenge must be a valid PKCE S256 challenge.');
+            }
+            const authUrl = await this.authService.buildGoogleWebAuthUrlForDesktop(req, res, 'login', parsedUri.toString(), codeChallenge);
+            this.authService.setOAuthStateCookie(res, authUrl, req);
+            return res.redirect(authUrl);
         }
         const returnUrl = typeof req.query.return === 'string' ? req.query.return : '';
         if (returnUrl && returnUrl.startsWith('/')) {
@@ -238,11 +251,59 @@ let SiteController = class SiteController {
         if (site !== 'main') {
             throw new common_1.NotFoundException();
         }
-        await this.authService.handleGoogleCallback(req, res);
+        const { desktopRedirectUri } = await this.authService.handleGoogleCallback(req, res);
+        if (desktopRedirectUri) {
+            const codeChallenge = this.authService.readDesktopChallengeCookie(req, res);
+            if (!codeChallenge) {
+                return res.render('pages/desktop-success', { success: false, error: 'Session expired. Please try again.' });
+            }
+            const user = this.authService.getCurrentUser(req);
+            if (!user)
+                return res.render('pages/desktop-success', { success: false, error: 'Authentication failed.' });
+            const otcToken = await this.authService.createDesktopOtc(user.id, desktopRedirectUri, codeChallenge);
+            return res.redirect(`${desktopRedirectUri}?token=${otcToken}`);
+        }
         const returnUrl = req.cookies?.ja_return_url;
         res.clearCookie('ja_return_url', { path: '/' });
         const safeReturn = typeof returnUrl === 'string' && returnUrl.startsWith('/') ? returnUrl : '/profile';
         return res.redirect(safeReturn);
+    }
+    async desktopToken(req, body) {
+        const { token, codeVerifier } = body;
+        if (!token || !codeVerifier) {
+            throw new common_1.BadRequestException('token and codeVerifier are required.');
+        }
+        const result = await this.authService.exchangeDesktopOtc(token, codeVerifier);
+        return {
+            accessToken: result.accessToken,
+            user: {
+                id: result.user.id,
+                email: result.user.email,
+                name: result.user.name,
+                firstName: result.user.firstName,
+                lastName: result.user.lastName,
+                picture: result.user.picture,
+                role: result.user.role,
+                thinkerSubscriptionStatus: result.user.thinkerSubscriptionStatus ?? null,
+                paddleSubscriptionStatus: result.user.paddleSubscriptionStatus ?? null,
+            },
+        };
+    }
+    async desktopMe(req) {
+        const user = await this.authService.verifyBearerToken(req);
+        if (!user)
+            throw new common_1.UnauthorizedException('Invalid or expired token.');
+        return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            picture: user.picture,
+            role: user.role,
+            thinkerSubscriptionStatus: user.thinkerSubscriptionStatus ?? null,
+            paddleSubscriptionStatus: user.paddleSubscriptionStatus ?? null,
+        };
     }
     async logout(req, res) {
         await this.authService.logout(req, res);
@@ -909,6 +970,21 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], SiteController.prototype, "googleCallback", null);
+__decorate([
+    (0, common_1.Post)('/api/desktop/token'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "desktopToken", null);
+__decorate([
+    (0, common_1.Get)('/api/me'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "desktopMe", null);
 __decorate([
     (0, common_1.Get)('/logout'),
     __param(0, (0, common_1.Req)()),

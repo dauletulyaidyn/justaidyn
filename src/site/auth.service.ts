@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
-import { randomBytes, scryptSync, timingSafeEqual } from 'crypto';
+import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'crypto';
 import { Request, Response } from 'express';
 import { existsSync, readFileSync } from 'fs';
 import nodemailer from 'nodemailer';
@@ -138,7 +138,7 @@ export class AuthService {
     });
   }
 
-  async handleGoogleCallback(req: Request, res: Response): Promise<AuthUser> {
+  async handleGoogleCallback(req: Request, res: Response): Promise<{ user: AuthUser; desktopRedirectUri?: string }> {
     const code  = this.getQueryValue(req.query.code);
     const state = this.getQueryValue(req.query.state);
     const error = this.getQueryValue(req.query.error);
@@ -169,7 +169,7 @@ export class AuthService {
       secure: this.isSecureRequest(req),
       maxAge: this.sessionTtlMs, path: '/',
     });
-    return user;
+    return { user, desktopRedirectUri: pendingState?.desktopRedirectUri };
   }
 
   // ─── Session ──────────────────────────────────────────────────────────────────
@@ -430,16 +430,16 @@ export class AuthService {
 
   // ─── Private: OAuth state ─────────────────────────────────────────────────────
 
-  private async saveOAuthState(state: string, mode: AuthMode): Promise<void> {
-    await this.prisma.oAuthState.create({ data: { state, mode } });
+  private async saveOAuthState(state: string, mode: AuthMode, desktopRedirectUri?: string): Promise<void> {
+    await this.prisma.oAuthState.create({ data: { state, mode, desktopRedirectUri } });
     await this.prisma.oAuthState.deleteMany({ where: { createdAt: { lt: new Date(Date.now() - 15 * 60 * 1000) } } });
   }
 
-  private async consumeOAuthState(state: string): Promise<{ mode: AuthMode } | null> {
+  private async consumeOAuthState(state: string): Promise<{ mode: AuthMode; desktopRedirectUri?: string } | null> {
     const record = await this.prisma.oAuthState.findUnique({ where: { state } });
     if (!record || record.createdAt < new Date(Date.now() - 15 * 60 * 1000)) return null;
     await this.prisma.oAuthState.delete({ where: { state } }).catch(() => {});
-    return { mode: record.mode as AuthMode };
+    return { mode: record.mode as AuthMode, desktopRedirectUri: record.desktopRedirectUri ?? undefined };
   }
 
   // ─── Private: Google user upsert ──────────────────────────────────────────────
@@ -652,6 +652,77 @@ export class AuthService {
   private randomToken(bytes: number): string {
     return randomBytes(bytes).toString('base64url');
   }
+
+  // ─── Desktop OAuth ────────────────────────────────────────────────────────────
+
+  private readonly apiTokenTtlMs = 90 * 24 * 60 * 60 * 1000;
+  private readonly desktopChallengeCookie = 'ja_desktop_challenge';
+
+  async buildGoogleWebAuthUrlForDesktop(req: Request, res: Response, mode: AuthMode, desktopRedirectUri: string, codeChallenge: string): Promise<string> {
+    const config = this.getGoogleOAuthConfig();
+    const redirectUri = this.getGoogleWebRedirectUri(req);
+    const state = `${mode}.${this.randomToken(32)}`;
+    const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+    authUrl.searchParams.set('client_id', config.clientId);
+    authUrl.searchParams.set('redirect_uri', redirectUri);
+    authUrl.searchParams.set('response_type', 'code');
+    authUrl.searchParams.set('scope', 'openid email profile');
+    authUrl.searchParams.set('access_type', 'offline');
+    authUrl.searchParams.set('prompt', 'consent');
+    authUrl.searchParams.set('state', state);
+    await this.saveOAuthState(state, mode, desktopRedirectUri);
+    res.cookie(this.desktopChallengeCookie, codeChallenge, {
+      httpOnly: true, sameSite: 'lax',
+      secure: this.isSecureRequest(req),
+      maxAge: 15 * 60 * 1000, path: '/',
+    });
+    return authUrl.toString();
+  }
+
+  readDesktopChallengeCookie(req: Request, res: Response): string | undefined {
+    const challenge = this.readCookie(req, this.desktopChallengeCookie);
+    if (challenge) res.clearCookie(this.desktopChallengeCookie, { path: '/' });
+    return challenge || undefined;
+  }
+
+  async createDesktopOtc(userId: string, redirectUri: string, codeChallenge: string): Promise<string> {
+    const token = this.randomToken(32);
+    const expiresAt = new Date(Date.now() + 60 * 1000);
+    await this.prisma.desktopOtc.create({ data: { token, userId, redirectUri, codeChallenge, expiresAt } });
+    await this.prisma.desktopOtc.deleteMany({ where: { expiresAt: { lt: new Date(Date.now() - 5 * 60 * 1000) } } });
+    return token;
+  }
+
+  async exchangeDesktopOtc(otcToken: string, codeVerifier: string): Promise<{ accessToken: string; user: AuthUser }> {
+    const record = await this.prisma.desktopOtc.findUnique({ where: { token: otcToken } });
+    if (!record || record.usedAt || record.expiresAt < new Date()) {
+      throw new UnauthorizedException('Invalid or expired one-time code.');
+    }
+    const expected = createHash('sha256').update(codeVerifier).digest('base64url');
+    if (expected !== record.codeChallenge) {
+      throw new UnauthorizedException('PKCE verification failed.');
+    }
+    await this.prisma.desktopOtc.update({ where: { id: record.id }, data: { usedAt: new Date() } });
+    const accessToken = this.randomToken(48);
+    const expiresAt = new Date(Date.now() + this.apiTokenTtlMs);
+    await this.prisma.apiToken.create({ data: { token: accessToken, userId: record.userId, expiresAt } });
+    const user = await this.prisma.user.findUnique({ where: { id: record.userId } });
+    if (!user) throw new UnauthorizedException('User not found.');
+    return { accessToken, user: this.mapUser(user) };
+  }
+
+  async verifyBearerToken(req: Request): Promise<AuthUser | null> {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) return null;
+    const token = authHeader.slice(7);
+    if (!token) return null;
+    const record = await this.prisma.apiToken.findUnique({ where: { token }, include: { user: true } });
+    if (!record || record.expiresAt < new Date()) return null;
+    this.prisma.apiToken.update({ where: { id: record.id }, data: { lastUsedAt: new Date() } }).catch(() => {});
+    return this.mapUser(record.user);
+  }
+
+  // ─── Private: helpers ─────────────────────────────────────────────────────────
 
   private getQueryValue(value: unknown): string | undefined {
     if (Array.isArray(value)) return typeof value[0] === 'string' ? value[0] : undefined;

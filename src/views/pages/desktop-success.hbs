@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{#if success}}Signed in — JustAidyn{{else}}Sign-in failed — JustAidyn{{/if}}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f3f7fb;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(18,35,52,.10);
+      padding: 48px 40px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+    }
+    .icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      display: block;
+    }
+    .icon-ok  { color: #14b78a; }
+    .icon-err { color: #e74c3c; }
+    h1 { font-size: 1.5rem; margin-bottom: 12px; color: #182432; }
+    p  { color: #5e6c79; line-height: 1.65; margin-bottom: 0; }
+    .hint {
+      margin-top: 28px;
+      padding: 14px 18px;
+      background: rgba(83,93,161,.07);
+      border-radius: 10px;
+      font-size: 0.88rem;
+      color: #535da1;
+    }
+    .close-btn {
+      display: inline-block;
+      margin-top: 28px;
+      padding: 12px 28px;
+      background: #535da1;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .close-btn:hover { background: #3d4680; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    {{#if success}}
+      <span class="icon icon-ok">✓</span>
+      <h1>You're signed in!</h1>
+      <p>Your JustAidyn account is connected. You can now close this tab and return to the application.</p>
+      <div class="hint">The application has received your login. This page is safe to close.</div>
+      <button class="close-btn" onclick="window.close()">Close this tab</button>
+    {{else}}
+      <span class="icon icon-err">✕</span>
+      <h1>Sign-in failed</h1>
+      <p>{{#if error}}{{error}}{{else}}Something went wrong during sign-in. Please try again from the application.{{/if}}</p>
+      <a class="close-btn" href="javascript:window.close()">Close this tab</a>
+    {{/if}}
+  </div>
+</body>
+</html>

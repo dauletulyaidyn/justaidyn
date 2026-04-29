@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Render, Req, Res } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Render, Req, Res, UnauthorizedException } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
@@ -203,11 +203,26 @@ export class SiteController {
       throw new NotFoundException();
     }
 
-    const desktopAuthUrl = this.buildGoogleDesktopAuthUrl(req, 'login');
-    if (desktopAuthUrl) {
-      return res.redirect(desktopAuthUrl);
+    // Desktop PKCE flow: redirect_uri + code_challenge present → OAuth via justaidyn.com callback
+    const redirectUri   = this.getQueryValue(req.query.redirect_uri);
+    const codeChallenge = this.getQueryValue(req.query.code_challenge);
+    if (redirectUri || codeChallenge) {
+      if (!redirectUri || !codeChallenge) {
+        throw new BadRequestException('Desktop OAuth requires both redirect_uri and code_challenge.');
+      }
+      const parsedUri = this.parseDesktopRedirectUri(redirectUri);
+      if (!parsedUri) {
+        throw new BadRequestException('redirect_uri must be http://127.0.0.1:<port>/oauth2callback or http://localhost:<port>/oauth2callback.');
+      }
+      if (!/^[A-Za-z0-9._~-]{43,128}$/.test(codeChallenge)) {
+        throw new BadRequestException('code_challenge must be a valid PKCE S256 challenge.');
+      }
+      const authUrl = await this.authService.buildGoogleWebAuthUrlForDesktop(req, res, 'login', parsedUri.toString(), codeChallenge);
+      this.authService.setOAuthStateCookie(res, authUrl, req);
+      return res.redirect(authUrl);
     }
 
+    // Web flow: optional ?return= redirect after login
     const returnUrl = typeof req.query.return === 'string' ? req.query.return : '';
     if (returnUrl && returnUrl.startsWith('/')) {
       res.cookie('ja_return_url', returnUrl, {
@@ -301,11 +316,65 @@ export class SiteController {
       throw new NotFoundException();
     }
 
-    await this.authService.handleGoogleCallback(req, res);
+    const { desktopRedirectUri } = await this.authService.handleGoogleCallback(req, res);
+
+    // Desktop flow: generate OTC and redirect to app's loopback
+    if (desktopRedirectUri) {
+      const codeChallenge = this.authService.readDesktopChallengeCookie(req, res);
+      if (!codeChallenge) {
+        return res.render('pages/desktop-success', { success: false, error: 'Session expired. Please try again.' });
+      }
+      const user = this.authService.getCurrentUser(req);
+      if (!user) return res.render('pages/desktop-success', { success: false, error: 'Authentication failed.' });
+      const otcToken = await this.authService.createDesktopOtc(user.id, desktopRedirectUri, codeChallenge);
+      return res.redirect(`${desktopRedirectUri}?token=${otcToken}`);
+    }
+
+    // Web flow: return to saved URL or profile
     const returnUrl = (req as any).cookies?.ja_return_url;
     res.clearCookie('ja_return_url', { path: '/' });
     const safeReturn = typeof returnUrl === 'string' && returnUrl.startsWith('/') ? returnUrl : '/profile';
     return res.redirect(safeReturn);
+  }
+
+  @Post('/api/desktop/token')
+  async desktopToken(@Req() req: Request, @Body() body: Record<string, string>) {
+    const { token, codeVerifier } = body;
+    if (!token || !codeVerifier) {
+      throw new BadRequestException('token and codeVerifier are required.');
+    }
+    const result = await this.authService.exchangeDesktopOtc(token, codeVerifier);
+    return {
+      accessToken: result.accessToken,
+      user: {
+        id: result.user.id,
+        email: result.user.email,
+        name: result.user.name,
+        firstName: result.user.firstName,
+        lastName: result.user.lastName,
+        picture: result.user.picture,
+        role: result.user.role,
+        thinkerSubscriptionStatus: result.user.thinkerSubscriptionStatus ?? null,
+        paddleSubscriptionStatus: result.user.paddleSubscriptionStatus ?? null,
+      },
+    };
+  }
+
+  @Get('/api/me')
+  async desktopMe(@Req() req: Request) {
+    const user = await this.authService.verifyBearerToken(req);
+    if (!user) throw new UnauthorizedException('Invalid or expired token.');
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      picture: user.picture,
+      role: user.role,
+      thinkerSubscriptionStatus: user.thinkerSubscriptionStatus ?? null,
+      paddleSubscriptionStatus: user.paddleSubscriptionStatus ?? null,
+    };
   }
 
   @Get('/logout')

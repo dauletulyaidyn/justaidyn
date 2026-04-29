@@ -38,6 +38,8 @@ model User {
 
   sessions            Session[]
   passwordResetTokens PasswordResetToken[]
+  desktopOtcs         DesktopOtc[]
+  apiTokens           ApiToken[]
 
   @@map("users")
 }
@@ -55,11 +57,41 @@ model Session {
 }
 
 model OAuthState {
-  state     String   @id
-  mode      String
-  createdAt DateTime @default(now())
+  state              String   @id
+  mode               String
+  desktopRedirectUri String?
+  createdAt          DateTime @default(now())
 
   @@map("oauth_states")
+}
+
+model DesktopOtc {
+  id          String    @id @default(cuid())
+  token       String    @unique
+  userId      String
+  redirectUri String
+  codeChallenge String
+  expiresAt   DateTime
+  usedAt      DateTime?
+  createdAt   DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("desktop_otcs")
+}
+
+model ApiToken {
+  id         String    @id @default(cuid())
+  token      String    @unique
+  userId     String
+  expiresAt  DateTime
+  lastUsedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("api_tokens")
 }
 
 model PasswordResetToken {
