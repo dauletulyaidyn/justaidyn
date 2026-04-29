@@ -208,6 +208,15 @@ export class SiteController {
       return res.redirect(desktopAuthUrl);
     }
 
+    const returnUrl = typeof req.query.return === 'string' ? req.query.return : '';
+    if (returnUrl && returnUrl.startsWith('/')) {
+      res.cookie('ja_return_url', returnUrl, {
+        httpOnly: true, sameSite: 'lax',
+        secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+        maxAge: 10 * 60 * 1000,
+      });
+    }
+
     const authUrl = await this.authService.buildGoogleWebAuthUrl(req, 'login');
     this.authService.setOAuthStateCookie(res, authUrl, req);
     return res.redirect(authUrl);
@@ -293,7 +302,10 @@ export class SiteController {
     }
 
     await this.authService.handleGoogleCallback(req, res);
-    return res.redirect('/profile');
+    const returnUrl = (req as any).cookies?.ja_return_url;
+    res.clearCookie('ja_return_url', { path: '/' });
+    const safeReturn = typeof returnUrl === 'string' && returnUrl.startsWith('/') ? returnUrl : '/profile';
+    return res.redirect(safeReturn);
   }
 
   @Get('/logout')

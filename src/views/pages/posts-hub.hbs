@@ -133,9 +133,9 @@
               <span data-en="Start 7-day Free Trial" data-ru="7 дней бесплатно" data-kk="7 күн тегін">Start 7-day Free Trial</span>
             </button>
             {{else}}
-            <a class="btn-thinker" href="/login" style="text-decoration:none;">
-              <i class="bi bi-box-arrow-in-right"></i>
-              <span data-en="Sign in to subscribe" data-ru="Войдите, чтобы подписаться" data-kk="Жазылу үшін кіріңіз">Sign in to subscribe</span>
+            <a class="btn-thinker" href="/login/google?return=/nofacethinker%3Fcheckout%3D1" style="text-decoration:none;">
+              <i class="bi bi-google"></i>
+              <span data-en="Sign in with Google to subscribe" data-ru="Войти через Google и подписаться" data-kk="Google арқылы кіріп жазылу">Sign in with Google to subscribe</span>
             </a>
             {{/if}}
           </div>
@@ -170,6 +170,10 @@
         customer: { email: '{{currentUser.email}}' },
         settings: { allowQuantity: false }
       });
+    }
+    if (new URLSearchParams(window.location.search).get('checkout') === '1') {
+      history.replaceState(null, '', window.location.pathname);
+      openThinkerCheckout();
     }
   </script>
   {{/if}}
