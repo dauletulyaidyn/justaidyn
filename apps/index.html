@@ -223,6 +223,36 @@
       transition: background 0.15s, color 0.15s;
     }
     .btn-outline:hover { background: var(--accent-light); color: var(--accent-dark); }
+    .btn-subscribe {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 42px;
+      padding: 9px 18px;
+      border-radius: 8px;
+      background: #14b78a;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.92rem;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-subscribe:hover { background: #0e8a63; color: #fff; }
+    .subscribed-badge {
+      display: none;
+      align-items: center;
+      gap: 7px;
+      min-height: 42px;
+      padding: 9px 18px;
+      border-radius: 8px;
+      background: rgba(20,183,138,0.12);
+      color: #0e8a63;
+      font-weight: 700;
+      font-size: 0.92rem;
+      border: 1.5px solid #14b78a;
+    }
 
     @media (max-width: 991px) {
       .page-shell {
@@ -277,7 +307,7 @@
                 <button type="button" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')">EN</button>
                 <button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')">RU</button>
               </div>
-              <div class="navbar-top-auth-links">
+              <div class="navbar-top-auth-links" id="apps-auth-links">
                 <a class="navbar-top-tool-btn" href="/login" data-en="Sign in with Google" data-ru="Войти через Google" data-kk="Google арқылы кіру">Sign in with Google</a>
               </div>
             </div>
@@ -345,10 +375,18 @@
             <span class="tag">Screen Recording</span>
           </div>
           <div class="app-card-actions">
-            <a class="btn-primary" href="/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.1.msi">
+            <a class="btn-primary" href="/track/download/apps/justaidyn-screencam">
               <i class="bi bi-download"></i>
               <span data-en="Download" data-ru="Скачать" data-kk="Жүктеу">Download</span>
             </a>
+            <button class="btn-subscribe subscribe-action" onclick="openSubscribeCheckout()">
+              <i class="bi bi-star"></i>
+              <span data-en="Subscribe — $5.90/mo" data-ru="Подписаться — $5.90/мес" data-kk="Жазылу — $5.90/ай">Subscribe — $5.90/mo</span>
+            </button>
+            <span class="subscribed-badge">
+              <i class="bi bi-check-circle-fill"></i>
+              <span data-en="Subscribed" data-ru="Подписка активна" data-kk="Жазылым белсенді">Subscribed</span>
+            </span>
             <a class="btn-outline" href="/apps/justaidyn-screencam/">
               <span data-en="Learn more" data-ru="Подробнее" data-kk="Толығырақ">Learn more</span>
               <i class="bi bi-arrow-right"></i>
@@ -372,6 +410,48 @@
       }
     }).catch(() => {});
   </script>  <script src="/js/legal.js"></script>
+  <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+  <script>
+    Paddle.Environment.set('sandbox');
+    Paddle.Initialize({
+      token: 'test_16c22427a493b4298c916610736',
+      eventCallback: function(event) {
+        if (event.name === 'checkout.completed') {
+          showSubscribed();
+          fetch('/api/paddle/verify-checkout', { method: 'POST' }).catch(() => {});
+        }
+      }
+    });
+
+    function openSubscribeCheckout() {
+      Paddle.Checkout.open({
+        items: [{ priceId: 'pri_01kq8jr52z64sztq8dp2dg1nyg', quantity: 1 }]
+      });
+    }
+
+    function showSubscribed() {
+      document.querySelectorAll('.subscribe-action').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.subscribed-badge').forEach(el => el.style.display = 'inline-flex');
+    }
+
+    fetch('/api/me').then(r => r.json()).then(data => {
+      const user = data?.user;
+      const status = user?.paddleSubscriptionStatus;
+      const isSubscribed = status === 'active' || status === 'trialing';
+
+      const authLinks = document.getElementById('apps-auth-links');
+      if (authLinks && user) {
+        const starHtml = isSubscribed
+          ? ' <i class="bi bi-star-fill" style="color:#14b78a;font-size:0.75em;vertical-align:middle" title="Subscribed"></i>'
+          : '';
+        authLinks.innerHTML =
+          `<a class="navbar-top-tool-btn" href="/profile">${user.name}${starHtml}</a>` +
+          `<a class="navbar-top-tool-btn" href="/logout" data-en="Logout" data-ru="Выйти" data-kk="Шығу">Logout</a>`;
+      }
+
+      if (isSubscribed) showSubscribed();
+    }).catch(() => {});
+  </script>
 
 </body>
 </html>
