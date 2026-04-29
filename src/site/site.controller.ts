@@ -377,6 +377,11 @@ export class SiteController {
     };
   }
 
+  @Get('/desktop-success')
+  desktopSuccess(@Res() res: Response) {
+    return res.render('pages/desktop-success', { success: true });
+  }
+
   @Get('/logout')
   async logout(@Req() req: Request, @Res() res: Response) {
     await this.authService.logout(req, res);
@@ -876,50 +881,7 @@ export class SiteController {
     }
   }
 
-  private buildGoogleDesktopAuthUrl(req: Request, mode: 'login' | 'register'): string | null {
-    const redirectUri = this.getQueryValue(req.query.redirect_uri);
-    const codeChallenge = this.getQueryValue(req.query.code_challenge);
-    const state = this.getQueryValue(req.query.state);
 
-    if (!redirectUri && !codeChallenge) {
-      return null;
-    }
-
-    if (!redirectUri || !codeChallenge) {
-      throw new BadRequestException('Desktop Google OAuth requires redirect_uri and code_challenge.');
-    }
-
-    const redirectUrl = this.parseDesktopRedirectUri(redirectUri);
-    if (!redirectUrl) {
-      throw new BadRequestException('redirect_uri must be http://127.0.0.1:<port>/oauth2callback or http://localhost:<port>/oauth2callback.');
-    }
-
-    if (!/^[A-Za-z0-9._~-]{43,128}$/.test(codeChallenge)) {
-      throw new BadRequestException('code_challenge must be a valid PKCE S256 challenge.');
-    }
-
-    if (state && state.length > 2048) {
-      throw new BadRequestException('state is too long.');
-    }
-
-    const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
-    authUrl.searchParams.set('client_id', '1032118127228-9oin1kharh2kp6i9dg85r7i0s0j2tq5u.apps.googleusercontent.com');
-    authUrl.searchParams.set('redirect_uri', redirectUrl.toString());
-    authUrl.searchParams.set('response_type', 'code');
-    authUrl.searchParams.set('scope', 'openid email profile');
-    authUrl.searchParams.set('access_type', 'offline');
-    authUrl.searchParams.set('prompt', 'consent');
-    authUrl.searchParams.set('code_challenge', codeChallenge);
-    authUrl.searchParams.set('code_challenge_method', 'S256');
-
-    if (state) {
-      authUrl.searchParams.set('state', state);
-    } else {
-      authUrl.searchParams.set('state', `justaidyn:${mode}:desktop`);
-    }
-
-    return authUrl.toString();
-  }
 
   private parseDesktopRedirectUri(value: string): URL | null {
     try {

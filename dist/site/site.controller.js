@@ -305,6 +305,9 @@ let SiteController = class SiteController {
             paddleSubscriptionStatus: user.paddleSubscriptionStatus ?? null,
         };
     }
+    desktopSuccess(res) {
+        return res.render('pages/desktop-success', { success: true });
+    }
     async logout(req, res) {
         await this.authService.logout(req, res);
         return res.redirect('/');
@@ -676,43 +679,6 @@ let SiteController = class SiteController {
             return false;
         }
     }
-    buildGoogleDesktopAuthUrl(req, mode) {
-        const redirectUri = this.getQueryValue(req.query.redirect_uri);
-        const codeChallenge = this.getQueryValue(req.query.code_challenge);
-        const state = this.getQueryValue(req.query.state);
-        if (!redirectUri && !codeChallenge) {
-            return null;
-        }
-        if (!redirectUri || !codeChallenge) {
-            throw new common_1.BadRequestException('Desktop Google OAuth requires redirect_uri and code_challenge.');
-        }
-        const redirectUrl = this.parseDesktopRedirectUri(redirectUri);
-        if (!redirectUrl) {
-            throw new common_1.BadRequestException('redirect_uri must be http://127.0.0.1:<port>/oauth2callback or http://localhost:<port>/oauth2callback.');
-        }
-        if (!/^[A-Za-z0-9._~-]{43,128}$/.test(codeChallenge)) {
-            throw new common_1.BadRequestException('code_challenge must be a valid PKCE S256 challenge.');
-        }
-        if (state && state.length > 2048) {
-            throw new common_1.BadRequestException('state is too long.');
-        }
-        const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
-        authUrl.searchParams.set('client_id', '1032118127228-9oin1kharh2kp6i9dg85r7i0s0j2tq5u.apps.googleusercontent.com');
-        authUrl.searchParams.set('redirect_uri', redirectUrl.toString());
-        authUrl.searchParams.set('response_type', 'code');
-        authUrl.searchParams.set('scope', 'openid email profile');
-        authUrl.searchParams.set('access_type', 'offline');
-        authUrl.searchParams.set('prompt', 'consent');
-        authUrl.searchParams.set('code_challenge', codeChallenge);
-        authUrl.searchParams.set('code_challenge_method', 'S256');
-        if (state) {
-            authUrl.searchParams.set('state', state);
-        }
-        else {
-            authUrl.searchParams.set('state', `justaidyn:${mode}:desktop`);
-        }
-        return authUrl.toString();
-    }
     parseDesktopRedirectUri(value) {
         try {
             const url = new URL(value);
@@ -985,6 +951,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], SiteController.prototype, "desktopMe", null);
+__decorate([
+    (0, common_1.Get)('/desktop-success'),
+    __param(0, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "desktopSuccess", null);
 __decorate([
     (0, common_1.Get)('/logout'),
     __param(0, (0, common_1.Req)()),
