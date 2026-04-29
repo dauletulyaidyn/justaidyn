@@ -380,6 +380,16 @@ export class SiteController {
     return res.render('pages/desktop-success', { success: true });
   }
 
+  @Get('/privacy')
+  privacy(@Req() req: Request, @Res() res: Response) {
+    return this.renderStaticHtmlFile(req, res, join(process.cwd(), 'privacy.html'));
+  }
+
+  @Get('/privacy.html')
+  privacyHtml(@Req() req: Request, @Res() res: Response) {
+    return res.redirect(301, '/privacy');
+  }
+
   @Get('/logout')
   async logout(@Req() req: Request, @Res() res: Response) {
     await this.authService.logout(req, res);
