@@ -15,15 +15,33 @@ export class SiteController {
   ) {}
 
   @Get('/')
-  root(@Req() req: Request, @Res() res: Response) {
+  async root(@Req() req: Request, @Res() res: Response) {
     const site = this.siteService.resolveHost(req.hostname);
 
     if (site === 'main') {
       return res.render('pages/home', this.withSharedModel(this.siteService.getHomePage(), req));
     }
-
     if (site === 'courses') {
       return res.render('pages/course-wrapper', this.withSharedModel(this.siteService.getCoursePageModel('JustAidyn Courses | AI Agents Course', 'course-home'), req));
+    }
+    if (site === 'skillsminds') {
+      const posts = await this.postService.listPublished('skillsminds');
+      return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getPostsHubPage('skillsminds', posts), req));
+    }
+    if (site === 'nofacethinker') {
+      const user = this.authService.getCurrentUser(req);
+      const isSubscribed = user && (user.thinkerSubscriptionStatus === 'active' || user.thinkerSubscriptionStatus === 'trialing');
+      const posts = await this.postService.listPublished('nofacethinker');
+      if (!isSubscribed) {
+        return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getThinkerPreviewListPage(posts), req));
+      }
+      return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getPostsHubPage('nofacethinker', posts), req));
+    }
+    if (site === 'apps') {
+      return this.renderStaticHtmlFile(req, res, join(process.cwd(), 'apps', 'index.html'));
+    }
+    if (site === 'shop') {
+      return this.renderStaticHtmlFile(req, res, join(process.cwd(), 'shop', 'index.html'));
     }
 
     return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage(site), req));
@@ -488,6 +506,24 @@ export class SiteController {
     return res.render('pages/post-detail', this.withSharedModel(this.siteService.getPostDetailPage(post, false), req));
   }
 
+  @Get('/post/:slug')
+  async subdomainPost(@Req() req: Request, @Res() res: Response, @Param('slug') slug: string) {
+    const site = this.siteService.resolveHost(req.hostname);
+
+    if (site === 'skillsminds') {
+      const post = await this.postService.getBySlug('skillsminds', slug);
+      return res.render('pages/post-detail', this.withSharedModel(this.siteService.getPostDetailPage(post), req));
+    }
+    if (site === 'nofacethinker') {
+      const user = this.authService.getCurrentUser(req);
+      const isSubscribed = user && (user.thinkerSubscriptionStatus === 'active' || user.thinkerSubscriptionStatus === 'trialing');
+      const post = await this.postService.getBySlug('nofacethinker', slug);
+      return res.render('pages/post-detail', this.withSharedModel(this.siteService.getPostDetailPage(post, !isSubscribed), req));
+    }
+
+    throw new NotFoundException();
+  }
+
   @Get('/courses')
   coursesProject(@Req() req: Request, @Res() res: Response) {
     return res.redirect('/courses/ai-agents-course.html');
@@ -801,7 +837,7 @@ export class SiteController {
       throw new NotFoundException();
     }
 
-    if (site === 'main' && coursePageMap[normalizedFile]) {
+    if ((site === 'main' || site === 'courses') && coursePageMap[normalizedFile]) {
       const coursePage = coursePageMap[normalizedFile];
       return res.render(
         'pages/course-wrapper',
@@ -867,9 +903,16 @@ export class SiteController {
   }
 
   private withSharedModel(page: PageModel, req?: Request) {
-    const host = req?.hostname?.toLowerCase().split(':')[0];
-    const mainSiteUrl =
-      host === 'localhost' || host === '127.0.0.1' ? 'http://localhost:3000' : 'https://justaidyn.com';
+    const host = req?.hostname?.toLowerCase().split(':')[0] || '';
+    const isLocalIp = host === 'localhost' || host === '127.0.0.1';
+    const isLocalDomain = host.endsWith('.justaidyn.local');
+    const mainSiteUrl = isLocalIp ? 'http://localhost:3000'
+      : isLocalDomain ? 'http://justaidyn.local:3000'
+      : 'https://justaidyn.com';
+    const sub = (name: string) => isLocalIp
+      ? `http://localhost:3000/${name}`
+      : isLocalDomain ? `http://${name}.justaidyn.local:3000`
+      : `https://${name}.justaidyn.com`;
 
     return {
       ...page,
@@ -880,6 +923,13 @@ export class SiteController {
       projectsUrl: `${mainSiteUrl}/projects`,
       articlesUrl: `${mainSiteUrl}/articles/`,
       downloadsUrl: `${mainSiteUrl}/downloads/`,
+      skillsmindsUrl: sub('skillsminds'),
+      nofacethinkerUrl: sub('nofacethinker'),
+      coursesUrl: sub('courses'),
+      appsUrl: sub('apps'),
+      gamesUrl: sub('games'),
+      shopUrl: sub('shop'),
+      apiUrl: sub('api'),
     };
   }
 

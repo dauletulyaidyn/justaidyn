@@ -88,13 +88,13 @@ const ROOT_HOSTS = new Set([
 ]);
 
 const PROJECT_LINKS: ProjectLink[] = [
-  { labelEn: 'Skills and Minds Hub', labelRu: 'Skills and Minds Hub', labelKk: 'Skills and Minds Hub', url: '/articles/' },
-  { labelEn: 'no Face Thinker', labelRu: 'no Face Thinker', labelKk: 'no Face Thinker', url: '/nofacethinker' },
-  { labelEn: 'Courses', labelRu: 'Курсы', labelKk: 'Курстар', url: '/courses/ai-agents-course.html', showLangs: 'ru,kk' },
-  { labelEn: 'Apps', labelRu: 'Приложения', labelKk: 'Қосымшалар', url: '/apps' },
-  { labelEn: 'Games', labelRu: 'Игры', labelKk: 'Ойындар', url: '/games' },
-  { labelEn: 'Shop', labelRu: 'Магазин', labelKk: 'Дүкен', url: '/shop' },
-  { labelEn: 'API', labelRu: 'API', labelKk: 'API', url: '/api' },
+  { labelEn: 'Skills and Minds Hub', labelRu: 'Skills and Minds Hub', labelKk: 'Skills and Minds Hub', url: 'https://skillsminds.justaidyn.com' },
+  { labelEn: 'no Face Thinker', labelRu: 'no Face Thinker', labelKk: 'no Face Thinker', url: 'https://nofacethinker.justaidyn.com' },
+  { labelEn: 'Courses', labelRu: 'Курсы', labelKk: 'Курстар', url: 'https://courses.justaidyn.com', showLangs: 'ru,kk' },
+  { labelEn: 'Apps', labelRu: 'Приложения', labelKk: 'Қосымшалар', url: 'https://apps.justaidyn.com' },
+  { labelEn: 'Games', labelRu: 'Игры', labelKk: 'Ойындар', url: 'https://games.justaidyn.com' },
+  { labelEn: 'Shop', labelRu: 'Магазин', labelKk: 'Дүкен', url: 'https://shop.justaidyn.com' },
+  { labelEn: 'API', labelRu: 'API', labelKk: 'API', url: 'https://api.justaidyn.com' },
 ];
 
 @Injectable()
