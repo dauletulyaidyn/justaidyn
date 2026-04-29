@@ -251,15 +251,12 @@ let SiteController = class SiteController {
         if (site !== 'main') {
             throw new common_1.NotFoundException();
         }
-        const { desktopRedirectUri } = await this.authService.handleGoogleCallback(req, res);
+        const { user, desktopRedirectUri } = await this.authService.handleGoogleCallback(req, res);
         if (desktopRedirectUri) {
             const codeChallenge = this.authService.readDesktopChallengeCookie(req, res);
             if (!codeChallenge) {
                 return res.render('pages/desktop-success', { success: false, error: 'Session expired. Please try again.' });
             }
-            const user = this.authService.getCurrentUser(req);
-            if (!user)
-                return res.render('pages/desktop-success', { success: false, error: 'Authentication failed.' });
             const otcToken = await this.authService.createDesktopOtc(user.id, desktopRedirectUri, codeChallenge);
             return res.redirect(`${desktopRedirectUri}?token=${otcToken}`);
         }
