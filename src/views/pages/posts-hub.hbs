@@ -127,10 +127,17 @@
             <i class="bi bi-star-fill" style="font-size:2.2rem;color:#535da1;display:block;margin-bottom:16px"></i>
             <h2 data-en="Subscribe to read all posts" data-ru="Подпишитесь для полного доступа" data-kk="Барлық постқа қол жеткізу үшін жазылыңыз">Subscribe to read all posts</h2>
             <p data-en="Get full access to all no Face Thinker posts. $3.90/month with a 7-day free trial." data-ru="Получите полный доступ ко всем постам no Face Thinker. $3.90/мес, 7 дней бесплатно." data-kk="no Face Thinker постарының барлығына қол жеткізіңіз. Айына $3.90, 7 күн тегін.">Get full access to all no Face Thinker posts. $3.90/month with a 7-day free trial.</p>
+            {{#if currentUser}}
             <button class="btn-thinker" onclick="openThinkerCheckout()">
               <i class="bi bi-star"></i>
               <span data-en="Start 7-day Free Trial" data-ru="7 дней бесплатно" data-kk="7 күн тегін">Start 7-day Free Trial</span>
             </button>
+            {{else}}
+            <a class="btn-thinker" href="/login" style="text-decoration:none;">
+              <i class="bi bi-box-arrow-in-right"></i>
+              <span data-en="Sign in to subscribe" data-ru="Войдите, чтобы подписаться" data-kk="Жазылу үшін кіріңіз">Sign in to subscribe</span>
+            </a>
+            {{/if}}
           </div>
         </div>
         {{/if}}
@@ -158,7 +165,11 @@
       }
     });
     function openThinkerCheckout() {
-      Paddle.Checkout.open({ items: [{ priceId: '{{thinkerPriceId}}', quantity: 1 }] });
+      Paddle.Checkout.open({
+        items: [{ priceId: '{{thinkerPriceId}}', quantity: 1 }],
+        customer: { email: '{{currentUser.email}}' },
+        settings: { allowQuantity: false }
+      });
     }
   </script>
   {{/if}}
