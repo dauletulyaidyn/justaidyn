@@ -128,10 +128,23 @@
             <h2 data-en="Subscribe to read all posts" data-ru="Подпишитесь для полного доступа" data-kk="Барлық постқа қол жеткізу үшін жазылыңыз">Subscribe to read all posts</h2>
             <p data-en="Get full access to all no Face Thinker posts. $3.90/month with a 7-day free trial." data-ru="Получите полный доступ ко всем постам no Face Thinker. $3.90/мес, 7 дней бесплатно." data-kk="no Face Thinker постарының барлығына қол жеткізіңіз. Айына $3.90, 7 күн тегін.">Get full access to all no Face Thinker posts. $3.90/month with a 7-day free trial.</p>
             {{#if currentUser}}
-            <button class="btn-thinker" onclick="openThinkerCheckout()">
-              <i class="bi bi-star"></i>
-              <span data-en="Start 7-day Free Trial" data-ru="7 дней бесплатно" data-kk="7 күн тегін">Start 7-day Free Trial</span>
-            </button>
+              {{#if (or (eq currentUser.thinkerSubscriptionStatus 'active') (eq currentUser.thinkerSubscriptionStatus 'trialing'))}}
+              <div style="margin-top:8px;padding:14px 18px;background:rgba(20,183,138,0.1);border:1px solid rgba(20,183,138,0.3);border-radius:10px;">
+                <p style="margin:0 0 12px;font-weight:600;color:#0e8a63;"
+                   data-en="✓ You already have an active no Face Thinker subscription."
+                   data-ru="✓ У вас уже есть активная подписка no Face Thinker."
+                   data-kk="✓ Сізде no Face Thinker белсенді жазылымы бар.">✓ You already have an active no Face Thinker subscription.</p>
+                <a href="/profile" class="btn-thinker" style="text-decoration:none;background:#0e8a63;">
+                  <i class="bi bi-person-fill"></i>
+                  <span data-en="Go to profile" data-ru="Перейти в профиль" data-kk="Профильге өту">Go to profile</span>
+                </a>
+              </div>
+              {{else}}
+              <button class="btn-thinker" onclick="openThinkerCheckout()">
+                <i class="bi bi-star"></i>
+                <span data-en="Start 7-day Free Trial" data-ru="7 дней бесплатно" data-kk="7 күн тегін">Start 7-day Free Trial</span>
+              </button>
+              {{/if}}
             {{else}}
             <a class="btn-thinker" href="/login/google?return=/nofacethinker%3Fcheckout%3D1" style="text-decoration:none;">
               <i class="bi bi-google"></i>
@@ -171,9 +184,12 @@
         settings: { allowQuantity: false }
       });
     }
+    var alreadySubscribed = {{#if (or (eq currentUser.thinkerSubscriptionStatus 'active') (eq currentUser.thinkerSubscriptionStatus 'trialing'))}}true{{else}}false{{/if}};
     if (new URLSearchParams(window.location.search).get('checkout') === '1') {
       history.replaceState(null, '', window.location.pathname);
-      openThinkerCheckout();
+      if (!alreadySubscribed) {
+        openThinkerCheckout();
+      }
     }
   </script>
   {{/if}}
