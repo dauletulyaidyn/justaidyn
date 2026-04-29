@@ -454,6 +454,44 @@ let SiteController = class SiteController {
             timestamp: new Date().toISOString(),
         };
     }
+    get desktopVersionPath() {
+        return (0, path_1.join)(process.cwd(), 'desktop-version.json');
+    }
+    readDesktopVersion() {
+        if (!(0, fs_1.existsSync)(this.desktopVersionPath)) {
+            return { version: '0.0.0', minVersion: '0.0.0', downloadUrl: '', releaseNotes: '', required: false };
+        }
+        try {
+            return JSON.parse((0, fs_1.readFileSync)(this.desktopVersionPath, 'utf-8'));
+        }
+        catch {
+            throw new common_1.BadRequestException('desktop-version.json is malformed.');
+        }
+    }
+    getDesktopVersion() {
+        return this.readDesktopVersion();
+    }
+    setDesktopVersion(req, body) {
+        this.authService.getSuperadminUser(req);
+        const version = typeof body.version === 'string' ? body.version.trim() : '';
+        const downloadUrl = typeof body.downloadUrl === 'string' ? body.downloadUrl.trim() : '';
+        const releaseNotes = typeof body.releaseNotes === 'string' ? body.releaseNotes.trim() : '';
+        if (!version || !/^\d+\.\d+\.\d+$/.test(version)) {
+            throw new common_1.BadRequestException('version must be in format X.Y.Z');
+        }
+        if (!downloadUrl)
+            throw new common_1.BadRequestException('downloadUrl is required.');
+        const data = {
+            version,
+            minVersion: version,
+            downloadUrl,
+            releaseNotes,
+            required: true,
+            updatedAt: new Date().toISOString(),
+        };
+        (0, fs_1.writeFileSync)(this.desktopVersionPath, JSON.stringify(data, null, 2), 'utf-8');
+        return data;
+    }
     async paddleThinkerVerifyCheckout(req) {
         const user = await this.authService.verifyThinkerCheckoutAndSave(req);
         return { subscriptionStatus: user.thinkerSubscriptionStatus, subscribedAt: user.thinkerSubscribedAt };
@@ -1175,6 +1213,20 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "apiHealthPath", null);
+__decorate([
+    (0, common_1.Get)('/api/version/desktop'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "getDesktopVersion", null);
+__decorate([
+    (0, common_1.Post)('/api/admin/version/desktop'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "setDesktopVersion", null);
 __decorate([
     (0, common_1.Post)('/api/paddle/thinker/verify-checkout'),
     __param(0, (0, common_1.Req)()),

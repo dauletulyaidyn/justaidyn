@@ -605,6 +605,50 @@ export class SiteController {
     };
   }
 
+  // ─── Desktop version endpoints ────────────────────────────────────────────────
+
+  private get desktopVersionPath() {
+    return join(process.cwd(), 'desktop-version.json');
+  }
+
+  private readDesktopVersion(): Record<string, unknown> {
+    if (!existsSync(this.desktopVersionPath)) {
+      return { version: '0.0.0', minVersion: '0.0.0', downloadUrl: '', releaseNotes: '', required: false };
+    }
+    try {
+      return JSON.parse(readFileSync(this.desktopVersionPath, 'utf-8')) as Record<string, unknown>;
+    } catch {
+      throw new BadRequestException('desktop-version.json is malformed.');
+    }
+  }
+
+  @Get('/api/version/desktop')
+  getDesktopVersion() {
+    return this.readDesktopVersion();
+  }
+
+  @Post('/api/admin/version/desktop')
+  setDesktopVersion(@Req() req: Request, @Body() body: Record<string, unknown>) {
+    this.authService.getSuperadminUser(req);
+    const version = typeof body.version === 'string' ? body.version.trim() : '';
+    const downloadUrl = typeof body.downloadUrl === 'string' ? body.downloadUrl.trim() : '';
+    const releaseNotes = typeof body.releaseNotes === 'string' ? body.releaseNotes.trim() : '';
+    if (!version || !/^\d+\.\d+\.\d+$/.test(version)) {
+      throw new BadRequestException('version must be in format X.Y.Z');
+    }
+    if (!downloadUrl) throw new BadRequestException('downloadUrl is required.');
+    const data = {
+      version,
+      minVersion: version,  // no downgrade: minVersion always equals version
+      downloadUrl,
+      releaseNotes,
+      required: true,
+      updatedAt: new Date().toISOString(),
+    };
+    writeFileSync(this.desktopVersionPath, JSON.stringify(data, null, 2), 'utf-8');
+    return data;
+  }
+
   @Post('/api/paddle/thinker/verify-checkout')
   async paddleThinkerVerifyCheckout(@Req() req: Request) {
     const user = await this.authService.verifyThinkerCheckoutAndSave(req);
