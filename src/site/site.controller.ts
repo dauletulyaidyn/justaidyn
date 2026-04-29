@@ -49,24 +49,23 @@ export class SiteController {
 
   @Get('/projects')
   @Render('pages/host-router')
-  projects(@Req() req: Request) {
+  projects(@Req() req: Request, @Res() res: Response) {
     const site = this.siteService.resolveHost(req.hostname);
     if (site !== 'main') {
-      throw new NotFoundException();
+      return this.toMainSite(req, res, '/projects');
     }
 
     return this.withSharedModel(this.siteService.getProjectsPage(), req);
   }
 
   @Get('/login')
-  @Render('pages/host-router')
-  login(@Req() req: Request) {
+  login(@Req() req: Request, @Res() res: Response) {
     const site = this.siteService.resolveHost(req.hostname);
     if (site !== 'main') {
-      throw new NotFoundException();
+      return this.toMainSite(req, res, '/login');
     }
 
-    return this.withSharedModel(this.siteService.getLoginPage(), req);
+    return res.render('pages/host-router', this.withSharedModel(this.siteService.getLoginPage(), req));
   }
 
   @Get('/admin/login')
@@ -208,7 +207,7 @@ export class SiteController {
   register(@Req() req: Request, @Res() res: Response) {
     const site = this.siteService.resolveHost(req.hostname);
     if (site !== 'main') {
-      throw new NotFoundException();
+      return this.toMainSite(req, res, '/login');
     }
 
     return res.redirect('/login');
@@ -218,7 +217,7 @@ export class SiteController {
   async loginGoogle(@Req() req: Request, @Res() res: Response) {
     const site = this.siteService.resolveHost(req.hostname);
     if (site !== 'main') {
-      throw new NotFoundException();
+      return this.toMainSite(req, res, '/login/google');
     }
 
     // Desktop PKCE flow: redirect_uri + code_challenge present → OAuth via justaidyn.com callback
@@ -259,7 +258,7 @@ export class SiteController {
   profile(@Req() req: Request, @Res() res: Response) {
     const site = this.siteService.resolveHost(req.hostname);
     if (site !== 'main') {
-      throw new NotFoundException();
+      return this.toMainSite(req, res, '/profile');
     }
 
     const user = this.authService.getCurrentUser(req);
@@ -274,7 +273,7 @@ export class SiteController {
   profileEdit(@Req() req: Request, @Res() res: Response) {
     const site = this.siteService.resolveHost(req.hostname);
     if (site !== 'main') {
-      throw new NotFoundException();
+      return this.toMainSite(req, res, '/profile/edit');
     }
 
     const user = this.authService.getCurrentUser(req);
@@ -321,7 +320,7 @@ export class SiteController {
   registerGoogle(@Req() req: Request, @Res() res: Response) {
     const site = this.siteService.resolveHost(req.hostname);
     if (site !== 'main') {
-      throw new NotFoundException();
+      return this.toMainSite(req, res, '/login/google');
     }
 
     return res.redirect('/login/google');
@@ -931,6 +930,13 @@ export class SiteController {
       shopUrl: sub('shop'),
       apiUrl: sub('api'),
     };
+  }
+
+  private toMainSite(req: Request, res: Response, path: string) {
+    const host = req.hostname?.toLowerCase().split(':')[0] || '';
+    const isLocal = host === 'localhost' || host === '127.0.0.1' || host.endsWith('.justaidyn.local');
+    const base = isLocal ? 'http://localhost:3000' : 'https://justaidyn.com';
+    return res.redirect(302, `${base}${path}`);
   }
 
   private renderStaticHtmlFile(req: Request, res: Response, filePath: string) {
