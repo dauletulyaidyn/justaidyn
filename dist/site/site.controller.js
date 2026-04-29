@@ -286,20 +286,25 @@ let SiteController = class SiteController {
             },
         };
     }
-    async desktopMe(req) {
-        const user = await this.authService.verifyBearerToken(req);
-        if (!user)
-            throw new common_1.UnauthorizedException('Invalid or expired token.');
+    async apiMe(req) {
+        const sessionUser = this.authService.getCurrentUser(req);
+        const user = sessionUser ?? await this.authService.verifyBearerToken(req);
+        if (!user) {
+            return { authenticated: false };
+        }
         return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            picture: user.picture,
-            role: user.role,
-            thinkerSubscriptionStatus: user.thinkerSubscriptionStatus ?? null,
-            paddleSubscriptionStatus: user.paddleSubscriptionStatus ?? null,
+            authenticated: true,
+            user: {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                picture: user.picture,
+                role: user.role,
+                thinkerSubscriptionStatus: user.thinkerSubscriptionStatus ?? null,
+                paddleSubscriptionStatus: user.paddleSubscriptionStatus ?? null,
+            },
         };
     }
     desktopSuccess(res) {
@@ -447,27 +452,6 @@ let SiteController = class SiteController {
             app: 'justaidyn-platform',
             host: req.hostname,
             timestamp: new Date().toISOString(),
-        };
-    }
-    apiMe(req) {
-        const user = this.authService.getCurrentUser(req);
-        if (!user) {
-            return { authenticated: false };
-        }
-        return {
-            authenticated: true,
-            user: {
-                id: user.id,
-                email: user.email,
-                name: user.name,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                role: user.role,
-                paddleSubscriptionStatus: user.paddleSubscriptionStatus ?? null,
-                paddleSubscribedAt: user.paddleSubscribedAt ?? null,
-                thinkerSubscriptionStatus: user.thinkerSubscriptionStatus ?? null,
-                thinkerSubscribedAt: user.thinkerSubscribedAt ?? null,
-            },
         };
     }
     async paddleThinkerVerifyCheckout(req) {
@@ -959,7 +943,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], SiteController.prototype, "desktopMe", null);
+], SiteController.prototype, "apiMe", null);
 __decorate([
     (0, common_1.Get)('/desktop-success'),
     __param(0, (0, common_1.Res)()),
@@ -1191,13 +1175,6 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "apiHealthPath", null);
-__decorate([
-    (0, common_1.Get)('/api/me'),
-    __param(0, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
-], SiteController.prototype, "apiMe", null);
 __decorate([
     (0, common_1.Post)('/api/paddle/thinker/verify-checkout'),
     __param(0, (0, common_1.Req)()),

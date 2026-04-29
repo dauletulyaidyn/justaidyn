@@ -359,19 +359,26 @@ export class SiteController {
   }
 
   @Get('/api/me')
-  async desktopMe(@Req() req: Request) {
-    const user = await this.authService.verifyBearerToken(req);
-    if (!user) throw new UnauthorizedException('Invalid or expired token.');
+  async apiMe(@Req() req: Request) {
+    // Web session takes priority, then Bearer token (desktop)
+    const sessionUser = this.authService.getCurrentUser(req);
+    const user = sessionUser ?? await this.authService.verifyBearerToken(req);
+    if (!user) {
+      return { authenticated: false };
+    }
     return {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      picture: user.picture,
-      role: user.role,
-      thinkerSubscriptionStatus: user.thinkerSubscriptionStatus ?? null,
-      paddleSubscriptionStatus: user.paddleSubscriptionStatus ?? null,
+      authenticated: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        picture: user.picture,
+        role: user.role,
+        thinkerSubscriptionStatus: user.thinkerSubscriptionStatus ?? null,
+        paddleSubscriptionStatus: user.paddleSubscriptionStatus ?? null,
+      },
     };
   }
 
@@ -595,30 +602,6 @@ export class SiteController {
       app: 'justaidyn-platform',
       host: req.hostname,
       timestamp: new Date().toISOString(),
-    };
-  }
-
-  @Get('/api/me')
-  apiMe(@Req() req: Request) {
-    const user = this.authService.getCurrentUser(req);
-    if (!user) {
-      return { authenticated: false };
-    }
-
-    return {
-      authenticated: true,
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-        paddleSubscriptionStatus: user.paddleSubscriptionStatus ?? null,
-        paddleSubscribedAt: user.paddleSubscribedAt ?? null,
-        thinkerSubscriptionStatus: user.thinkerSubscriptionStatus ?? null,
-        thinkerSubscribedAt: user.thinkerSubscribedAt ?? null,
-      },
     };
   }
 
