@@ -48,7 +48,7 @@ export class PostService {
       publishedAt: p.publishedAt?.toISOString(),
       createdAt: p.createdAt.toISOString(),
       updatedAt: p.updatedAt.toISOString(),
-      viewCount: p._count?.views ?? 0,
+      viewCount: p.viewCount ?? 0,
     };
   }
 
@@ -60,23 +60,20 @@ export class PostService {
     const posts = await this.prisma.post.findMany({
       where: { platform: this.toPrismaEnum(platform), published: true },
       orderBy: { publishedAt: 'desc' },
-      include: { _count: { select: { views: true } } },
     });
-    return posts.map((p) => this.map(p));
+    return this.withViewCounts(posts.map((p) => this.map(p)));
   }
 
   async listAll(): Promise<PostDto[]> {
     const posts = await this.prisma.post.findMany({
       orderBy: [{ platform: 'asc' }, { createdAt: 'desc' }],
-      include: { _count: { select: { views: true } } },
     });
-    return posts.map((p) => this.map(p));
+    return this.withViewCounts(posts.map((p) => this.map(p)));
   }
 
   async getBySlug(platform: 'skillsminds' | 'nofacethinker', slug: string): Promise<PostDto> {
     const post = await this.prisma.post.findUnique({
       where: { platform_slug: { platform: this.toPrismaEnum(platform), slug } },
-      include: { _count: { select: { views: true } } },
     });
     if (!post || !post.published) throw new NotFoundException('Post not found.');
     return this.withViewTime(this.map(post));
@@ -85,10 +82,10 @@ export class PostService {
   async getById(id: string): Promise<PostDto> {
     const post = await this.prisma.post.findUnique({
       where: { id },
-      include: { _count: { select: { views: true } } },
     });
     if (!post) throw new NotFoundException('Post not found.');
-    return this.map(post);
+    const [mapped] = await this.withViewCounts([this.map(post)]);
+    return mapped;
   }
 
   async create(input: CreatePostInput): Promise<PostDto> {
@@ -137,12 +134,26 @@ export class PostService {
   }
 
   private async withViewTime(post: PostDto): Promise<PostDto> {
-    const aggregate = await this.prisma.postView.aggregate({
-      where: { postId: post.id },
-      _sum: { durationSeconds: true },
-    });
+    const [viewCount, aggregate] = await Promise.all([
+      this.prisma.postView.count({ where: { postId: post.id } }),
+      this.prisma.postView.aggregate({
+        where: { postId: post.id },
+        _sum: { durationSeconds: true },
+      }),
+    ]);
     const seconds = Math.round(aggregate._sum.durationSeconds ?? 0);
-    return { ...post, totalViewTime: this.formatDuration(seconds) };
+    return { ...post, viewCount, totalViewTime: this.formatDuration(seconds) };
+  }
+
+  private async withViewCounts(posts: PostDto[]): Promise<PostDto[]> {
+    if (!posts.length) return posts;
+    const counts = await this.prisma.postView.groupBy({
+      by: ['postId'],
+      where: { postId: { in: posts.map((post) => post.id) } },
+      _count: { _all: true },
+    });
+    const countByPostId = new Map(counts.map((count) => [count.postId, count._count._all]));
+    return posts.map((post) => ({ ...post, viewCount: countByPostId.get(post.id) ?? 0 }));
   }
 
   private formatDuration(seconds: number): string {
