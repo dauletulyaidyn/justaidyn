@@ -50,6 +50,16 @@ export interface ProfileUpdateInput {
 
 export interface PasswordResetRequestResult { resetUrl?: string; }
 
+export interface DesktopSessionStatus {
+  allowed: true;
+  subscriptionStatus: string;
+  seatLimit: number;
+  activeSessions: number;
+  heartbeatTtlSeconds: number;
+  checkedAt: string;
+  tokenExpiresAt: string;
+}
+
 @Injectable()
 export class AuthService {
   private readonly superadminEmail = 'aidyn.daulet@gmail.com';
@@ -57,6 +67,8 @@ export class AuthService {
   private readonly sessionCookie     = 'ja_session';
   private readonly paddleConfigFile  = join(process.cwd(), 'paddle-config.json');
   private readonly sessionTtlMs      = 30 * 24 * 60 * 60 * 1000;
+  private readonly screenCamProductId = 'pro_01kq54k4zhcg6hfa0k8rpvf708';
+  private readonly thinkerProductId = 'pro_01kq8twcm18210x96b7k9fnrbq';
 
   constructor(private readonly prisma: PrismaService) {}
 
@@ -330,7 +342,7 @@ export class AuthService {
   async verifyCheckoutAndSave(req: Request): Promise<AuthUser> {
     const currentUser = this.getCurrentUser(req);
     if (!currentUser) throw new UnauthorizedException('Login is required.');
-    const sub = await this.findActiveSubscriptionByEmail(currentUser.email, 'pro_01kq54k4zhcg6hfa0k8rpvf708');
+    const sub = await this.findActiveSubscriptionByEmail(currentUser.email, this.screenCamProductId);
     if (!sub) throw new BadRequestException('No active ScreenCam subscription found. Please wait a moment and try again.');
     const updated = await this.prisma.user.update({
       where: { id: currentUser.id },
@@ -360,7 +372,7 @@ export class AuthService {
   async verifyThinkerCheckoutAndSave(req: Request): Promise<AuthUser> {
     const currentUser = this.getCurrentUser(req);
     if (!currentUser) throw new UnauthorizedException('Login is required.');
-    const sub = await this.findActiveSubscriptionByEmail(currentUser.email, 'pro_01kq8twcm18210x96b7k9fnrbq');
+    const sub = await this.findActiveSubscriptionByEmail(currentUser.email, this.thinkerProductId);
     if (!sub) throw new BadRequestException('No active Thinker subscription found. Please wait a moment and try again.');
     const updated = await this.prisma.user.update({
       where: { id: currentUser.id },
@@ -430,12 +442,15 @@ export class AuthService {
     const customer       = data.customer as Record<string, unknown> | undefined;
     const email          = customer?.email as string | undefined;
     if (!email || !subscriptionId) return;
-    const items    = (data.items as Array<Record<string, unknown>>) ?? [];
-    const priceId  = (items[0]?.price as Record<string, unknown>)?.id as string | undefined;
-    const productId = (items[0]?.price as Record<string, unknown>)?.product_id as string | undefined;
+    const items = (data.items as Array<Record<string, unknown>>) ?? [];
+    const productIds = items
+      .map((item) => (item.price as Record<string, unknown> | undefined)?.product_id)
+      .filter((productId): productId is string => typeof productId === 'string');
     const user = await this.prisma.user.findFirst({ where: { email: { equals: email, mode: 'insensitive' } } });
     if (!user) return;
-    const isThinker = productId === 'pro_01kq8twcm18210x96b7k9fnrbq';
+    const isThinker = productIds.includes(this.thinkerProductId);
+    const isScreenCam = productIds.includes(this.screenCamProductId);
+    if (!isThinker && !isScreenCam) return;
     const now = new Date();
     if (isThinker) {
       await this.prisma.user.update({
@@ -517,8 +532,8 @@ export class AuthService {
 
   private async relinkPaddleSubscriptions(userId: string, email: string): Promise<void> {
     const [screencam, thinker] = await Promise.all([
-      this.findActiveSubscriptionByEmail(email, 'pro_01kq54k4zhcg6hfa0k8rpvf708'),
-      this.findActiveSubscriptionByEmail(email, 'pro_01kq8twcm18210x96b7k9fnrbq'),
+      this.findActiveSubscriptionByEmail(email, this.screenCamProductId),
+      this.findActiveSubscriptionByEmail(email, this.thinkerProductId),
     ]);
     const data: Record<string, unknown> = {};
     if (screencam) { data.paddleSubscriptionId = screencam.id; data.paddleSubscriptionStatus = screencam.status; data.paddleSubscribedAt = new Date(screencam.createdAt); data.paddleSubscriptionUpdatedAt = new Date(); }
@@ -568,7 +583,7 @@ export class AuthService {
     try { await this.paddlePost(`/subscriptions/${subscriptionId}/cancel`, { effective_from: 'next_billing_period' }); } catch { /* best-effort */ }
   }
 
-  async findActiveSubscriptionByEmail(email: string, productId?: string): Promise<{ id: string; status: string; createdAt: string } | null> {
+  async findActiveSubscriptionByEmail(email: string, productId?: string): Promise<{ id: string; status: string; createdAt: string; quantity: number } | null> {
     try {
       const customers = (await this.paddleGet(`/customers?search=${encodeURIComponent(email)}`)) as Array<Record<string, unknown>>;
       const list      = Array.isArray(customers) ? customers : [];
@@ -580,13 +595,35 @@ export class AuthService {
         const isActive = s.status === 'active' || s.status === 'trialing';
         if (!isActive) return false;
         if (!productId) return true;
-        const items    = (s.items as Array<Record<string, unknown>>) ?? [];
-        const pId      = (items[0]?.price as Record<string, unknown>)?.product_id as string | undefined;
-        return pId === productId;
+        const items = (s.items as Array<Record<string, unknown>>) ?? [];
+        return items.some((item) => (item.price as Record<string, unknown> | undefined)?.product_id === productId);
       });
       if (!active) return null;
-      return { id: active.id as string, status: active.status as string, createdAt: active.created_at as string };
+      return {
+        id: active.id as string,
+        status: active.status as string,
+        createdAt: active.created_at as string,
+        quantity: this.getPaddleItemsQuantity((active.items as Array<Record<string, unknown>>) ?? [], productId),
+      };
     } catch { return null; }
+  }
+
+  private async getSubscriptionQuantity(subscriptionId: string, productId: string): Promise<number> {
+    const subscription = await this.paddleGet(`/subscriptions/${encodeURIComponent(subscriptionId)}`) as Record<string, unknown>;
+    return this.getPaddleItemsQuantity((subscription.items as Array<Record<string, unknown>>) ?? [], productId);
+  }
+
+  private getPaddleItemsQuantity(items: Array<Record<string, unknown>>, productId?: string): number {
+    const quantities = items
+      .filter((item) => {
+        if (!productId) return true;
+        const price = item.price as Record<string, unknown> | undefined;
+        return price?.product_id === productId;
+      })
+      .map((item) => Number(item.quantity ?? 1))
+      .filter((quantity) => Number.isFinite(quantity) && quantity > 0);
+
+    return Math.max(1, quantities.reduce((total, quantity) => total + quantity, 0));
   }
 
   // ─── Private: helpers ─────────────────────────────────────────────────────────
@@ -695,6 +732,7 @@ export class AuthService {
   // ─── Desktop OAuth ────────────────────────────────────────────────────────────
 
   private readonly apiTokenTtlMs = 90 * 24 * 60 * 60 * 1000;
+  private readonly desktopHeartbeatTtlMs = 2 * 60 * 1000;
   private readonly desktopChallengeCookie = 'ja_desktop_challenge';
 
   async buildGoogleWebAuthUrlForDesktop(req: Request, res: Response, mode: AuthMode, desktopRedirectUri: string, codeChallenge: string): Promise<string> {
@@ -751,9 +789,7 @@ export class AuthService {
   }
 
   async verifyBearerToken(req: Request): Promise<AuthUser | null> {
-    const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith('Bearer ')) return null;
-    const token = authHeader.slice(7);
+    const token = this.readBearerToken(req);
     if (!token) return null;
     const record = await this.prisma.apiToken.findUnique({ where: { token }, include: { user: true } });
     if (!record || record.expiresAt < new Date()) return null;
@@ -761,7 +797,71 @@ export class AuthService {
     return this.mapUser(record.user);
   }
 
+  async checkDesktopSession(req: Request): Promise<DesktopSessionStatus> {
+    const token = this.readBearerToken(req);
+    if (!token) throw new UnauthorizedException('Bearer token is required.');
+
+    const now = new Date();
+    const record = await this.prisma.apiToken.findUnique({ where: { token }, include: { user: true } });
+    if (!record || record.expiresAt < now) {
+      throw new UnauthorizedException('Invalid or expired token.');
+    }
+
+    const user = record.user;
+    const subscriptionId = user.paddleSubscriptionId;
+    const hasScreenCamSubscription = subscriptionId && (user.paddleSubscriptionStatus === 'active' || user.paddleSubscriptionStatus === 'trialing');
+    if (!hasScreenCamSubscription) {
+      throw new ForbiddenException({
+        error: 'subscription_required',
+        message: 'Active ScreenCam subscription is required.',
+      });
+    }
+
+    const seatLimit = await this.getSubscriptionQuantity(subscriptionId, this.screenCamProductId).catch(() => 1);
+    const activeSince = new Date(now.getTime() - this.desktopHeartbeatTtlMs);
+    const activeTokens = await this.prisma.apiToken.findMany({
+      where: {
+        userId: user.id,
+        expiresAt: { gt: now },
+        lastUsedAt: { gte: activeSince },
+      },
+      orderBy: [{ createdAt: 'asc' }],
+    });
+
+    const currentIsActive = activeTokens.some((activeToken) => activeToken.id === record.id);
+    const allowedTokenIds = new Set(activeTokens.slice(0, seatLimit).map((activeToken) => activeToken.id));
+    const canClaimFreeSeat = !currentIsActive && activeTokens.length < seatLimit;
+    if (!allowedTokenIds.has(record.id) && !canClaimFreeSeat) {
+      throw new ForbiddenException({
+        error: 'seat_limit_reached',
+        message: 'Subscription seat limit reached.',
+        seatLimit,
+        activeSessions: activeTokens.length,
+        heartbeatTtlSeconds: Math.floor(this.desktopHeartbeatTtlMs / 1000),
+      });
+    }
+
+    await this.prisma.apiToken.update({ where: { id: record.id }, data: { lastUsedAt: now } });
+    const activeSessions = currentIsActive ? activeTokens.length : activeTokens.length + 1;
+
+    return {
+      allowed: true,
+      subscriptionStatus: user.paddleSubscriptionStatus ?? '',
+      seatLimit,
+      activeSessions,
+      heartbeatTtlSeconds: Math.floor(this.desktopHeartbeatTtlMs / 1000),
+      checkedAt: now.toISOString(),
+      tokenExpiresAt: record.expiresAt.toISOString(),
+    };
+  }
+
   // ─── Private: helpers ─────────────────────────────────────────────────────────
+
+  private readBearerToken(req: Request): string | undefined {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) return undefined;
+    return authHeader.slice(7).trim() || undefined;
+  }
 
   private getQueryValue(value: unknown): string | undefined {
     if (Array.isArray(value)) return typeof value[0] === 'string' ? value[0] : undefined;

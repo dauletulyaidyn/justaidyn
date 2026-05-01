@@ -27,7 +27,10 @@ let AuthService = class AuthService {
         this.sessionCookie = 'ja_session';
         this.paddleConfigFile = (0, path_1.join)(process.cwd(), 'paddle-config.json');
         this.sessionTtlMs = 30 * 24 * 60 * 60 * 1000;
+        this.screenCamProductId = 'pro_01kq54k4zhcg6hfa0k8rpvf708';
+        this.thinkerProductId = 'pro_01kq8twcm18210x96b7k9fnrbq';
         this.apiTokenTtlMs = 90 * 24 * 60 * 60 * 1000;
+        this.desktopHeartbeatTtlMs = 2 * 60 * 1000;
         this.desktopChallengeCookie = 'ja_desktop_challenge';
     }
     mapUser(u) {
@@ -278,7 +281,7 @@ let AuthService = class AuthService {
         const currentUser = this.getCurrentUser(req);
         if (!currentUser)
             throw new common_1.UnauthorizedException('Login is required.');
-        const sub = await this.findActiveSubscriptionByEmail(currentUser.email, 'pro_01kq54k4zhcg6hfa0k8rpvf708');
+        const sub = await this.findActiveSubscriptionByEmail(currentUser.email, this.screenCamProductId);
         if (!sub)
             throw new common_1.BadRequestException('No active ScreenCam subscription found. Please wait a moment and try again.');
         const updated = await this.prisma.user.update({
@@ -308,7 +311,7 @@ let AuthService = class AuthService {
         const currentUser = this.getCurrentUser(req);
         if (!currentUser)
             throw new common_1.UnauthorizedException('Login is required.');
-        const sub = await this.findActiveSubscriptionByEmail(currentUser.email, 'pro_01kq8twcm18210x96b7k9fnrbq');
+        const sub = await this.findActiveSubscriptionByEmail(currentUser.email, this.thinkerProductId);
         if (!sub)
             throw new common_1.BadRequestException('No active Thinker subscription found. Please wait a moment and try again.');
         const updated = await this.prisma.user.update({
@@ -382,12 +385,16 @@ let AuthService = class AuthService {
         if (!email || !subscriptionId)
             return;
         const items = data.items ?? [];
-        const priceId = items[0]?.price?.id;
-        const productId = items[0]?.price?.product_id;
+        const productIds = items
+            .map((item) => item.price?.product_id)
+            .filter((productId) => typeof productId === 'string');
         const user = await this.prisma.user.findFirst({ where: { email: { equals: email, mode: 'insensitive' } } });
         if (!user)
             return;
-        const isThinker = productId === 'pro_01kq8twcm18210x96b7k9fnrbq';
+        const isThinker = productIds.includes(this.thinkerProductId);
+        const isScreenCam = productIds.includes(this.screenCamProductId);
+        if (!isThinker && !isScreenCam)
+            return;
         const now = new Date();
         if (isThinker) {
             await this.prisma.user.update({
@@ -460,8 +467,8 @@ let AuthService = class AuthService {
     }
     async relinkPaddleSubscriptions(userId, email) {
         const [screencam, thinker] = await Promise.all([
-            this.findActiveSubscriptionByEmail(email, 'pro_01kq54k4zhcg6hfa0k8rpvf708'),
-            this.findActiveSubscriptionByEmail(email, 'pro_01kq8twcm18210x96b7k9fnrbq'),
+            this.findActiveSubscriptionByEmail(email, this.screenCamProductId),
+            this.findActiveSubscriptionByEmail(email, this.thinkerProductId),
         ]);
         const data = {};
         if (screencam) {
@@ -538,16 +545,36 @@ let AuthService = class AuthService {
                 if (!productId)
                     return true;
                 const items = s.items ?? [];
-                const pId = items[0]?.price?.product_id;
-                return pId === productId;
+                return items.some((item) => item.price?.product_id === productId);
             });
             if (!active)
                 return null;
-            return { id: active.id, status: active.status, createdAt: active.created_at };
+            return {
+                id: active.id,
+                status: active.status,
+                createdAt: active.created_at,
+                quantity: this.getPaddleItemsQuantity(active.items ?? [], productId),
+            };
         }
         catch {
             return null;
         }
+    }
+    async getSubscriptionQuantity(subscriptionId, productId) {
+        const subscription = await this.paddleGet(`/subscriptions/${encodeURIComponent(subscriptionId)}`);
+        return this.getPaddleItemsQuantity(subscription.items ?? [], productId);
+    }
+    getPaddleItemsQuantity(items, productId) {
+        const quantities = items
+            .filter((item) => {
+            if (!productId)
+                return true;
+            const price = item.price;
+            return price?.product_id === productId;
+        })
+            .map((item) => Number(item.quantity ?? 1))
+            .filter((quantity) => Number.isFinite(quantity) && quantity > 0);
+        return Math.max(1, quantities.reduce((total, quantity) => total + quantity, 0));
     }
     async exchangeGoogleCode(req, code) {
         const config = this.getGoogleOAuthConfig();
@@ -701,10 +728,7 @@ let AuthService = class AuthService {
         return { accessToken, user: this.mapUser(user) };
     }
     async verifyBearerToken(req) {
-        const authHeader = req.headers.authorization;
-        if (!authHeader?.startsWith('Bearer '))
-            return null;
-        const token = authHeader.slice(7);
+        const token = this.readBearerToken(req);
         if (!token)
             return null;
         const record = await this.prisma.apiToken.findUnique({ where: { token }, include: { user: true } });
@@ -712,6 +736,64 @@ let AuthService = class AuthService {
             return null;
         this.prisma.apiToken.update({ where: { id: record.id }, data: { lastUsedAt: new Date() } }).catch(() => { });
         return this.mapUser(record.user);
+    }
+    async checkDesktopSession(req) {
+        const token = this.readBearerToken(req);
+        if (!token)
+            throw new common_1.UnauthorizedException('Bearer token is required.');
+        const now = new Date();
+        const record = await this.prisma.apiToken.findUnique({ where: { token }, include: { user: true } });
+        if (!record || record.expiresAt < now) {
+            throw new common_1.UnauthorizedException('Invalid or expired token.');
+        }
+        const user = record.user;
+        const subscriptionId = user.paddleSubscriptionId;
+        const hasScreenCamSubscription = subscriptionId && (user.paddleSubscriptionStatus === 'active' || user.paddleSubscriptionStatus === 'trialing');
+        if (!hasScreenCamSubscription) {
+            throw new common_1.ForbiddenException({
+                error: 'subscription_required',
+                message: 'Active ScreenCam subscription is required.',
+            });
+        }
+        const seatLimit = await this.getSubscriptionQuantity(subscriptionId, this.screenCamProductId).catch(() => 1);
+        const activeSince = new Date(now.getTime() - this.desktopHeartbeatTtlMs);
+        const activeTokens = await this.prisma.apiToken.findMany({
+            where: {
+                userId: user.id,
+                expiresAt: { gt: now },
+                lastUsedAt: { gte: activeSince },
+            },
+            orderBy: [{ createdAt: 'asc' }],
+        });
+        const currentIsActive = activeTokens.some((activeToken) => activeToken.id === record.id);
+        const allowedTokenIds = new Set(activeTokens.slice(0, seatLimit).map((activeToken) => activeToken.id));
+        const canClaimFreeSeat = !currentIsActive && activeTokens.length < seatLimit;
+        if (!allowedTokenIds.has(record.id) && !canClaimFreeSeat) {
+            throw new common_1.ForbiddenException({
+                error: 'seat_limit_reached',
+                message: 'Subscription seat limit reached.',
+                seatLimit,
+                activeSessions: activeTokens.length,
+                heartbeatTtlSeconds: Math.floor(this.desktopHeartbeatTtlMs / 1000),
+            });
+        }
+        await this.prisma.apiToken.update({ where: { id: record.id }, data: { lastUsedAt: now } });
+        const activeSessions = currentIsActive ? activeTokens.length : activeTokens.length + 1;
+        return {
+            allowed: true,
+            subscriptionStatus: user.paddleSubscriptionStatus ?? '',
+            seatLimit,
+            activeSessions,
+            heartbeatTtlSeconds: Math.floor(this.desktopHeartbeatTtlMs / 1000),
+            checkedAt: now.toISOString(),
+            tokenExpiresAt: record.expiresAt.toISOString(),
+        };
+    }
+    readBearerToken(req) {
+        const authHeader = req.headers.authorization;
+        if (!authHeader?.startsWith('Bearer '))
+            return undefined;
+        return authHeader.slice(7).trim() || undefined;
     }
     getQueryValue(value) {
         if (Array.isArray(value))

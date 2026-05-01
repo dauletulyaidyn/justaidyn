@@ -305,6 +305,9 @@ let SiteController = class SiteController {
             },
         };
     }
+    async desktopSession(req) {
+        return this.authService.checkDesktopSession(req);
+    }
     async apiMe(req) {
         const sessionUser = this.authService.getCurrentUser(req);
         const user = sessionUser ?? await this.authService.verifyBearerToken(req);
@@ -1088,6 +1091,13 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], SiteController.prototype, "desktopToken", null);
+__decorate([
+    (0, common_1.Get)('/api/desktop/session'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "desktopSession", null);
 __decorate([
     (0, common_1.Get)('/api/me'),
     __param(0, (0, common_1.Req)()),

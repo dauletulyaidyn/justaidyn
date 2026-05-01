@@ -375,6 +375,11 @@ export class SiteController {
     };
   }
 
+  @Get('/api/desktop/session')
+  async desktopSession(@Req() req: Request) {
+    return this.authService.checkDesktopSession(req);
+  }
+
   @Get('/api/me')
   async apiMe(@Req() req: Request) {
     // Web session takes priority, then Bearer token (desktop)
