@@ -412,13 +412,23 @@
   </script>  <script src="/js/legal.js"></script>
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
   <script>
+    function getCookie(name) {
+      return document.cookie.split(';').map(function(part) { return part.trim(); }).reduce(function(value, part) {
+        return part.indexOf(name + '=') === 0 ? decodeURIComponent(part.slice(name.length + 1)) : value;
+      }, '');
+    }
+
+    function csrfHeaders() {
+      return { 'X-CSRF-Token': getCookie('ja_csrf') };
+    }
+
     Paddle.Environment.set('sandbox');
     Paddle.Initialize({
       token: 'test_16c22427a493b4298c916610736',
       eventCallback: function(event) {
         if (event.name === 'checkout.completed') {
           showSubscribed();
-          fetch('/api/paddle/verify-checkout', { method: 'POST' }).catch(() => {});
+          fetch('/api/paddle/verify-checkout', { method: 'POST', headers: csrfHeaders() }).catch(() => {});
         }
       }
     });

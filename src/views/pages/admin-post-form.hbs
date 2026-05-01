@@ -60,6 +60,7 @@
       <h1>{{#if editPost}}Edit Post{{else}}New Post{{/if}}</h1>
 
       <form method="post" action="{{#if editPost}}/admin/posts/{{editPost.id}}/edit{{else}}/admin/posts/new{{/if}}">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
         <div class="mb-4">
           <label class="form-label">Platform</label>
           <select class="form-select" name="platform" {{#if editPost}}disabled{{/if}}>

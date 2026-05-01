@@ -25,7 +25,7 @@ let SiteController = class SiteController {
         this.authService = authService;
         this.postService = postService;
     }
-    root(req, res) {
+    async root(req, res) {
         const site = this.siteService.resolveHost(req.hostname);
         if (site === 'main') {
             return res.render('pages/home', this.withSharedModel(this.siteService.getHomePage(), req));
@@ -33,21 +33,40 @@ let SiteController = class SiteController {
         if (site === 'courses') {
             return res.render('pages/course-wrapper', this.withSharedModel(this.siteService.getCoursePageModel('JustAidyn Courses | AI Agents Course', 'course-home'), req));
         }
+        if (site === 'skillsminds') {
+            const posts = await this.postService.listPublished('skillsminds');
+            return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getPostsHubPage('skillsminds', posts), req));
+        }
+        if (site === 'nofacethinker') {
+            const user = this.authService.getCurrentUser(req);
+            const isSubscribed = user && (user.thinkerSubscriptionStatus === 'active' || user.thinkerSubscriptionStatus === 'trialing');
+            const posts = await this.postService.listPublished('nofacethinker');
+            if (!isSubscribed) {
+                return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getThinkerPreviewListPage(posts), req));
+            }
+            return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getPostsHubPage('nofacethinker', posts), req));
+        }
+        if (site === 'apps') {
+            return this.renderStaticHtmlFile(req, res, (0, path_1.join)(process.cwd(), 'apps', 'index.html'));
+        }
+        if (site === 'shop') {
+            return this.renderStaticHtmlFile(req, res, (0, path_1.join)(process.cwd(), 'shop', 'index.html'));
+        }
         return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage(site), req));
     }
-    projects(req) {
+    projects(req, res) {
         const site = this.siteService.resolveHost(req.hostname);
         if (site !== 'main') {
-            throw new common_1.NotFoundException();
+            return this.toMainSite(req, res, '/projects');
         }
         return this.withSharedModel(this.siteService.getProjectsPage(), req);
     }
-    login(req) {
+    login(req, res) {
         const site = this.siteService.resolveHost(req.hostname);
         if (site !== 'main') {
-            throw new common_1.NotFoundException();
+            return this.toMainSite(req, res, '/login');
         }
-        return this.withSharedModel(this.siteService.getLoginPage(), req);
+        return res.render('pages/host-router', this.withSharedModel(this.siteService.getLoginPage(), req));
     }
     adminLogin(req) {
         const site = this.siteService.resolveHost(req.hostname);
@@ -154,14 +173,14 @@ let SiteController = class SiteController {
     register(req, res) {
         const site = this.siteService.resolveHost(req.hostname);
         if (site !== 'main') {
-            throw new common_1.NotFoundException();
+            return this.toMainSite(req, res, '/login');
         }
         return res.redirect('/login');
     }
     async loginGoogle(req, res) {
         const site = this.siteService.resolveHost(req.hostname);
         if (site !== 'main') {
-            throw new common_1.NotFoundException();
+            return this.toMainSite(req, res, '/login/google');
         }
         const redirectUri = this.getQueryValue(req.query.redirect_uri);
         const codeChallenge = this.getQueryValue(req.query.code_challenge);
@@ -180,8 +199,8 @@ let SiteController = class SiteController {
             this.authService.setOAuthStateCookie(res, authUrl, req);
             return res.redirect(authUrl);
         }
-        const returnUrl = typeof req.query.return === 'string' ? req.query.return : '';
-        if (returnUrl && returnUrl.startsWith('/')) {
+        const returnUrl = this.safeLocalReturnPath(typeof req.query.return === 'string' ? req.query.return : '');
+        if (returnUrl) {
             res.cookie('ja_return_url', returnUrl, {
                 httpOnly: true, sameSite: 'lax',
                 secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
@@ -195,7 +214,7 @@ let SiteController = class SiteController {
     profile(req, res) {
         const site = this.siteService.resolveHost(req.hostname);
         if (site !== 'main') {
-            throw new common_1.NotFoundException();
+            return this.toMainSite(req, res, '/profile');
         }
         const user = this.authService.getCurrentUser(req);
         if (!user) {
@@ -206,7 +225,7 @@ let SiteController = class SiteController {
     profileEdit(req, res) {
         const site = this.siteService.resolveHost(req.hostname);
         if (site !== 'main') {
-            throw new common_1.NotFoundException();
+            return this.toMainSite(req, res, '/profile/edit');
         }
         const user = this.authService.getCurrentUser(req);
         if (!user) {
@@ -242,7 +261,7 @@ let SiteController = class SiteController {
     registerGoogle(req, res) {
         const site = this.siteService.resolveHost(req.hostname);
         if (site !== 'main') {
-            throw new common_1.NotFoundException();
+            return this.toMainSite(req, res, '/login/google');
         }
         return res.redirect('/login/google');
     }
@@ -262,7 +281,7 @@ let SiteController = class SiteController {
         }
         const returnUrl = req.cookies?.ja_return_url;
         res.clearCookie('ja_return_url', { path: '/' });
-        const safeReturn = typeof returnUrl === 'string' && returnUrl.startsWith('/') ? returnUrl : '/profile';
+        const safeReturn = this.safeLocalReturnPath(returnUrl) || '/profile';
         return res.redirect(safeReturn);
     }
     async desktopToken(req, body) {
@@ -385,6 +404,20 @@ let SiteController = class SiteController {
         }
         return res.render('pages/post-detail', this.withSharedModel(this.siteService.getPostDetailPage(post, false), req));
     }
+    async subdomainPost(req, res, slug) {
+        const site = this.siteService.resolveHost(req.hostname);
+        if (site === 'skillsminds') {
+            const post = await this.postService.getBySlug('skillsminds', slug);
+            return res.render('pages/post-detail', this.withSharedModel(this.siteService.getPostDetailPage(post), req));
+        }
+        if (site === 'nofacethinker') {
+            const user = this.authService.getCurrentUser(req);
+            const isSubscribed = user && (user.thinkerSubscriptionStatus === 'active' || user.thinkerSubscriptionStatus === 'trialing');
+            const post = await this.postService.getBySlug('nofacethinker', slug);
+            return res.render('pages/post-detail', this.withSharedModel(this.siteService.getPostDetailPage(post, !isSubscribed), req));
+        }
+        throw new common_1.NotFoundException();
+    }
     coursesProject(req, res) {
         return res.redirect('/courses/ai-agents-course.html');
     }
@@ -408,31 +441,31 @@ let SiteController = class SiteController {
         return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);
     }
     appDetailPath(req, res) {
-        return this.renderStaticHtmlFile(req, res, (0, path_1.join)(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
+        return res.sendFile((0, path_1.join)(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
     }
     appDetailAlias(req) {
         return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);
     }
-    aiAgentsCourse(req) {
-        return this.withSharedModel(this.siteService.getCoursePageModel('JustAidyn Courses | AI Agents Course', 'course-home'), req);
+    aiAgentsCourse(res) {
+        return res.redirect(301, '/courses/ai-agents-course.html');
     }
-    aiAgentsLite(req) {
-        return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | Lite Group', 'lite-group'), req);
+    aiAgentsLite(res) {
+        return res.redirect(301, '/courses/ai-agents-lite-group.html');
     }
-    aiAgentsStandard(req) {
-        return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | Standard Group', 'standard-group'), req);
+    aiAgentsStandard(res) {
+        return res.redirect(301, '/courses/ai-agents-standard-group.html');
     }
-    aiAgentsStandardPlus(req) {
-        return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | Standard+ Group', 'standard-plus-group'), req);
+    aiAgentsStandardPlus(res) {
+        return res.redirect(301, '/courses/ai-agents-standard-plus-group.html');
     }
-    aiAgentsVip(req) {
-        return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | VIP Group', 'vip-group'), req);
+    aiAgentsVip(res) {
+        return res.redirect(301, '/courses/ai-agents-vip-group.html');
     }
-    aiAgentsLearningSteps(req) {
-        return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | Три этапа обучения', 'learning-steps'), req);
+    aiAgentsLearningSteps(res) {
+        return res.redirect(301, '/courses/ai-agents-learning-steps.html');
     }
-    aiAgentsLearningPrinciples(req) {
-        return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | Три принципа обучения', 'learning-principles'), req);
+    aiAgentsLearningPrinciples(res) {
+        return res.redirect(301, '/courses/ai-agents-learning-principles.html');
     }
     apiHealth(req) {
         const site = this.siteService.resolveHost(req.hostname);
@@ -507,12 +540,50 @@ let SiteController = class SiteController {
             this.postService.listPublished('nofacethinker'),
         ]);
         const staticUrls = [
-            { loc: base, priority: '1.0', changefreq: 'weekly' },
-            { loc: `${base}/skillsminds`, priority: '0.9', changefreq: 'daily' },
-            { loc: `${base}/nofacethinker`, priority: '0.8', changefreq: 'daily' },
-            { loc: `${base}/apps`, priority: '0.7', changefreq: 'weekly' },
-            { loc: `${base}/apps/justaidyn-screencam/`, priority: '0.7', changefreq: 'monthly' },
-            { loc: `${base}/courses/ai-agents-course.html`, priority: '0.8', changefreq: 'monthly' },
+            { loc: `${base}/`, priority: '1.0', changefreq: 'weekly', lastmod: '2026-05-01' },
+            { loc: `${base}/projects.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/faq.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/education.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/experience.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/ml-models.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/terms.html`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/eula.html`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/privacy.html`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/cookie-policy.html`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/refunds.html`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/subscription-terms.html`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/dmca.html`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/legal-notice.html`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/courses/ai-agents-course.html`, priority: '0.9', changefreq: 'weekly', lastmod: '2026-05-01' },
+            { loc: `${base}/courses/ai-agents-lite-group.html`, priority: '0.8', changefreq: 'weekly', lastmod: '2026-05-01' },
+            { loc: `${base}/courses/ai-agents-standard-group.html`, priority: '0.8', changefreq: 'weekly', lastmod: '2026-05-01' },
+            { loc: `${base}/courses/ai-agents-standard-plus-group.html`, priority: '0.8', changefreq: 'weekly', lastmod: '2026-05-01' },
+            { loc: `${base}/courses/ai-agents-vip-group.html`, priority: '0.8', changefreq: 'weekly', lastmod: '2026-05-01' },
+            { loc: `${base}/courses/ai-agents-learning-steps.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/courses/ai-agents-learning-principles.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/courses/faq.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/articles/`, priority: '0.8', changefreq: 'weekly', lastmod: '2026-05-01' },
+            { loc: `${base}/articles/ai-and-ml/modern-ai-from-chats-to-digital-coworkers.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/articles/ai-and-ml/codex-for-learners.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/articles/ai-and-ml/codex-for-entrepreneurs-and-business-owners.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/articles/ai-and-ml/codex-for-teachers-and-tutors.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/articles/ai-and-ml/codex-for-marketers-and-sales-professionals.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/articles/ai-and-ml/codex-for-office-workers-and-managers.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/articles/ai-and-ml/codex-for-parents.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/articles/ai-and-ml/codex-for-researchers-and-evidence-based-thinking.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/articles/ai-and-ml/codex-in-self-development-and-personal-life.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/articles/ai-and-ml/how-to-subscribe-chatgpt-plus.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/articles/programming/installing-visual-studio-code.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/articles/programming/installing-nodejs-and-setting-up-path.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/articles/programming/installing-qdrant-first-use-python-nestjs.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/articles/programming/installing-docker.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/articles/programming/installing-python-and-setting-up-path.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/articles/programming/github-registration-and-repository-creation.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/articles/programming/adding-codex-to-visual-studio-code.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+            { loc: `${base}/skillsminds`, priority: '0.9', changefreq: 'daily', lastmod: '2026-05-01' },
+            { loc: `${base}/nofacethinker`, priority: '0.8', changefreq: 'daily', lastmod: '2026-05-01' },
+            { loc: `${base}/apps`, priority: '0.7', changefreq: 'weekly', lastmod: '2026-05-01' },
+            { loc: `${base}/apps/justaidyn-screencam/`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
         ];
         const postUrls = [
             ...skillsPosts.map(p => ({ loc: `${base}/skillsminds/post/${p.slug}`, priority: '0.8', changefreq: 'monthly', lastmod: p.publishedAt?.slice(0, 10) })),
@@ -523,13 +594,15 @@ let SiteController = class SiteController {
         res.set('Content-Type', 'application/xml; charset=utf-8');
         return res.send(xml);
     }
-    paddleWebhook(body, res) {
+    async paddleWebhook(req, body, res) {
         try {
-            this.authService.handlePaddleWebhook(body);
+            this.authService.verifyPaddleWebhookSignature(this.getHeaderValue(req.headers['paddle-signature']), req.rawBody);
+            await this.authService.handlePaddleWebhook(body);
+            return res.status(200).json({ received: true });
         }
         catch {
         }
-        return res.status(200).json({ received: true });
+        return res.status(401).json({ received: false });
     }
     async paddleVerifyCheckout(req) {
         const user = await this.authService.verifyCheckoutAndSave(req);
@@ -611,7 +684,7 @@ let SiteController = class SiteController {
         if (!/\.(html|txt|xml|png)$/i.test(file)) {
             throw new common_1.NotFoundException();
         }
-        if (site === 'main' && coursePageMap[normalizedFile]) {
+        if ((site === 'main' || site === 'courses') && coursePageMap[normalizedFile]) {
             const coursePage = coursePageMap[normalizedFile];
             return res.render('pages/course-wrapper', this.withSharedModel(this.siteService.getCoursePageModel(coursePage.title, coursePage.key), req));
         }
@@ -661,8 +734,16 @@ let SiteController = class SiteController {
         return res.redirect(fileMap[app]);
     }
     withSharedModel(page, req) {
-        const host = req?.hostname?.toLowerCase().split(':')[0];
-        const mainSiteUrl = host === 'localhost' || host === '127.0.0.1' ? 'http://localhost:3000' : 'https://justaidyn.com';
+        const host = req?.hostname?.toLowerCase().split(':')[0] || '';
+        const isLocalIp = host === 'localhost' || host === '127.0.0.1';
+        const isLocalDomain = host.endsWith('.justaidyn.local');
+        const mainSiteUrl = isLocalIp ? 'http://localhost:3000'
+            : isLocalDomain ? 'http://justaidyn.local:3000'
+                : 'https://justaidyn.com';
+        const sub = (name) => isLocalIp
+            ? `http://localhost:3000/${name}`
+            : isLocalDomain ? `http://${name}.justaidyn.local:3000`
+                : `https://${name}.justaidyn.com`;
         return {
             ...page,
             year: new Date().getFullYear(),
@@ -672,7 +753,20 @@ let SiteController = class SiteController {
             projectsUrl: `${mainSiteUrl}/projects`,
             articlesUrl: `${mainSiteUrl}/articles/`,
             downloadsUrl: `${mainSiteUrl}/downloads/`,
+            skillsmindsUrl: sub('skillsminds'),
+            nofacethinkerUrl: sub('nofacethinker'),
+            coursesUrl: sub('courses'),
+            appsUrl: sub('apps'),
+            gamesUrl: sub('games'),
+            shopUrl: sub('shop'),
+            apiUrl: sub('api'),
         };
+    }
+    toMainSite(req, res, path) {
+        const host = req.hostname?.toLowerCase().split(':')[0] || '';
+        const isLocal = host === 'localhost' || host === '127.0.0.1' || host.endsWith('.justaidyn.local');
+        const base = isLocal ? 'http://localhost:3000' : 'https://justaidyn.com';
+        return res.redirect(302, `${base}${path}`);
     }
     renderStaticHtmlFile(req, res, filePath) {
         try {
@@ -731,6 +825,24 @@ let SiteController = class SiteController {
         }
         return typeof value === 'string' ? value : undefined;
     }
+    getHeaderValue(value) {
+        return Array.isArray(value) ? value[0] : value;
+    }
+    safeLocalReturnPath(value) {
+        if (typeof value !== 'string')
+            return '';
+        if (!value.startsWith('/') || value.startsWith('//') || value.includes('\\'))
+            return '';
+        try {
+            const parsed = new URL(value, 'https://justaidyn.com');
+            if (parsed.origin !== 'https://justaidyn.com')
+                return '';
+            return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+        }
+        catch {
+            return '';
+        }
+    }
 };
 exports.SiteController = SiteController;
 __decorate([
@@ -739,22 +851,23 @@ __decorate([
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], SiteController.prototype, "root", null);
 __decorate([
     (0, common_1.Get)('/projects'),
     (0, common_1.Render)('pages/host-router'),
     __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "projects", null);
 __decorate([
     (0, common_1.Get)('/login'),
-    (0, common_1.Render)('pages/host-router'),
     __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "login", null);
 __decorate([
@@ -1080,6 +1193,15 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], SiteController.prototype, "nofacethinkerPost", null);
 __decorate([
+    (0, common_1.Get)('/post/:slug'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Param)('slug')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, String]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "subdomainPost", null);
+__decorate([
     (0, common_1.Get)('/courses'),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Res)()),
@@ -1145,56 +1267,49 @@ __decorate([
 ], SiteController.prototype, "appDetailAlias", null);
 __decorate([
     (0, common_1.Get)('/ai-agents-course.html'),
-    (0, common_1.Render)('pages/course-wrapper'),
-    __param(0, (0, common_1.Req)()),
+    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "aiAgentsCourse", null);
 __decorate([
     (0, common_1.Get)('/ai-agents-lite-group.html'),
-    (0, common_1.Render)('pages/course-wrapper'),
-    __param(0, (0, common_1.Req)()),
+    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "aiAgentsLite", null);
 __decorate([
     (0, common_1.Get)('/ai-agents-standard-group.html'),
-    (0, common_1.Render)('pages/course-wrapper'),
-    __param(0, (0, common_1.Req)()),
+    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "aiAgentsStandard", null);
 __decorate([
     (0, common_1.Get)('/ai-agents-standard-plus-group.html'),
-    (0, common_1.Render)('pages/course-wrapper'),
-    __param(0, (0, common_1.Req)()),
+    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "aiAgentsStandardPlus", null);
 __decorate([
     (0, common_1.Get)('/ai-agents-vip-group.html'),
-    (0, common_1.Render)('pages/course-wrapper'),
-    __param(0, (0, common_1.Req)()),
+    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "aiAgentsVip", null);
 __decorate([
     (0, common_1.Get)('/ai-agents-learning-steps.html'),
-    (0, common_1.Render)('pages/course-wrapper'),
-    __param(0, (0, common_1.Req)()),
+    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "aiAgentsLearningSteps", null);
 __decorate([
     (0, common_1.Get)('/ai-agents-learning-principles.html'),
-    (0, common_1.Render)('pages/course-wrapper'),
-    __param(0, (0, common_1.Req)()),
+    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
@@ -1250,11 +1365,12 @@ __decorate([
 ], SiteController.prototype, "sitemap", null);
 __decorate([
     (0, common_1.Post)('/api/paddle/webhook'),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Res)()),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:returntype", Promise)
 ], SiteController.prototype, "paddleWebhook", null);
 __decorate([
     (0, common_1.Post)('/api/paddle/verify-checkout'),

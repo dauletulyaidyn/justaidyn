@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Platform } from '@prisma/client';
+import sanitizeHtml from 'sanitize-html';
 import { PrismaService } from '../prisma.service';
 
 export interface PostDto {
@@ -39,7 +40,7 @@ export class PostService {
       title: p.title,
       slug: p.slug,
       excerpt: p.excerpt,
-      content: p.content,
+      content: this.sanitizePostHtml(p.content),
       coverImage: p.coverImage ?? undefined,
       published: p.published,
       publishedAt: p.publishedAt?.toISOString(),
@@ -85,7 +86,7 @@ export class PostService {
         title: input.title,
         slug,
         excerpt: input.excerpt ?? '',
-        content: input.content ?? '',
+        content: this.sanitizePostHtml(input.content ?? ''),
         coverImage: input.coverImage || null,
         published: input.published ?? false,
         publishedAt: input.published ? new Date() : null,
@@ -105,7 +106,7 @@ export class PostService {
         ...(input.title    !== undefined && { title: input.title }),
         ...(input.slug     !== undefined && { slug: input.slug }),
         ...(input.excerpt  !== undefined && { excerpt: input.excerpt }),
-        ...(input.content  !== undefined && { content: input.content }),
+        ...(input.content  !== undefined && { content: this.sanitizePostHtml(input.content) }),
         ...(input.coverImage !== undefined && { coverImage: input.coverImage || null }),
         ...(input.published !== undefined && { published: input.published }),
         ...(!wasPublished && nowPublished && { publishedAt: new Date() }),
@@ -120,5 +121,35 @@ export class PostService {
 
   private slugify(title: string): string {
     return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80) || `post-${Date.now()}`;
+  }
+
+  private sanitizePostHtml(html: string): string {
+    return sanitizeHtml(html || '', {
+      allowedTags: [
+        'p', 'br', 'strong', 'b', 'em', 'i', 'u', 's', 'a',
+        'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'blockquote',
+        'pre', 'code', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td',
+        'hr', 'figure', 'figcaption',
+      ],
+      allowedAttributes: {
+        a: ['href', 'title', 'target', 'rel'],
+        img: ['src', 'alt', 'title', 'width', 'height', 'loading'],
+        code: ['class'],
+        pre: ['class'],
+        th: ['colspan', 'rowspan'],
+        td: ['colspan', 'rowspan'],
+      },
+      allowedSchemes: ['http', 'https', 'mailto'],
+      allowedSchemesByTag: {
+        img: ['http', 'https', 'data'],
+      },
+      transformTags: {
+        a: sanitizeHtml.simpleTransform('a', { rel: 'noopener noreferrer' }, true),
+      },
+      allowedClasses: {
+        code: [/^language-[a-z0-9-]+$/],
+        pre: [/^language-[a-z0-9-]+$/],
+      },
+    });
   }
 }

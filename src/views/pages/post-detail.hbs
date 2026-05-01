@@ -151,12 +151,18 @@
   {{#if isPaywall}}
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
   <script>
+    function getCookie(name) {
+      return document.cookie.split(';').map(function(part) { return part.trim(); }).reduce(function(value, part) {
+        return part.indexOf(name + '=') === 0 ? decodeURIComponent(part.slice(name.length + 1)) : value;
+      }, '');
+    }
+
     Paddle.Environment.set('sandbox');
     Paddle.Initialize({
       token: 'test_16c22427a493b4298c916610736',
       eventCallback: function(event) {
         if (event.name === 'checkout.completed') {
-          fetch('/api/paddle/thinker/verify-checkout', { method: 'POST' })
+          fetch('/api/paddle/thinker/verify-checkout', { method: 'POST', headers: { 'X-CSRF-Token': getCookie('ja_csrf') } })
             .then(function() { window.location.reload(); })
             .catch(function() { window.location.reload(); });
         }

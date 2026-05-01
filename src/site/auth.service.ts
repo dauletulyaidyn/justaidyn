@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
-import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'crypto';
+import { createHash, createHmac, randomBytes, scryptSync, timingSafeEqual } from 'crypto';
 import { Request, Response } from 'express';
 import { existsSync, readFileSync } from 'fs';
 import nodemailer from 'nodemailer';
@@ -387,6 +387,37 @@ export class AuthService {
 
   // ─── Paddle: Webhook ─────────────────────────────────────────────────────────
 
+  verifyPaddleWebhookSignature(signatureHeader: string | undefined, rawBody: Buffer | undefined): void {
+    const secret = this.getPaddleWebhookSecret();
+    if (!secret) throw new InternalServerErrorException('Paddle webhook secret is not configured.');
+    if (!signatureHeader || !rawBody) throw new UnauthorizedException('Missing Paddle webhook signature.');
+
+    const parts = signatureHeader.split(';').map((part) => part.trim()).filter(Boolean);
+    const timestamp = parts.find((part) => part.startsWith('ts='))?.slice(3);
+    const signatures = parts.filter((part) => part.startsWith('h1=')).map((part) => part.slice(3));
+    if (!timestamp || !signatures.length || !/^\d+$/.test(timestamp)) {
+      throw new UnauthorizedException('Invalid Paddle webhook signature header.');
+    }
+
+    const ageMs = Math.abs(Date.now() - Number(timestamp) * 1000);
+    if (ageMs > 5 * 60 * 1000) {
+      throw new UnauthorizedException('Paddle webhook signature timestamp is outside tolerance.');
+    }
+
+    const signedPayload = Buffer.concat([
+      Buffer.from(`${timestamp}:`, 'utf-8'),
+      rawBody,
+    ]);
+    const expected = createHmac('sha256', secret).update(signedPayload).digest('hex');
+    const expectedBuffer = Buffer.from(expected, 'hex');
+    const ok = signatures.some((signature) => {
+      if (!/^[a-f0-9]{64}$/i.test(signature)) return false;
+      const actualBuffer = Buffer.from(signature, 'hex');
+      return actualBuffer.length === expectedBuffer.length && timingSafeEqual(actualBuffer, expectedBuffer);
+    });
+    if (!ok) throw new UnauthorizedException('Invalid Paddle webhook signature.');
+  }
+
   async handlePaddleWebhook(body: Record<string, unknown>): Promise<void> {
     const eventType = body.event_type as string | undefined;
     if (!eventType) return;
@@ -503,6 +534,14 @@ export class AuthService {
     if (envKey) return { apiKey: envKey, environment: envEnv ?? 'production' };
     if (!existsSync(this.paddleConfigFile)) throw new InternalServerErrorException('Paddle is not configured.');
     return JSON.parse(readFileSync(this.paddleConfigFile, 'utf-8')) as { apiKey: string; environment: string };
+  }
+
+  private getPaddleWebhookSecret(): string {
+    const envSecret = process.env.PADDLE_WEBHOOK_SECRET || process.env.PADDLE_WEBHOOK_SECRET_KEY;
+    if (envSecret) return envSecret;
+    if (!existsSync(this.paddleConfigFile)) return '';
+    const config = JSON.parse(readFileSync(this.paddleConfigFile, 'utf-8')) as Record<string, unknown>;
+    return String(config.webhookSecret || config.webhookSecretKey || config.endpointSecretKey || '');
   }
 
   private getPaddleApiUrl(): string {

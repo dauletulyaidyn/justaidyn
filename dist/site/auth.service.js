@@ -334,6 +334,37 @@ let AuthService = class AuthService {
             data: { thinkerSubscriptionStatus: 'canceled', thinkerSubscriptionUpdatedAt: new Date() },
         });
     }
+    verifyPaddleWebhookSignature(signatureHeader, rawBody) {
+        const secret = this.getPaddleWebhookSecret();
+        if (!secret)
+            throw new common_1.InternalServerErrorException('Paddle webhook secret is not configured.');
+        if (!signatureHeader || !rawBody)
+            throw new common_1.UnauthorizedException('Missing Paddle webhook signature.');
+        const parts = signatureHeader.split(';').map((part) => part.trim()).filter(Boolean);
+        const timestamp = parts.find((part) => part.startsWith('ts='))?.slice(3);
+        const signatures = parts.filter((part) => part.startsWith('h1=')).map((part) => part.slice(3));
+        if (!timestamp || !signatures.length || !/^\d+$/.test(timestamp)) {
+            throw new common_1.UnauthorizedException('Invalid Paddle webhook signature header.');
+        }
+        const ageMs = Math.abs(Date.now() - Number(timestamp) * 1000);
+        if (ageMs > 5 * 60 * 1000) {
+            throw new common_1.UnauthorizedException('Paddle webhook signature timestamp is outside tolerance.');
+        }
+        const signedPayload = Buffer.concat([
+            Buffer.from(`${timestamp}:`, 'utf-8'),
+            rawBody,
+        ]);
+        const expected = (0, crypto_1.createHmac)('sha256', secret).update(signedPayload).digest('hex');
+        const expectedBuffer = Buffer.from(expected, 'hex');
+        const ok = signatures.some((signature) => {
+            if (!/^[a-f0-9]{64}$/i.test(signature))
+                return false;
+            const actualBuffer = Buffer.from(signature, 'hex');
+            return actualBuffer.length === expectedBuffer.length && (0, crypto_1.timingSafeEqual)(actualBuffer, expectedBuffer);
+        });
+        if (!ok)
+            throw new common_1.UnauthorizedException('Invalid Paddle webhook signature.');
+    }
     async handlePaddleWebhook(body) {
         const eventType = body.event_type;
         if (!eventType)
@@ -456,6 +487,15 @@ let AuthService = class AuthService {
         if (!(0, fs_1.existsSync)(this.paddleConfigFile))
             throw new common_1.InternalServerErrorException('Paddle is not configured.');
         return JSON.parse((0, fs_1.readFileSync)(this.paddleConfigFile, 'utf-8'));
+    }
+    getPaddleWebhookSecret() {
+        const envSecret = process.env.PADDLE_WEBHOOK_SECRET || process.env.PADDLE_WEBHOOK_SECRET_KEY;
+        if (envSecret)
+            return envSecret;
+        if (!(0, fs_1.existsSync)(this.paddleConfigFile))
+            return '';
+        const config = JSON.parse((0, fs_1.readFileSync)(this.paddleConfigFile, 'utf-8'));
+        return String(config.webhookSecret || config.webhookSecretKey || config.endpointSecretKey || '');
     }
     getPaddleApiUrl() {
         return this.getPaddleConfig().environment === 'sandbox' ? 'https://sandbox-api.paddle.com' : 'https://api.paddle.com';

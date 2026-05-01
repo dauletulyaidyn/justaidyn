@@ -90,6 +90,7 @@
               <p class="platform-auth-text">{{heroText}}</p>
             </div>
             <form class="platform-card" method="post" action="/admin/login">
+              <input type="hidden" name="_csrf" value="{{csrfToken}}">
               <h2>Superadmin</h2>
               <div class="mb-3">
                 <label class="form-label" for="adminEmail">Email</label>
@@ -118,6 +119,7 @@
               <p class="platform-auth-text">{{heroText}}</p>
             </div>
             <form class="platform-card" method="post" action="/admin/password-reset">
+              <input type="hidden" name="_csrf" value="{{csrfToken}}">
               <h2>Password reset</h2>
               <div class="mb-4">
                 <label class="form-label" for="resetEmail">Email</label>
@@ -142,6 +144,7 @@
               <p class="platform-auth-text">{{heroText}}</p>
             </div>
             <form class="platform-card" method="post" action="/admin/password-reset/{{content}}">
+              <input type="hidden" name="_csrf" value="{{csrfToken}}">
               <h2>New password</h2>
               <div class="mb-4">
                 <label class="form-label" for="newPassword">Password</label>
@@ -189,6 +192,7 @@
               <p class="platform-auth-text"{{#if heroTextEn}} data-en="{{heroTextEn}}" data-ru="{{heroTextRu}}" data-kk="{{heroTextKk}}"{{/if}}>{{heroText}}</p>
             </div>
             <form class="platform-card" method="post" action="/profile/edit">
+              <input type="hidden" name="_csrf" value="{{csrfToken}}">
               <h2 data-en="Basic profile" data-ru="Основной профиль" data-kk="Негізгі профиль">Basic profile</h2>
               <div class="mb-3">
                 <label class="form-label" for="firstName" data-en="Name" data-ru="Имя" data-kk="Аты">Name</label>
@@ -228,6 +232,7 @@
               </div>
             </form>
             <form class="platform-card" method="post" action="/profile/delete" onsubmit="return confirmDeleteProfile({{#if (or (eq currentUser.paddleSubscriptionStatus 'active') (eq currentUser.paddleSubscriptionStatus 'trialing'))}}true{{else}}false{{/if}});">
+              <input type="hidden" name="_csrf" value="{{csrfToken}}">
               <h2 data-en="Delete profile" data-ru="Удалить профиль" data-kk="Профильді жою">Delete profile</h2>
               <p data-en="This permanently removes your JustAidyn profile and active sessions. Your Google account is not deleted." data-ru="Это навсегда удалит ваш профиль JustAidyn и активные сессии. Ваш Google аккаунт не удаляется." data-kk="Бұл JustAidyn профиліңізді және белсенді сессияларды біржола жояды. Google аккаунтыңыз жойылмайды.">This permanently removes your JustAidyn profile and active sessions. Your Google account is not deleted.</p>
               {{#if (or (eq currentUser.paddleSubscriptionStatus 'active') (eq currentUser.paddleSubscriptionStatus 'trialing'))}}
@@ -409,6 +414,14 @@
         </div>
       </section>
       <script>
+      function getCookie(name) {
+        return document.cookie.split(';').map(function(part) { return part.trim(); }).reduce(function(value, part) {
+          return part.indexOf(name + '=') === 0 ? decodeURIComponent(part.slice(name.length + 1)) : value;
+        }, '');
+      }
+      function csrfHeaders() {
+        return { 'X-CSRF-Token': getCookie('ja_csrf') };
+      }
       function profileCancelSubscription() {
         var lang = document.documentElement.lang;
         var msg = lang === 'ru'
@@ -419,7 +432,7 @@
         if (!confirm(msg)) return;
         var btn = document.getElementById('profile-cancel-btn');
         btn.disabled = true;
-        fetch('/api/paddle/subscription/cancel', { method: 'POST' })
+        fetch('/api/paddle/subscription/cancel', { method: 'POST', headers: csrfHeaders() })
           .then(function(r) { return r.json(); })
           .then(function() {
             var section = document.getElementById('section_subscriptions');
@@ -440,7 +453,7 @@
         if (!confirm(msg)) return;
         var btn = document.getElementById('profile-thinker-cancel-btn');
         btn.disabled = true;
-        fetch('/api/paddle/thinker/cancel', { method: 'POST' })
+        fetch('/api/paddle/thinker/cancel', { method: 'POST', headers: csrfHeaders() })
           .then(function(r) { return r.json(); })
           .then(function() {
             var section = document.getElementById('section_subscriptions');

@@ -11,5 +11,8 @@ data/auth-sessions.json
 data/auth-oauth-states.json
 data/auth-password-reset-tokens.json
 data/superadmin-login.txt
+tmp_*.json
+tmp_*.html
+tmp_*.png
 
 /src/generated/prisma

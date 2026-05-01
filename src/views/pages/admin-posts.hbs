@@ -104,6 +104,7 @@
               <div class="post-actions">
                 <a class="btn-edit" href="/admin/posts/{{this.id}}/edit"><i class="bi bi-pencil"></i> Edit</a>
                 <form method="post" action="/admin/posts/{{this.id}}/delete" style="display:inline" onsubmit="return confirm('Delete this post?')">
+                  <input type="hidden" name="_csrf" value="{{../csrfToken}}">
                   <button class="btn-del" type="submit"><i class="bi bi-trash"></i> Delete</button>
                 </form>
               </div>

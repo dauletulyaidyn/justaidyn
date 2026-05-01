@@ -8,10 +8,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostService = void 0;
 const common_1 = require("@nestjs/common");
 const client_1 = require("@prisma/client");
+const sanitize_html_1 = __importDefault(require("sanitize-html"));
 const prisma_service_1 = require("../prisma.service");
 let PostService = class PostService {
     constructor(prisma) {
@@ -24,7 +28,7 @@ let PostService = class PostService {
             title: p.title,
             slug: p.slug,
             excerpt: p.excerpt,
-            content: p.content,
+            content: this.sanitizePostHtml(p.content),
             coverImage: p.coverImage ?? undefined,
             published: p.published,
             publishedAt: p.publishedAt?.toISOString(),
@@ -66,7 +70,7 @@ let PostService = class PostService {
                 title: input.title,
                 slug,
                 excerpt: input.excerpt ?? '',
-                content: input.content ?? '',
+                content: this.sanitizePostHtml(input.content ?? ''),
                 coverImage: input.coverImage || null,
                 published: input.published ?? false,
                 publishedAt: input.published ? new Date() : null,
@@ -86,7 +90,7 @@ let PostService = class PostService {
                 ...(input.title !== undefined && { title: input.title }),
                 ...(input.slug !== undefined && { slug: input.slug }),
                 ...(input.excerpt !== undefined && { excerpt: input.excerpt }),
-                ...(input.content !== undefined && { content: input.content }),
+                ...(input.content !== undefined && { content: this.sanitizePostHtml(input.content) }),
                 ...(input.coverImage !== undefined && { coverImage: input.coverImage || null }),
                 ...(input.published !== undefined && { published: input.published }),
                 ...(!wasPublished && nowPublished && { publishedAt: new Date() }),
@@ -99,6 +103,35 @@ let PostService = class PostService {
     }
     slugify(title) {
         return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80) || `post-${Date.now()}`;
+    }
+    sanitizePostHtml(html) {
+        return (0, sanitize_html_1.default)(html || '', {
+            allowedTags: [
+                'p', 'br', 'strong', 'b', 'em', 'i', 'u', 's', 'a',
+                'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'blockquote',
+                'pre', 'code', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td',
+                'hr', 'figure', 'figcaption',
+            ],
+            allowedAttributes: {
+                a: ['href', 'title', 'target', 'rel'],
+                img: ['src', 'alt', 'title', 'width', 'height', 'loading'],
+                code: ['class'],
+                pre: ['class'],
+                th: ['colspan', 'rowspan'],
+                td: ['colspan', 'rowspan'],
+            },
+            allowedSchemes: ['http', 'https', 'mailto'],
+            allowedSchemesByTag: {
+                img: ['http', 'https', 'data'],
+            },
+            transformTags: {
+                a: sanitize_html_1.default.simpleTransform('a', { rel: 'noopener noreferrer' }, true),
+            },
+            allowedClasses: {
+                code: [/^language-[a-z0-9-]+$/],
+                pre: [/^language-[a-z0-9-]+$/],
+            },
+        });
     }
 };
 exports.PostService = PostService;

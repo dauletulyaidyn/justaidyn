@@ -240,8 +240,8 @@ export class SiteController {
     }
 
     // Web flow: optional ?return= redirect after login
-    const returnUrl = typeof req.query.return === 'string' ? req.query.return : '';
-    if (returnUrl && returnUrl.startsWith('/')) {
+    const returnUrl = this.safeLocalReturnPath(typeof req.query.return === 'string' ? req.query.return : '');
+    if (returnUrl) {
       res.cookie('ja_return_url', returnUrl, {
         httpOnly: true, sameSite: 'lax',
         secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
@@ -348,7 +348,7 @@ export class SiteController {
     // Web flow: return to saved URL or profile
     const returnUrl = (req as any).cookies?.ja_return_url;
     res.clearCookie('ja_return_url', { path: '/' });
-    const safeReturn = typeof returnUrl === 'string' && returnUrl.startsWith('/') ? returnUrl : '/profile';
+    const safeReturn = this.safeLocalReturnPath(returnUrl) || '/profile';
     return res.redirect(safeReturn);
   }
 
@@ -564,7 +564,7 @@ export class SiteController {
 
   @Get('/apps/justaidyn-screencam')
   appDetailPath(@Req() req: Request, @Res() res: Response) {
-    return this.renderStaticHtmlFile(req, res, join(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
+    return res.sendFile(join(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
   }
 
   @Get('/p/apps/justaidyn-screencam')
@@ -574,45 +574,38 @@ export class SiteController {
   }
 
   @Get('/ai-agents-course.html')
-  @Render('pages/course-wrapper')
-  aiAgentsCourse(@Req() req: Request) {
-    return this.withSharedModel(this.siteService.getCoursePageModel('JustAidyn Courses | AI Agents Course', 'course-home'), req);
+  aiAgentsCourse(@Res() res: Response) {
+    return res.redirect(301, '/courses/ai-agents-course.html');
   }
 
   @Get('/ai-agents-lite-group.html')
-  @Render('pages/course-wrapper')
-  aiAgentsLite(@Req() req: Request) {
-    return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | Lite Group', 'lite-group'), req);
+  aiAgentsLite(@Res() res: Response) {
+    return res.redirect(301, '/courses/ai-agents-lite-group.html');
   }
 
   @Get('/ai-agents-standard-group.html')
-  @Render('pages/course-wrapper')
-  aiAgentsStandard(@Req() req: Request) {
-    return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | Standard Group', 'standard-group'), req);
+  aiAgentsStandard(@Res() res: Response) {
+    return res.redirect(301, '/courses/ai-agents-standard-group.html');
   }
 
   @Get('/ai-agents-standard-plus-group.html')
-  @Render('pages/course-wrapper')
-  aiAgentsStandardPlus(@Req() req: Request) {
-    return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | Standard+ Group', 'standard-plus-group'), req);
+  aiAgentsStandardPlus(@Res() res: Response) {
+    return res.redirect(301, '/courses/ai-agents-standard-plus-group.html');
   }
 
   @Get('/ai-agents-vip-group.html')
-  @Render('pages/course-wrapper')
-  aiAgentsVip(@Req() req: Request) {
-    return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | VIP Group', 'vip-group'), req);
+  aiAgentsVip(@Res() res: Response) {
+    return res.redirect(301, '/courses/ai-agents-vip-group.html');
   }
 
   @Get('/ai-agents-learning-steps.html')
-  @Render('pages/course-wrapper')
-  aiAgentsLearningSteps(@Req() req: Request) {
-    return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | Три этапа обучения', 'learning-steps'), req);
+  aiAgentsLearningSteps(@Res() res: Response) {
+    return res.redirect(301, '/courses/ai-agents-learning-steps.html');
   }
 
   @Get('/ai-agents-learning-principles.html')
-  @Render('pages/course-wrapper')
-  aiAgentsLearningPrinciples(@Req() req: Request) {
-    return this.withSharedModel(this.siteService.getCoursePageModel('AI Agents Course | Три принципа обучения', 'learning-principles'), req);
+  aiAgentsLearningPrinciples(@Res() res: Response) {
+    return res.redirect(301, '/courses/ai-agents-learning-principles.html');
   }
 
   @Get('/health')
@@ -704,12 +697,50 @@ export class SiteController {
       this.postService.listPublished('nofacethinker'),
     ]);
     const staticUrls: { loc: string; priority: string; changefreq: string; lastmod?: string }[] = [
-      { loc: base, priority: '1.0', changefreq: 'weekly' },
-      { loc: `${base}/skillsminds`, priority: '0.9', changefreq: 'daily' },
-      { loc: `${base}/nofacethinker`, priority: '0.8', changefreq: 'daily' },
-      { loc: `${base}/apps`, priority: '0.7', changefreq: 'weekly' },
-      { loc: `${base}/apps/justaidyn-screencam/`, priority: '0.7', changefreq: 'monthly' },
-      { loc: `${base}/courses/ai-agents-course.html`, priority: '0.8', changefreq: 'monthly' },
+      { loc: `${base}/`, priority: '1.0', changefreq: 'weekly', lastmod: '2026-05-01' },
+      { loc: `${base}/projects.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/faq.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/education.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/experience.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/ml-models.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/terms.html`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/eula.html`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/privacy.html`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/cookie-policy.html`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/refunds.html`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/subscription-terms.html`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/dmca.html`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/legal-notice.html`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/courses/ai-agents-course.html`, priority: '0.9', changefreq: 'weekly', lastmod: '2026-05-01' },
+      { loc: `${base}/courses/ai-agents-lite-group.html`, priority: '0.8', changefreq: 'weekly', lastmod: '2026-05-01' },
+      { loc: `${base}/courses/ai-agents-standard-group.html`, priority: '0.8', changefreq: 'weekly', lastmod: '2026-05-01' },
+      { loc: `${base}/courses/ai-agents-standard-plus-group.html`, priority: '0.8', changefreq: 'weekly', lastmod: '2026-05-01' },
+      { loc: `${base}/courses/ai-agents-vip-group.html`, priority: '0.8', changefreq: 'weekly', lastmod: '2026-05-01' },
+      { loc: `${base}/courses/ai-agents-learning-steps.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/courses/ai-agents-learning-principles.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/courses/faq.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/articles/`, priority: '0.8', changefreq: 'weekly', lastmod: '2026-05-01' },
+      { loc: `${base}/articles/ai-and-ml/modern-ai-from-chats-to-digital-coworkers.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/articles/ai-and-ml/codex-for-learners.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/articles/ai-and-ml/codex-for-entrepreneurs-and-business-owners.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/articles/ai-and-ml/codex-for-teachers-and-tutors.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/articles/ai-and-ml/codex-for-marketers-and-sales-professionals.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/articles/ai-and-ml/codex-for-office-workers-and-managers.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/articles/ai-and-ml/codex-for-parents.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/articles/ai-and-ml/codex-for-researchers-and-evidence-based-thinking.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/articles/ai-and-ml/codex-in-self-development-and-personal-life.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/articles/ai-and-ml/how-to-subscribe-chatgpt-plus.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/articles/programming/installing-visual-studio-code.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/articles/programming/installing-nodejs-and-setting-up-path.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/articles/programming/installing-qdrant-first-use-python-nestjs.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/articles/programming/installing-docker.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/articles/programming/installing-python-and-setting-up-path.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/articles/programming/github-registration-and-repository-creation.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/articles/programming/adding-codex-to-visual-studio-code.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${base}/skillsminds`, priority: '0.9', changefreq: 'daily', lastmod: '2026-05-01' },
+      { loc: `${base}/nofacethinker`, priority: '0.8', changefreq: 'daily', lastmod: '2026-05-01' },
+      { loc: `${base}/apps`, priority: '0.7', changefreq: 'weekly', lastmod: '2026-05-01' },
+      { loc: `${base}/apps/justaidyn-screencam/`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
     ];
     const postUrls = [
       ...skillsPosts.map(p => ({ loc: `${base}/skillsminds/post/${p.slug}`, priority: '0.8', changefreq: 'monthly', lastmod: p.publishedAt?.slice(0, 10) })),
@@ -722,13 +753,18 @@ export class SiteController {
   }
 
   @Post('/api/paddle/webhook')
-  paddleWebhook(@Body() body: Record<string, unknown>, @Res() res: Response) {
+  async paddleWebhook(@Req() req: Request, @Body() body: Record<string, unknown>, @Res() res: Response) {
     try {
-      this.authService.handlePaddleWebhook(body);
+      this.authService.verifyPaddleWebhookSignature(
+        this.getHeaderValue(req.headers['paddle-signature']),
+        (req as Request & { rawBody?: Buffer }).rawBody,
+      );
+      await this.authService.handlePaddleWebhook(body);
+      return res.status(200).json({ received: true });
     } catch {
       // never reject — Paddle retries on non-2xx
     }
-    return res.status(200).json({ received: true });
+    return res.status(401).json({ received: false });
   }
 
   @Post('/api/paddle/verify-checkout')
@@ -1007,5 +1043,21 @@ export class SiteController {
     }
 
     return typeof value === 'string' ? value : undefined;
+  }
+
+  private getHeaderValue(value: string | string[] | undefined): string | undefined {
+    return Array.isArray(value) ? value[0] : value;
+  }
+
+  private safeLocalReturnPath(value: unknown): string {
+    if (typeof value !== 'string') return '';
+    if (!value.startsWith('/') || value.startsWith('//') || value.includes('\\')) return '';
+    try {
+      const parsed = new URL(value, 'https://justaidyn.com');
+      if (parsed.origin !== 'https://justaidyn.com') return '';
+      return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+    } catch {
+      return '';
+    }
   }
 }
