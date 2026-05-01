@@ -6,6 +6,11 @@ downloads/**/*.exe
 google-oauth.json
 paddle-config.json
 .env
+Banners/social-publisher/.env
+Banners/social-publisher/browser_data/
+Banners/social-publisher/social_accounts.json
+Banners/social-publisher/*_session.png
+Banners/social-publisher/*_qr.png
 data/auth-users.json
 data/auth-sessions.json
 data/auth-oauth-states.json
