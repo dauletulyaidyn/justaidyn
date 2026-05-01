@@ -88,7 +88,8 @@ async function bootstrap() {
         }
         const headerToken = typeof req.headers['x-csrf-token'] === 'string' ? req.headers['x-csrf-token'] : '';
         const bodyToken = typeof req.body?._csrf === 'string' ? req.body._csrf : '';
-        const submittedToken = headerToken || bodyToken;
+        const queryToken = typeof req.query?._csrf === 'string' ? req.query._csrf : '';
+        const submittedToken = headerToken || bodyToken || queryToken;
         if (!submittedToken || !sameToken(csrfToken, submittedToken)) {
             return res.status(403).json({ error: 'Invalid CSRF token.' });
         }

@@ -1,0 +1,17 @@
+[
+  {
+    "slug": "justaidyn-screencam",
+    "name": "JustAidyn ScreenCam",
+    "shortDescription": "Screen recording app for JustAidyn users.",
+    "description": "Capture workflows, record screen sessions, and receive automatic updates from JustAidyn.",
+    "version": "1.1.4",
+    "minVersion": "1.1.4",
+    "releaseNotes": "JustAidyn ScreenCam 1.1.4 release.",
+    "downloadUrl": "/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.4.msi",
+    "fileName": "JustAidyn ScreenCam 1.1.4.msi",
+    "fileSize": 524398592,
+    "required": true,
+    "published": true,
+    "updatedAt": "2026-05-01T23:04:30.000Z"
+  }
+]

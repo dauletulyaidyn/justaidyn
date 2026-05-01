@@ -14,6 +14,7 @@ const site_controller_1 = require("./site.controller");
 const site_service_1 = require("./site.service");
 const post_service_1 = require("./post.service");
 const analytics_service_1 = require("./analytics.service");
+const app_catalog_service_1 = require("./app-catalog.service");
 const prisma_service_1 = require("../prisma.service");
 let SiteModule = class SiteModule {
     configure(consumer) {
@@ -24,6 +25,6 @@ exports.SiteModule = SiteModule;
 exports.SiteModule = SiteModule = __decorate([
     (0, common_1.Module)({
         controllers: [site_controller_1.SiteController],
-        providers: [site_service_1.SiteService, auth_service_1.AuthService, post_service_1.PostService, analytics_service_1.AnalyticsService, prisma_service_1.PrismaService],
+        providers: [site_service_1.SiteService, auth_service_1.AuthService, post_service_1.PostService, analytics_service_1.AnalyticsService, app_catalog_service_1.AppCatalogService, prisma_service_1.PrismaService],
     })
 ], SiteModule);

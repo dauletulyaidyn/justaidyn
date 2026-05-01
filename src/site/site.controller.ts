@@ -1,11 +1,25 @@
-import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Render, Req, Res, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Render, Req, Res, UnauthorizedException, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Request, Response } from 'express';
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { AuthService } from './auth.service';
 import { AnalyticsService } from './analytics.service';
 import { PageModel, SiteService } from './site.service';
 import { PostService } from './post.service';
+import { AppCatalogService } from './app-catalog.service';
+
+const { diskStorage } = require('multer');
+const installerUpload = {
+  storage: diskStorage({
+    destination: (_req: Request, _file: unknown, cb: (error: Error | null, destination: string) => void) => {
+      const dir = join(process.cwd(), 'tmp', 'uploads');
+      mkdirSync(dir, { recursive: true });
+      cb(null, dir);
+    },
+  }),
+  limits: { fileSize: 1024 * 1024 * 1024 },
+};
 
 @Controller()
 export class SiteController {
@@ -14,6 +28,7 @@ export class SiteController {
     private readonly authService: AuthService,
     private readonly postService: PostService,
     private readonly analyticsService: AnalyticsService,
+    private readonly appCatalogService: AppCatalogService,
   ) {}
 
   @Get('/')
@@ -206,7 +221,59 @@ export class SiteController {
 
   @Get('/admin/apps')
   adminApps(@Req() req: Request, @Res() res: Response) {
-    return this.renderAdminSection(req, res, 'Apps');
+    if (!this.tryRequireSuperadmin(req, res)) return;
+    const page = {
+      ...this.siteService.getAdminSectionPage('Apps'),
+      title: 'Apps | Admin | JustAidyn',
+      pageKey: 'admin-apps',
+      heroTitle: 'Apps',
+      heroText: 'Create app pages and publish the latest installer.',
+    };
+    return res.render('pages/admin-apps', {
+      ...this.withSharedModel(page, req),
+      apps: this.appCatalogService.list(),
+      editApp: null,
+    });
+  }
+
+  @Get('/admin/apps/:slug/edit')
+  adminAppEdit(@Req() req: Request, @Res() res: Response, @Param('slug') slug: string) {
+    if (!this.tryRequireSuperadmin(req, res)) return;
+    const page = {
+      ...this.siteService.getAdminSectionPage('Apps'),
+      title: 'Edit App | Admin | JustAidyn',
+      pageKey: 'admin-apps',
+      heroTitle: 'Apps',
+      heroText: 'Create app pages and publish the latest installer.',
+    };
+    return res.render('pages/admin-apps', {
+      ...this.withSharedModel(page, req),
+      apps: this.appCatalogService.list(),
+      editApp: this.appCatalogService.get(slug),
+    });
+  }
+
+  @Post('/admin/apps/save')
+  adminAppSave(@Req() req: Request, @Res() res: Response, @Body() body: Record<string, string>) {
+    if (!this.tryRequireSuperadmin(req, res)) return;
+    const app = this.appCatalogService.save({
+      slug: body.slug,
+      name: body.name,
+      shortDescription: body.shortDescription ?? '',
+      description: body.description ?? '',
+      version: body.version,
+      releaseNotes: body.releaseNotes ?? '',
+      published: body.published === 'on',
+    });
+    return res.redirect(`/admin/apps/${app.slug}/edit`);
+  }
+
+  @Post('/admin/apps/:slug/upload')
+  @UseInterceptors(FileInterceptor('installer', installerUpload))
+  adminAppUpload(@Req() req: Request, @Res() res: Response, @Param('slug') slug: string, @UploadedFile() file: any) {
+    if (!this.tryRequireSuperadmin(req, res)) return;
+    this.appCatalogService.attachInstaller(slug, file);
+    return res.redirect(`/admin/apps/${slug}/edit`);
   }
 
   @Get('/admin/games')
@@ -584,25 +651,31 @@ export class SiteController {
   }
 
   @Get('/justaidyn-screencam')
-  @Render('pages/host-router')
-  appDetail(@Req() req: Request) {
+  appDetail(@Req() req: Request, @Res() res: Response) {
     const site = this.siteService.resolveHost(req.hostname);
     if (site !== 'apps') {
       throw new NotFoundException();
     }
 
-    return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);
+    const app = this.appCatalogService.getPublished('justaidyn-screencam');
+    return res.render('pages/app-detail', this.withSharedModel(this.getAppDetailPage(app), req));
   }
 
   @Get('/apps/justaidyn-screencam')
   appDetailPath(@Req() req: Request, @Res() res: Response) {
-    return res.sendFile(join(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
+    const app = this.appCatalogService.getPublished('justaidyn-screencam');
+    return res.render('pages/app-detail', this.withSharedModel(this.getAppDetailPage(app), req));
   }
 
   @Get('/p/apps/justaidyn-screencam')
-  @Render('pages/host-router')
-  appDetailAlias(@Req() req: Request) {
-    return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);
+  appDetailAlias(@Res() res: Response) {
+    return res.redirect(301, '/apps/justaidyn-screencam');
+  }
+
+  @Get('/apps/:slug')
+  dynamicAppDetail(@Req() req: Request, @Res() res: Response, @Param('slug') slug: string) {
+    const app = this.appCatalogService.getPublished(slug);
+    return res.render('pages/app-detail', this.withSharedModel(this.getAppDetailPage(app), req));
   }
 
   @Get('/ai-agents-course.html')
@@ -949,14 +1022,6 @@ export class SiteController {
 
   @Get('/track/download/apps/:app')
   trackDownload(@Param('app') app: string, @Res() res: Response) {
-    const fileMap: Record<string, string> = {
-      'justaidyn-screencam': '/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.3.msi',
-    };
-
-    if (!fileMap[app]) {
-      throw new NotFoundException();
-    }
-
     const countsFile = join(process.cwd(), 'data', 'download-counts.json');
     try {
       const counts = JSON.parse(readFileSync(countsFile, 'utf-8'));
@@ -966,7 +1031,37 @@ export class SiteController {
       // don't block download if counter fails
     }
 
-    return res.redirect(fileMap[app]);
+    return res.redirect(this.appCatalogService.getDownloadUrl(app));
+  }
+
+  private getAppDetailPage(app: { name: string; shortDescription: string; description: string; slug: string; version: string; releaseNotes: string; downloadUrl: string; updatedAt: string }): PageModel {
+    return {
+      title: `${app.name} | JustAidyn Apps`,
+      description: app.shortDescription || app.description,
+      pageKey: `app-${app.slug}`,
+      view: 'app-detail',
+      lowerNav: [
+        { labelEn: 'Apps', labelRu: 'Приложения', labelKk: 'Қолданбалар', url: '/apps' },
+        { labelEn: app.name, labelRu: app.name, labelKk: app.name, url: `/apps/${app.slug}`, active: true },
+      ],
+      heroTitle: app.name,
+      heroText: app.shortDescription || app.description,
+      releaseVersion: app.version,
+      primaryAction: { label: 'Download latest', url: `/track/download/apps/${app.slug}` },
+      secondaryAction: { label: 'All apps', url: '/apps' },
+      sections: [
+        {
+          id: 'about',
+          title: 'About',
+          text: app.description,
+        },
+        {
+          id: 'release',
+          title: `Latest version ${app.version}`,
+          text: app.releaseNotes || 'Latest installer is available for download.',
+        },
+      ],
+    } as PageModel;
   }
 
   private withSharedModel(page: PageModel, req?: Request) {

@@ -14,18 +14,32 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SiteController = void 0;
 const common_1 = require("@nestjs/common");
+const platform_express_1 = require("@nestjs/platform-express");
 const fs_1 = require("fs");
 const path_1 = require("path");
 const auth_service_1 = require("./auth.service");
 const analytics_service_1 = require("./analytics.service");
 const site_service_1 = require("./site.service");
 const post_service_1 = require("./post.service");
+const app_catalog_service_1 = require("./app-catalog.service");
+const { diskStorage } = require('multer');
+const installerUpload = {
+    storage: diskStorage({
+        destination: (_req, _file, cb) => {
+            const dir = (0, path_1.join)(process.cwd(), 'tmp', 'uploads');
+            (0, fs_1.mkdirSync)(dir, { recursive: true });
+            cb(null, dir);
+        },
+    }),
+    limits: { fileSize: 1024 * 1024 * 1024 },
+};
 let SiteController = class SiteController {
-    constructor(siteService, authService, postService, analyticsService) {
+    constructor(siteService, authService, postService, analyticsService, appCatalogService) {
         this.siteService = siteService;
         this.authService = authService;
         this.postService = postService;
         this.analyticsService = analyticsService;
+        this.appCatalogService = appCatalogService;
     }
     async root(req, res) {
         const site = this.siteService.resolveHost(req.hostname);
@@ -177,7 +191,56 @@ let SiteController = class SiteController {
         return res.redirect('/admin/posts');
     }
     adminApps(req, res) {
-        return this.renderAdminSection(req, res, 'Apps');
+        if (!this.tryRequireSuperadmin(req, res))
+            return;
+        const page = {
+            ...this.siteService.getAdminSectionPage('Apps'),
+            title: 'Apps | Admin | JustAidyn',
+            pageKey: 'admin-apps',
+            heroTitle: 'Apps',
+            heroText: 'Create app pages and publish the latest installer.',
+        };
+        return res.render('pages/admin-apps', {
+            ...this.withSharedModel(page, req),
+            apps: this.appCatalogService.list(),
+            editApp: null,
+        });
+    }
+    adminAppEdit(req, res, slug) {
+        if (!this.tryRequireSuperadmin(req, res))
+            return;
+        const page = {
+            ...this.siteService.getAdminSectionPage('Apps'),
+            title: 'Edit App | Admin | JustAidyn',
+            pageKey: 'admin-apps',
+            heroTitle: 'Apps',
+            heroText: 'Create app pages and publish the latest installer.',
+        };
+        return res.render('pages/admin-apps', {
+            ...this.withSharedModel(page, req),
+            apps: this.appCatalogService.list(),
+            editApp: this.appCatalogService.get(slug),
+        });
+    }
+    adminAppSave(req, res, body) {
+        if (!this.tryRequireSuperadmin(req, res))
+            return;
+        const app = this.appCatalogService.save({
+            slug: body.slug,
+            name: body.name,
+            shortDescription: body.shortDescription ?? '',
+            description: body.description ?? '',
+            version: body.version,
+            releaseNotes: body.releaseNotes ?? '',
+            published: body.published === 'on',
+        });
+        return res.redirect(`/admin/apps/${app.slug}/edit`);
+    }
+    adminAppUpload(req, res, slug, file) {
+        if (!this.tryRequireSuperadmin(req, res))
+            return;
+        this.appCatalogService.attachInstaller(slug, file);
+        return res.redirect(`/admin/apps/${slug}/edit`);
     }
     adminGames(req, res) {
         return this.renderAdminSection(req, res, 'Games');
@@ -458,18 +521,24 @@ let SiteController = class SiteController {
     apiProject(req) {
         return this.withSharedModel(this.siteService.getComingSoonPage('api'), req);
     }
-    appDetail(req) {
+    appDetail(req, res) {
         const site = this.siteService.resolveHost(req.hostname);
         if (site !== 'apps') {
             throw new common_1.NotFoundException();
         }
-        return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);
+        const app = this.appCatalogService.getPublished('justaidyn-screencam');
+        return res.render('pages/app-detail', this.withSharedModel(this.getAppDetailPage(app), req));
     }
     appDetailPath(req, res) {
-        return res.sendFile((0, path_1.join)(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
+        const app = this.appCatalogService.getPublished('justaidyn-screencam');
+        return res.render('pages/app-detail', this.withSharedModel(this.getAppDetailPage(app), req));
     }
-    appDetailAlias(req) {
-        return this.withSharedModel(this.siteService.getComingSoonPage('apps'), req);
+    appDetailAlias(res) {
+        return res.redirect(301, '/apps/justaidyn-screencam');
+    }
+    dynamicAppDetail(req, res, slug) {
+        const app = this.appCatalogService.getPublished(slug);
+        return res.render('pages/app-detail', this.withSharedModel(this.getAppDetailPage(app), req));
     }
     aiAgentsCourse(res) {
         return res.redirect(301, '/courses/ai-agents-course.html');
@@ -742,12 +811,6 @@ let SiteController = class SiteController {
         }
     }
     trackDownload(app, res) {
-        const fileMap = {
-            'justaidyn-screencam': '/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.3.msi',
-        };
-        if (!fileMap[app]) {
-            throw new common_1.NotFoundException();
-        }
         const countsFile = (0, path_1.join)(process.cwd(), 'data', 'download-counts.json');
         try {
             const counts = JSON.parse((0, fs_1.readFileSync)(countsFile, 'utf-8'));
@@ -756,7 +819,36 @@ let SiteController = class SiteController {
         }
         catch {
         }
-        return res.redirect(fileMap[app]);
+        return res.redirect(this.appCatalogService.getDownloadUrl(app));
+    }
+    getAppDetailPage(app) {
+        return {
+            title: `${app.name} | JustAidyn Apps`,
+            description: app.shortDescription || app.description,
+            pageKey: `app-${app.slug}`,
+            view: 'app-detail',
+            lowerNav: [
+                { labelEn: 'Apps', labelRu: 'Приложения', labelKk: 'Қолданбалар', url: '/apps' },
+                { labelEn: app.name, labelRu: app.name, labelKk: app.name, url: `/apps/${app.slug}`, active: true },
+            ],
+            heroTitle: app.name,
+            heroText: app.shortDescription || app.description,
+            releaseVersion: app.version,
+            primaryAction: { label: 'Download latest', url: `/track/download/apps/${app.slug}` },
+            secondaryAction: { label: 'All apps', url: '/apps' },
+            sections: [
+                {
+                    id: 'about',
+                    title: 'About',
+                    text: app.description,
+                },
+                {
+                    id: 'release',
+                    title: `Latest version ${app.version}`,
+                    text: app.releaseNotes || 'Latest installer is available for download.',
+                },
+            ],
+        };
     }
     withSharedModel(page, req) {
         const host = req?.hostname?.toLowerCase().split(':')[0] || '';
@@ -1033,6 +1125,35 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "adminApps", null);
 __decorate([
+    (0, common_1.Get)('/admin/apps/:slug/edit'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Param)('slug')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, String]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "adminAppEdit", null);
+__decorate([
+    (0, common_1.Post)('/admin/apps/save'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "adminAppSave", null);
+__decorate([
+    (0, common_1.Post)('/admin/apps/:slug/upload'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('installer', installerUpload)),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Param)('slug')),
+    __param(3, (0, common_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, String, Object]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "adminAppUpload", null);
+__decorate([
     (0, common_1.Get)('/admin/games'),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Res)()),
@@ -1298,10 +1419,10 @@ __decorate([
 ], SiteController.prototype, "apiProject", null);
 __decorate([
     (0, common_1.Get)('/justaidyn-screencam'),
-    (0, common_1.Render)('pages/host-router'),
     __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "appDetail", null);
 __decorate([
@@ -1314,12 +1435,20 @@ __decorate([
 ], SiteController.prototype, "appDetailPath", null);
 __decorate([
     (0, common_1.Get)('/p/apps/justaidyn-screencam'),
-    (0, common_1.Render)('pages/host-router'),
-    __param(0, (0, common_1.Req)()),
+    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "appDetailAlias", null);
+__decorate([
+    (0, common_1.Get)('/apps/:slug'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Param)('slug')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, String]),
+    __metadata("design:returntype", void 0)
+], SiteController.prototype, "dynamicAppDetail", null);
 __decorate([
     (0, common_1.Get)('/ai-agents-course.html'),
     __param(0, (0, common_1.Res)()),
@@ -1484,5 +1613,6 @@ exports.SiteController = SiteController = __decorate([
     __metadata("design:paramtypes", [site_service_1.SiteService,
         auth_service_1.AuthService,
         post_service_1.PostService,
-        analytics_service_1.AnalyticsService])
+        analytics_service_1.AnalyticsService,
+        app_catalog_service_1.AppCatalogService])
 ], SiteController);

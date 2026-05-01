@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  <link rel="icon" type="image/png" href="/favicon.png?v=20260331c">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/templatemo-first-portfolio-style.css" rel="stylesheet">
+  <style>
+    body { background: #f0f4f8; }
+    .admin-shell { max-width: 1120px; margin: 0 auto; padding: 160px 24px 72px; }
+    .admin-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+    .admin-header h1 { margin: 6px 0 0; font-size: 1.8rem; }
+    .admin-back { color: #535da1; text-decoration: none; font-size: .82rem; font-weight: 700; }
+    .apps-grid { display: grid; grid-template-columns: minmax(0, 1fr) 390px; gap: 22px; align-items: start; }
+    .panel { background: #fff; border: 1px solid rgba(24,35,44,.1); border-radius: 12px; overflow: hidden; }
+    .panel-body { padding: 22px; }
+    .apps-table { width: 100%; border-collapse: collapse; }
+    .apps-table th { background: #f5f7fa; color: #5e6c79; font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; padding: 12px 14px; }
+    .apps-table td { border-top: 1px solid #eef1f5; padding: 14px; font-size: .9rem; vertical-align: middle; }
+    .app-title { font-weight: 800; color: #18232c; }
+    .muted { color: #7a8793; font-size: .82rem; }
+    .badge-live { display: inline-flex; padding: 3px 9px; border-radius: 99px; background: rgba(20,183,138,.12); color: #0e8a63; font-size: .72rem; font-weight: 800; }
+    .badge-draft { display: inline-flex; padding: 3px 9px; border-radius: 99px; background: rgba(24,35,44,.08); color: #7a8793; font-size: .72rem; font-weight: 800; }
+    .btn-linkish { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 7px; background: rgba(83,93,161,.1); color: #535da1; text-decoration: none; font-weight: 800; font-size: .8rem; border: 0; }
+    .btn-linkish:hover { background: rgba(83,93,161,.18); color: #535da1; }
+    .form-label { font-size: .82rem; color: #18232c; font-weight: 800; margin-bottom: 6px; }
+    .form-control, .form-select { border-radius: 8px; border: 1.5px solid rgba(24,35,44,.14); padding: 10px 12px; font-size: .9rem; }
+    textarea.form-control { min-height: 110px; }
+    .btn-save { width: 100%; border: 0; border-radius: 8px; background: #535da1; color: #fff; font-weight: 800; padding: 11px 14px; }
+    .btn-save:hover { background: #3d4680; }
+    .upload-box { margin-top: 18px; border-top: 1px solid #eef1f5; padding-top: 18px; }
+    .empty-state { padding: 42px 20px; text-align: center; color: #7a8793; }
+    @media (max-width: 991px) { .admin-shell { padding-top: 205px; } .apps-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 720px) { .apps-table th:nth-child(3), .apps-table td:nth-child(3) { display: none; } }
+  </style>
+</head>
+<body>
+  <section class="preloader"><div class="spinner"><span class="spinner-rotate"></span></div></section>
+  <nav class="navbar navbar-expand-lg navbar-split">
+    <div class="container">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#appsAdminNav"><span class="navbar-toggler-icon"></span></button>
+      <a class="navbar-brand mx-auto mx-lg-0" href="/">JustAidyn</a>
+      <div class="collapse navbar-collapse" id="appsAdminNav">
+        <div class="navbar-split-layout w-100">
+          <div class="navbar-top-contact d-none d-lg-flex"><div></div><div class="navbar-top-tools"><div class="language-selector navbar-top-lang language-flags"></div><div class="navbar-top-auth-links"></div></div></div>
+          <ul class="navbar-nav ms-lg-0 nav-row-primary"></ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="admin-shell">
+    <div class="admin-header">
+      <div>
+        <a class="admin-back" href="/admin"><i class="bi bi-arrow-left"></i> Admin</a>
+        <h1>Program pages</h1>
+        <div class="muted">Create apps, upload the latest installer, and replace old versions automatically.</div>
+      </div>
+      <a class="btn-linkish" href="/admin/apps"><i class="bi bi-plus-lg"></i> New app</a>
+    </div>
+
+    <div class="apps-grid">
+      <section class="panel">
+        {{#if apps.length}}
+        <table class="apps-table">
+          <thead>
+            <tr><th>App</th><th>Version</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody>
+            {{#each apps}}
+            <tr>
+              <td>
+                <div class="app-title">{{this.name}}</div>
+                <div class="muted">/apps/{{this.slug}}</div>
+                {{#if this.downloadUrl}}<div class="muted">{{this.fileName}}</div>{{/if}}
+              </td>
+              <td>{{this.version}}</td>
+              <td>{{#if this.published}}<span class="badge-live">Published</span>{{else}}<span class="badge-draft">Draft</span>{{/if}}</td>
+              <td style="text-align:right">
+                <a class="btn-linkish" href="/apps/{{this.slug}}" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i></a>
+                <a class="btn-linkish" href="/admin/apps/{{this.slug}}/edit"><i class="bi bi-pencil"></i> Edit</a>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+        {{else}}
+        <div class="empty-state"><i class="bi bi-window-plus" style="font-size:2rem"></i><br>No apps yet.</div>
+        {{/if}}
+      </section>
+
+      <aside class="panel">
+        <div class="panel-body">
+          <h2 style="font-size:1.2rem;margin:0 0 16px">{{#if editApp}}Edit app{{else}}Create app{{/if}}</h2>
+          <form method="post" action="/admin/apps/save">
+            <input type="hidden" name="_csrf" value="{{csrfToken}}">
+            <div class="mb-3">
+              <label class="form-label">Slug</label>
+              <input class="form-control" name="slug" value="{{#if editApp}}{{editApp.slug}}{{/if}}" required pattern="[a-z0-9\-]+" placeholder="justaidyn-screencam">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Name</label>
+              <input class="form-control" name="name" value="{{#if editApp}}{{editApp.name}}{{/if}}" required maxlength="120">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Short description</label>
+              <input class="form-control" name="shortDescription" value="{{#if editApp}}{{editApp.shortDescription}}{{/if}}" maxlength="220">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Description</label>
+              <textarea class="form-control" name="description">{{#if editApp}}{{editApp.description}}{{/if}}</textarea>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Version</label>
+              <input class="form-control" name="version" value="{{#if editApp}}{{editApp.version}}{{else}}1.0.0{{/if}}" required pattern="\d+\.\d+\.\d+">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Release notes</label>
+              <textarea class="form-control" name="releaseNotes">{{#if editApp}}{{editApp.releaseNotes}}{{/if}}</textarea>
+            </div>
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" name="published" id="published" {{#if editApp}}{{#if editApp.published}}checked{{/if}}{{else}}checked{{/if}}>
+              <label class="form-check-label" for="published" style="font-weight:700">Published</label>
+            </div>
+            <button class="btn-save" type="submit"><i class="bi bi-check-lg"></i> Save app page</button>
+          </form>
+
+          {{#if editApp}}
+          <div class="upload-box">
+            <h3 style="font-size:1rem;margin:0 0 10px">Latest installer</h3>
+            {{#if editApp.downloadUrl}}
+            <div class="muted" style="margin-bottom:10px">Current: <a href="{{editApp.downloadUrl}}">{{editApp.fileName}}</a></div>
+            {{else}}
+            <div class="muted" style="margin-bottom:10px">No installer uploaded yet.</div>
+            {{/if}}
+            <form method="post" action="/admin/apps/{{editApp.slug}}/upload?_csrf={{csrfToken}}" enctype="multipart/form-data">
+              <input class="form-control mb-3" type="file" name="installer" accept=".msi,.exe,.zip,.dmg,.pkg" required>
+              <button class="btn-save" type="submit"><i class="bi bi-upload"></i> Upload and replace old installer</button>
+            </form>
+          </div>
+          {{/if}}
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  {{> footer}}
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/jquery.sticky.js"></script>
+  <script src="/js/custom.js?v=20260428-profile-i18n"></script>
+</body>
+</html>
