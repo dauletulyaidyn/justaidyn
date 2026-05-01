@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { AuthService } from './auth.service';
+import { AnalyticsService } from './analytics.service';
 import { PageModel, SiteService } from './site.service';
 import { PostService } from './post.service';
 
@@ -12,6 +13,7 @@ export class SiteController {
     private readonly siteService: SiteService,
     private readonly authService: AuthService,
     private readonly postService: PostService,
+    private readonly analyticsService: AnalyticsService,
   ) {}
 
   @Get('/')
@@ -135,6 +137,20 @@ export class SiteController {
     if (!this.tryRequireSuperadmin(req, res)) return;
     const posts = await this.postService.listAll();
     return res.render('pages/admin-posts', this.withSharedModel(this.siteService.getAdminPostsPage(posts), req));
+  }
+
+  @Get('/admin/analytics')
+  async adminAnalytics(@Req() req: Request, @Res() res: Response) {
+    if (!this.tryRequireSuperadmin(req, res)) return;
+    const analytics = await this.analyticsService.getDashboard();
+    const page = {
+      ...this.siteService.getAdminSectionPage('Posts'),
+      title: 'Analytics | Admin | JustAidyn',
+      pageKey: 'admin-analytics',
+      heroTitle: 'Analytics',
+      heroText: 'Post views, reading time, and unique visitor analytics.',
+    };
+    return res.render('pages/admin-analytics', { ...this.withSharedModel(page, req), analytics });
   }
 
   @Get('/admin/posts/new')
@@ -378,6 +394,17 @@ export class SiteController {
   @Get('/api/desktop/session')
   async desktopSession(@Req() req: Request) {
     return this.authService.checkDesktopSession(req);
+  }
+
+  @Post('/api/analytics/post-view/start')
+  async analyticsPostViewStart(@Req() req: Request, @Body() body: Record<string, unknown>) {
+    const user = this.authService.getCurrentUser(req);
+    return this.analyticsService.startPostView(req, body, user?.id);
+  }
+
+  @Post('/api/analytics/post-view/heartbeat')
+  async analyticsPostViewHeartbeat(@Body() body: Record<string, unknown>) {
+    return this.analyticsService.heartbeatPostView(body);
   }
 
   @Get('/api/me')

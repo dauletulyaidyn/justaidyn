@@ -40,6 +40,7 @@ model User {
   passwordResetTokens PasswordResetToken[]
   desktopOtcs         DesktopOtc[]
   apiTokens           ApiToken[]
+  postViews           PostView[]
 
   @@map("users")
 }
@@ -117,10 +118,34 @@ model Post {
   publishedAt DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  views       PostView[]
 
   @@unique([platform, slug])
   @@index([platform, published])
   @@map("posts")
+}
+
+model PostView {
+  id              String   @id @default(cuid())
+  postId          String
+  userId          String?
+  visitorId       String
+  path            String
+  referrer        String?
+  userAgent       String?
+  ipHash          String?
+  durationSeconds Int      @default(0)
+  startedAt       DateTime @default(now())
+  lastSeenAt      DateTime @default(now())
+  createdAt       DateTime @default(now())
+
+  post Post  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([postId, startedAt])
+  @@index([visitorId])
+  @@index([userId])
+  @@map("post_views")
 }
 
 enum Role {

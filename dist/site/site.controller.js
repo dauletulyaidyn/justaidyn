@@ -17,13 +17,15 @@ const common_1 = require("@nestjs/common");
 const fs_1 = require("fs");
 const path_1 = require("path");
 const auth_service_1 = require("./auth.service");
+const analytics_service_1 = require("./analytics.service");
 const site_service_1 = require("./site.service");
 const post_service_1 = require("./post.service");
 let SiteController = class SiteController {
-    constructor(siteService, authService, postService) {
+    constructor(siteService, authService, postService, analyticsService) {
         this.siteService = siteService;
         this.authService = authService;
         this.postService = postService;
+        this.analyticsService = analyticsService;
     }
     async root(req, res) {
         const site = this.siteService.resolveHost(req.hostname);
@@ -114,6 +116,19 @@ let SiteController = class SiteController {
             return;
         const posts = await this.postService.listAll();
         return res.render('pages/admin-posts', this.withSharedModel(this.siteService.getAdminPostsPage(posts), req));
+    }
+    async adminAnalytics(req, res) {
+        if (!this.tryRequireSuperadmin(req, res))
+            return;
+        const analytics = await this.analyticsService.getDashboard();
+        const page = {
+            ...this.siteService.getAdminSectionPage('Posts'),
+            title: 'Analytics | Admin | JustAidyn',
+            pageKey: 'admin-analytics',
+            heroTitle: 'Analytics',
+            heroText: 'Post views, reading time, and unique visitor analytics.',
+        };
+        return res.render('pages/admin-analytics', { ...this.withSharedModel(page, req), analytics });
     }
     adminPostNew(req, res) {
         if (!this.tryRequireSuperadmin(req, res))
@@ -307,6 +322,13 @@ let SiteController = class SiteController {
     }
     async desktopSession(req) {
         return this.authService.checkDesktopSession(req);
+    }
+    async analyticsPostViewStart(req, body) {
+        const user = this.authService.getCurrentUser(req);
+        return this.analyticsService.startPostView(req, body, user?.id);
+    }
+    async analyticsPostViewHeartbeat(body) {
+        return this.analyticsService.heartbeatPostView(body);
     }
     async apiMe(req) {
         const sessionUser = this.authService.getCurrentUser(req);
@@ -950,6 +972,14 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], SiteController.prototype, "adminPosts", null);
 __decorate([
+    (0, common_1.Get)('/admin/analytics'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "adminAnalytics", null);
+__decorate([
     (0, common_1.Get)('/admin/posts/new'),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Res)()),
@@ -1098,6 +1128,21 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], SiteController.prototype, "desktopSession", null);
+__decorate([
+    (0, common_1.Post)('/api/analytics/post-view/start'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "analyticsPostViewStart", null);
+__decorate([
+    (0, common_1.Post)('/api/analytics/post-view/heartbeat'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "analyticsPostViewHeartbeat", null);
 __decorate([
     (0, common_1.Get)('/api/me'),
     __param(0, (0, common_1.Req)()),
@@ -1438,5 +1483,6 @@ exports.SiteController = SiteController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [site_service_1.SiteService,
         auth_service_1.AuthService,
-        post_service_1.PostService])
+        post_service_1.PostService,
+        analytics_service_1.AnalyticsService])
 ], SiteController);

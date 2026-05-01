@@ -4,11 +4,12 @@ import { AuthMiddleware } from './auth.middleware';
 import { SiteController } from './site.controller';
 import { SiteService } from './site.service';
 import { PostService } from './post.service';
+import { AnalyticsService } from './analytics.service';
 import { PrismaService } from '../prisma.service';
 
 @Module({
   controllers: [SiteController],
-  providers: [SiteService, AuthService, PostService, PrismaService],
+  providers: [SiteService, AuthService, PostService, AnalyticsService, PrismaService],
 })
 export class SiteModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

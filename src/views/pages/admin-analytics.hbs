@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  <link rel="icon" type="image/png" href="/favicon.png?v=20260331c">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/templatemo-first-portfolio-style.css" rel="stylesheet">
+  <style>
+    body { background: #f0f4f8; }
+    .analytics-page { padding: 150px 0 72px; }
+    .analytics-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 26px; }
+    .analytics-header h1 { margin: 0; font-size: clamp(1.7rem,3vw,2.5rem); }
+    .analytics-header a { color: #535da1; font-weight: 700; text-decoration: none; }
+    .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; margin-bottom: 26px; }
+    .metric-card, .analytics-card { background: #fff; border: 1px solid rgba(24,35,44,0.1); border-radius: 12px; padding: 20px; }
+    .metric-card span { display: block; color: #7a8691; font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .metric-card strong { color: #18232c; font-size: 1.65rem; line-height: 1; }
+    .analytics-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.8fr); gap: 20px; align-items: start; }
+    .analytics-card h2 { margin: 0 0 16px; font-size: 1.15rem; }
+    .analytics-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    .analytics-table th { color: #5e6c79; background: #f5f7fa; padding: 10px 12px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .analytics-table td { padding: 12px; border-top: 1px solid #eef2f6; vertical-align: top; }
+    .analytics-table a { color: #535da1; font-weight: 700; text-decoration: none; }
+    .daily-list { display: grid; gap: 12px; }
+    .daily-item { display: grid; grid-template-columns: 92px 1fr; gap: 12px; align-items: center; }
+    .daily-bar { height: 8px; border-radius: 999px; background: #e8edf5; overflow: hidden; }
+    .daily-bar span { display: block; height: 100%; background: #535da1; }
+    .muted { color: #7a8691; }
+    @media (max-width: 991px) { .analytics-grid { grid-template-columns: 1fr; } .analytics-page { padding-top: 205px; } }
+  </style>
+</head>
+<body>
+  {{> header}}
+  <main class="analytics-page">
+    <div class="container">
+      <div class="analytics-header">
+        <div>
+          <a href="/admin"><i class="bi bi-arrow-left"></i> Admin</a>
+          <h1>Analytics</h1>
+        </div>
+        <a href="/admin/posts">Posts</a>
+      </div>
+
+      <section class="metric-grid" aria-label="Totals">
+        <article class="metric-card"><span>Total views</span><strong>{{analytics.totals.views}}</strong></article>
+        <article class="metric-card"><span>Unique visitors</span><strong>{{analytics.totals.uniqueVisitors}}</strong></article>
+        <article class="metric-card"><span>Logged-in users</span><strong>{{analytics.totals.uniqueUsers}}</strong></article>
+        <article class="metric-card"><span>Total reading time</span><strong>{{analytics.totals.totalDuration}}</strong></article>
+        <article class="metric-card"><span>Average time</span><strong>{{analytics.totals.averageDuration}}</strong></article>
+      </section>
+
+      <section class="analytics-grid">
+        <article class="analytics-card">
+          <h2>Posts</h2>
+          <table class="analytics-table">
+            <thead>
+              <tr><th>Post</th><th>Views</th><th>Unique</th><th>Total time</th><th>Average</th><th>Last seen</th></tr>
+            </thead>
+            <tbody>
+              {{#each analytics.posts}}
+              <tr>
+                <td><a href="{{this.url}}">{{this.title}}</a></td>
+                <td>{{this.views}}</td>
+                <td>{{this.uniqueVisitors}}</td>
+                <td>{{this.totalDuration}}</td>
+                <td>{{this.averageDuration}}</td>
+                <td class="muted">{{this.lastSeenAt}}</td>
+              </tr>
+              {{else}}
+              <tr><td colspan="6" class="muted">No post views yet.</td></tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </article>
+
+        <aside class="analytics-card">
+          <h2>Last 30 days</h2>
+          <div class="daily-list">
+            {{#each analytics.daily}}
+            <div class="daily-item">
+              <strong>{{this.date}}</strong>
+              <div>
+                <div class="daily-bar"><span style="width: {{this.views}}%; max-width: 100%;"></span></div>
+                <div class="muted">{{this.views}} views, {{this.uniqueVisitors}} unique, {{this.totalDuration}}</div>
+              </div>
+            </div>
+            {{else}}
+            <p class="muted">No daily analytics yet.</p>
+            {{/each}}
+          </div>
+        </aside>
+      </section>
+
+      <section class="analytics-card" style="margin-top:20px;">
+        <h2>Recent views</h2>
+        <table class="analytics-table">
+          <thead>
+            <tr><th>Post</th><th>Visitor</th><th>User</th><th>Duration</th><th>Started</th></tr>
+          </thead>
+          <tbody>
+            {{#each analytics.recentViews}}
+            <tr>
+              <td><a href="{{this.url}}">{{this.title}}</a></td>
+              <td>{{this.visitorId}}</td>
+              <td class="muted">{{this.userEmail}}</td>
+              <td>{{this.duration}}</td>
+              <td class="muted">{{this.startedAt}}</td>
+            </tr>
+            {{else}}
+            <tr><td colspan="5" class="muted">No recent views yet.</td></tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </main>
+  {{> footer}}
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/jquery.sticky.js"></script>
+  <script src="/js/custom.js?v=20260502-project-nav"></script>
+</body>
+</html>

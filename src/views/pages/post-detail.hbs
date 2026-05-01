@@ -118,6 +118,8 @@
           <h1 itemprop="headline">{{post.title}}</h1>
           <div class="post-meta">
             <span itemprop="datePublished" content="{{post.publishedAt}}">{{formatDate post.publishedAt}}</span>
+            <span><i class="bi bi-eye"></i> {{post.viewCount}} views</span>
+            <span><i class="bi bi-clock"></i> Total {{post.totalViewTime}}</span>
             {{#if (eq currentUser.role 'superadmin')}}
               <a class="post-edit-link" href="/admin/posts/{{post.id}}/edit"><i class="bi bi-pencil"></i> Edit</a>
             {{/if}}
@@ -150,6 +152,69 @@
   <script src="/js/bootstrap.min.js"></script>
   <script src="/js/jquery.sticky.js"></script>
   <script src="/js/custom.js?v=20260502-project-nav"></script>
+  <script>
+    (function() {
+      var postId = '{{post.id}}';
+      var viewId = '';
+      var activeSeconds = 0;
+      var lastTick = Date.now();
+      var visitorKey = 'ja_analytics_visitor_id';
+
+      function visitorId() {
+        var existing = localStorage.getItem(visitorKey);
+        if (existing) return existing;
+        var generated = (window.crypto && window.crypto.randomUUID)
+          ? window.crypto.randomUUID().replace(/-/g, '')
+          : String(Date.now()) + Math.random().toString(36).slice(2);
+        localStorage.setItem(visitorKey, generated);
+        return generated;
+      }
+
+      function postJson(url, payload, useBeacon) {
+        var body = JSON.stringify(payload);
+        if (useBeacon && navigator.sendBeacon) {
+          return navigator.sendBeacon(url, new Blob([body], { type: 'application/json' }));
+        }
+        return fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: body,
+          keepalive: !!useBeacon,
+        }).catch(function() {});
+      }
+
+      function tick() {
+        var now = Date.now();
+        if (!document.hidden) activeSeconds += Math.max(0, Math.round((now - lastTick) / 1000));
+        lastTick = now;
+      }
+
+      function heartbeat(useBeacon) {
+        tick();
+        if (!viewId) return;
+        postJson('/api/analytics/post-view/heartbeat', {
+          viewId: viewId,
+          durationSeconds: activeSeconds,
+        }, useBeacon);
+      }
+
+      postJson('/api/analytics/post-view/start', {
+        postId: postId,
+        visitorId: visitorId(),
+        path: window.location.pathname,
+        referrer: document.referrer || '',
+      }).then(function(response) {
+        if (!response || !response.ok) return;
+        return response.json();
+      }).then(function(data) {
+        viewId = data && data.viewId ? data.viewId : '';
+      }).catch(function() {});
+
+      setInterval(heartbeat, 15000);
+      document.addEventListener('visibilitychange', function() { heartbeat(false); });
+      window.addEventListener('pagehide', function() { heartbeat(true); });
+    })();
+  </script>
   {{#if isPaywall}}
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
   <script>

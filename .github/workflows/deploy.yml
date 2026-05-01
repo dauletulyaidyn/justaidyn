@@ -35,6 +35,7 @@ jobs:
           ssh -i ~/.ssh/deploy_key root@89.207.254.135 "
             cd /var/www/justaidyn.com &&
             npm install --omit=dev &&
+            npx prisma migrate deploy &&
             npx prisma generate &&
             npm run build &&
             pm2 reload all || pm2 restart all || true

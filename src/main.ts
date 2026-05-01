@@ -70,7 +70,12 @@ async function bootstrap() {
   app.use((req: Request, res: Response, next: NextFunction) => {
     const csrfCookieName = 'ja_csrf';
     const unsafeMethod = !['GET', 'HEAD', 'OPTIONS'].includes(req.method.toUpperCase());
-    const csrfExemptPaths = new Set(['/api/paddle/webhook', '/api/desktop/token']);
+    const csrfExemptPaths = new Set([
+      '/api/paddle/webhook',
+      '/api/desktop/token',
+      '/api/analytics/post-view/start',
+      '/api/analytics/post-view/heartbeat',
+    ]);
     let csrfToken = parseCookie(req.headers.cookie, csrfCookieName);
     if (!csrfToken) {
       csrfToken = createCsrfToken();

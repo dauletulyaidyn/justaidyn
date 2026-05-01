@@ -34,6 +34,7 @@ let PostService = class PostService {
             publishedAt: p.publishedAt?.toISOString(),
             createdAt: p.createdAt.toISOString(),
             updatedAt: p.updatedAt.toISOString(),
+            viewCount: p._count?.views ?? 0,
         };
     }
     toPrismaEnum(platform) {
@@ -43,21 +44,31 @@ let PostService = class PostService {
         const posts = await this.prisma.post.findMany({
             where: { platform: this.toPrismaEnum(platform), published: true },
             orderBy: { publishedAt: 'desc' },
+            include: { _count: { select: { views: true } } },
         });
         return posts.map((p) => this.map(p));
     }
     async listAll() {
-        const posts = await this.prisma.post.findMany({ orderBy: [{ platform: 'asc' }, { createdAt: 'desc' }] });
+        const posts = await this.prisma.post.findMany({
+            orderBy: [{ platform: 'asc' }, { createdAt: 'desc' }],
+            include: { _count: { select: { views: true } } },
+        });
         return posts.map((p) => this.map(p));
     }
     async getBySlug(platform, slug) {
-        const post = await this.prisma.post.findUnique({ where: { platform_slug: { platform: this.toPrismaEnum(platform), slug } } });
+        const post = await this.prisma.post.findUnique({
+            where: { platform_slug: { platform: this.toPrismaEnum(platform), slug } },
+            include: { _count: { select: { views: true } } },
+        });
         if (!post || !post.published)
             throw new common_1.NotFoundException('Post not found.');
-        return this.map(post);
+        return this.withViewTime(this.map(post));
     }
     async getById(id) {
-        const post = await this.prisma.post.findUnique({ where: { id } });
+        const post = await this.prisma.post.findUnique({
+            where: { id },
+            include: { _count: { select: { views: true } } },
+        });
         if (!post)
             throw new common_1.NotFoundException('Post not found.');
         return this.map(post);
@@ -103,6 +114,23 @@ let PostService = class PostService {
     }
     slugify(title) {
         return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80) || `post-${Date.now()}`;
+    }
+    async withViewTime(post) {
+        const aggregate = await this.prisma.postView.aggregate({
+            where: { postId: post.id },
+            _sum: { durationSeconds: true },
+        });
+        const seconds = Math.round(aggregate._sum.durationSeconds ?? 0);
+        return { ...post, totalViewTime: this.formatDuration(seconds) };
+    }
+    formatDuration(seconds) {
+        const safeSeconds = Math.max(0, Math.round(seconds));
+        const minutes = Math.floor(safeSeconds / 60);
+        const restSeconds = safeSeconds % 60;
+        if (minutes < 60)
+            return `${minutes}m ${restSeconds}s`;
+        const hours = Math.floor(minutes / 60);
+        return `${hours}h ${minutes % 60}m`;
     }
     sanitizePostHtml(html) {
         return (0, sanitize_html_1.default)(html || '', {
