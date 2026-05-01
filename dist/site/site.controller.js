@@ -721,7 +721,7 @@ let SiteController = class SiteController {
     }
     trackDownload(app, res) {
         const fileMap = {
-            'justaidyn-screencam': '/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.1.msi',
+            'justaidyn-screencam': '/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.3.msi',
         };
         if (!fileMap[app]) {
             throw new common_1.NotFoundException();

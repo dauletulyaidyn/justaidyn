@@ -923,7 +923,7 @@ export class SiteController {
   @Get('/track/download/apps/:app')
   trackDownload(@Param('app') app: string, @Res() res: Response) {
     const fileMap: Record<string, string> = {
-      'justaidyn-screencam': '/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.1.msi',
+      'justaidyn-screencam': '/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.3.msi',
     };
 
     if (!fileMap[app]) {
