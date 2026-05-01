@@ -200,7 +200,7 @@
 
     function getSharedStaticNavHtml(currentSection) {
       var isHome = currentSection === 'home';
-      var languageButtons = `<button type="button" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')" aria-label="English" title="English">EN</button><button type="button" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')" aria-label="Kazakh" title="Kazakh">KK</button><button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')" aria-label="Russian" title="Russian">RU</button>`;
+      var languageButtons = `<button type="button" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')" aria-label="Kazakh" title="Kazakh">KK</button><button type="button" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')" aria-label="English" title="English">EN</button><button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')" aria-label="Russian" title="Russian">RU</button>`;
 
       return `
         <div class="container">
@@ -284,6 +284,28 @@
 
     window.getSharedStaticNavHtml = getSharedStaticNavHtml;
 
+    function getPrimaryNavHtml(currentSection) {
+      if (currentSection === 'skillsminds') {
+        return `
+          <li class="nav-item"><a class="nav-link active" href="/skillsminds" data-en="Home" data-ru="Главная" data-kk="Басты">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/skillsminds#intro" data-en="Intro" data-ru="О проекте" data-kk="Жоба туралы">Intro</a></li>
+          <li class="nav-item"><a class="nav-link" href="/skillsminds#posts" data-en="Posts" data-ru="Посты" data-kk="Посттар">Posts</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact" data-en="Contact" data-ru="Контакты" data-kk="Байланыс">Contact</a></li>
+        `;
+      }
+
+      if (currentSection === 'nofacethinker') {
+        return `
+          <li class="nav-item"><a class="nav-link active" href="/nofacethinker" data-en="Home" data-ru="Главная" data-kk="Басты">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/nofacethinker#posts" data-en="Posts" data-ru="Посты" data-kk="Посттар">Posts</a></li>
+          <li class="nav-item"><a class="nav-link" href="/nofacethinker#subscribe" data-en="Subscribe" data-ru="Подписка" data-kk="Жазылым">Subscribe</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact" data-en="Contact" data-ru="Контакты" data-kk="Байланыс">Contact</a></li>
+        `;
+      }
+
+      return '';
+    }
+
     function renderSharedNavbars() {
       var currentSection = detectCurrentSection();
 
@@ -292,6 +314,11 @@
         var signedInAuthHtml = existingAuth && existingAuth.querySelector('a[href$="/logout"]') ? existingAuth.innerHTML : '';
         navbar.classList.remove('course-navbar');
         navbar.innerHTML = getSharedStaticNavHtml(currentSection);
+        var pagePrimaryNav = getPrimaryNavHtml(currentSection);
+        var primaryNav = navbar.querySelector('.nav-row-primary');
+        if (pagePrimaryNav && primaryNav) {
+          primaryNav.innerHTML = pagePrimaryNav;
+        }
         if (signedInAuthHtml) {
           var renderedAuth = navbar.querySelector('.navbar-top-auth-links');
           if (renderedAuth) {

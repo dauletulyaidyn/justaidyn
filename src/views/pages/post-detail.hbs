@@ -43,9 +43,10 @@
     body { background: linear-gradient(rgba(240,242,250,0.92), rgba(240,242,250,0.97)), url("/images/portrait-happy-excited-man-holding-laptop-computer.png") center / cover no-repeat fixed; }
     .post-page { padding: 160px 0 72px; }
     @media (max-width: 991px) { .post-page { padding-top: 205px; } }
+    .post-page .container { max-width: 980px; }
     .post-back { display: inline-flex; align-items: center; gap: 6px; font-size: 0.88rem; color: #535da1; text-decoration: none; margin-bottom: 24px; font-weight: 600; }
     .post-back:hover { color: #3d4680; }
-    .post-article { background: rgba(255,255,255,0.97); border: 1px solid rgba(24,35,44,0.1); border-radius: 16px; overflow: hidden; }
+    .post-article { background: rgba(255,255,255,0.97); border: 1px solid rgba(24,35,44,0.1); border-radius: 16px; overflow: hidden; max-width: 860px; margin: 0 auto; }
     .post-cover { width: 100%; max-height: 420px; object-fit: cover; display: block; }
     .post-body { padding: 40px 52px 52px; }
     @media (max-width: 767px) { .post-body { padding: 28px 24px 36px; } }
@@ -55,7 +56,7 @@
     .post-edit-link { font-size: 0.78rem; color: #535da1; text-decoration: none; }
     .post-edit-link:hover { text-decoration: underline; }
     .post-excerpt { font-size: 1.05rem; color: #5e6c79; line-height: 1.75; margin-bottom: 32px; border-left: 3px solid #535da1; padding-left: 16px; }
-    .post-content { color: #2d3748; line-height: 1.85; font-size: 1rem; max-width: 740px; }
+    .post-content { color: #2d3748; line-height: 1.85; font-size: 1rem; max-width: 740px; margin: 0 auto; }
     .post-content h2 { font-size: 1.35rem; margin-top: 2.2rem; margin-bottom: 0.6rem; }
     .post-content h3 { font-size: 1.1rem; margin-top: 1.8rem; margin-bottom: 0.5rem; }
     .post-content p { margin-bottom: 1.1em; }
@@ -143,11 +144,12 @@
     </div>
   </div>
 
+  <div id="contact"></div>
   {{> footer}}
   <script src="/js/jquery.min.js"></script>
   <script src="/js/bootstrap.min.js"></script>
   <script src="/js/jquery.sticky.js"></script>
-  <script src="/js/custom.js?v=20260428-profile-i18n"></script>
+  <script src="/js/custom.js?v=20260502-project-nav"></script>
   {{#if isPaywall}}
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
   <script>
