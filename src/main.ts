@@ -16,6 +16,10 @@ async function bootstrap() {
   hbs.registerPartials(join(viewsPath, 'partials'));
   hbs.registerHelper('eq', (left: unknown, right: unknown) => left === right);
   hbs.registerHelper('or', (...args: unknown[]) => args.slice(0, -1).some(Boolean));
+  hbs.registerHelper('formatDate', (dateStr: string) => {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  });
 
   const root = process.cwd();
   app.use('/css', express.static(join(root, 'css')));

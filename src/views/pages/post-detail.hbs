@@ -116,7 +116,7 @@
           <span class="post-platform-badge">{{#if (eq platform 'skillsminds')}}Skills & Minds{{else}}no Face Thinker{{/if}}</span>
           <h1 itemprop="headline">{{post.title}}</h1>
           <div class="post-meta">
-            <span itemprop="datePublished" content="{{post.publishedAt}}">{{post.publishedAt}}</span>
+            <span itemprop="datePublished" content="{{post.publishedAt}}">{{formatDate post.publishedAt}}</span>
             {{#if (eq currentUser.role 'superadmin')}}
               <a class="post-edit-link" href="/admin/posts/{{post.id}}/edit"><i class="bi bi-pencil"></i> Edit</a>
             {{/if}}
