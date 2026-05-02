@@ -650,21 +650,19 @@ export class SiteController {
     return this.withSharedModel(this.siteService.getComingSoonPage('api'), req);
   }
 
-  @Get('/justaidyn-screencam')
+  @Get(['/justaidyn-screencam', '/justaidyn-screencam/'])
   appDetail(@Req() req: Request, @Res() res: Response) {
     const site = this.siteService.resolveHost(req.hostname);
     if (site !== 'apps') {
       throw new NotFoundException();
     }
 
-    const app = this.appCatalogService.getPublished('justaidyn-screencam');
-    return res.render('pages/app-detail', this.withSharedModel(this.getAppDetailPage(app), req));
+    return res.sendFile(join(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
   }
 
-  @Get('/apps/justaidyn-screencam')
+  @Get(['/apps/justaidyn-screencam', '/apps/justaidyn-screencam/'])
   appDetailPath(@Req() req: Request, @Res() res: Response) {
-    const app = this.appCatalogService.getPublished('justaidyn-screencam');
-    return res.render('pages/app-detail', this.withSharedModel(this.getAppDetailPage(app), req));
+    return res.sendFile(join(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
   }
 
   @Get('/p/apps/justaidyn-screencam')

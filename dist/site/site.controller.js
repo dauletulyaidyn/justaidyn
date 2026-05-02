@@ -526,12 +526,10 @@ let SiteController = class SiteController {
         if (site !== 'apps') {
             throw new common_1.NotFoundException();
         }
-        const app = this.appCatalogService.getPublished('justaidyn-screencam');
-        return res.render('pages/app-detail', this.withSharedModel(this.getAppDetailPage(app), req));
+        return res.sendFile((0, path_1.join)(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
     }
     appDetailPath(req, res) {
-        const app = this.appCatalogService.getPublished('justaidyn-screencam');
-        return res.render('pages/app-detail', this.withSharedModel(this.getAppDetailPage(app), req));
+        return res.sendFile((0, path_1.join)(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
     }
     appDetailAlias(res) {
         return res.redirect(301, '/apps/justaidyn-screencam');
@@ -1418,7 +1416,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "apiProject", null);
 __decorate([
-    (0, common_1.Get)('/justaidyn-screencam'),
+    (0, common_1.Get)(['/justaidyn-screencam', '/justaidyn-screencam/']),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -1426,7 +1424,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "appDetail", null);
 __decorate([
-    (0, common_1.Get)('/apps/justaidyn-screencam'),
+    (0, common_1.Get)(['/apps/justaidyn-screencam', '/apps/justaidyn-screencam/']),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
