@@ -78,7 +78,7 @@
                 <li class="footer-menu-item"><a class="footer-menu-link" href="articles/index.html" data-en="Articles" data-ru="Статьи" data-kk="Мақалалар">Articles</a></li>
                 <li class="footer-menu-item"><a class="footer-menu-link" href="faq.html" data-en="FAQ" data-ru="FAQ" data-kk="ЖҚС">FAQ</a></li>
                 <li class="footer-menu-item"><a class="footer-menu-link" href="sitemap.xml">Sitemap.xml</a></li>
-                <li class="footer-menu-item"><a class="footer-menu-link" href="ai-agents-course.html" data-en="AI Agents" data-ru="AI-агенты" data-kk="AI агенттер">AI Agents</a></li>
+                <li class="footer-menu-item"><a class="footer-menu-link" href="/courses/ai-agents-course.html" data-en="AI Agents" data-ru="AI-агенты" data-kk="AI агенттер">AI Agents</a></li>
               </ul>
             </div>
             <div class="col-lg-2 col-md-6 col-12">
@@ -344,8 +344,29 @@
       }
     }
 
+    function isEnglishOnlyPage() {
+      var host = (window.location.hostname || '').toLowerCase();
+      var path = (window.location.pathname || '/').toLowerCase();
+      return host.indexOf('apps.') === 0
+        || host.indexOf('games.') === 0
+        || host.indexOf('nofacethinker.') === 0
+        || path === '/apps'
+        || path.indexOf('/apps/') === 0
+        || path === '/games'
+        || path.indexOf('/games/') === 0
+        || path === '/nofacethinker'
+        || path.indexOf('/nofacethinker/') === 0;
+    }
+
+    function applyEnglishOnlyMode() {
+      if (!document.body || !isEnglishOnlyPage()) return false;
+      document.body.classList.add('english-only-language');
+      return true;
+    }
+
     function applyLanguageToDocument(lang) {
-      var uiLang = lang === 'kk' ? 'kk' : lang === 'ru' ? 'ru' : 'en';
+      var englishOnly = applyEnglishOnlyMode();
+      var uiLang = englishOnly ? 'en' : (lang === 'kk' ? 'kk' : lang === 'ru' ? 'ru' : 'en');
 
       document.documentElement.lang = uiLang;
 
@@ -381,11 +402,13 @@
         button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
       });
 
-      saveLanguage(uiLang);
+      if (!englishOnly) {
+        saveLanguage(uiLang);
+      }
     }
 
     window.changeLanguage = function(lang) {
-      applyLanguageToDocument(lang);
+      applyLanguageToDocument(isEnglishOnlyPage() ? 'en' : lang);
     };
 
     function enhanceMobileSplitNavbars() {
@@ -510,6 +533,7 @@
       ensureSiteFavicon();
       renderSharedNavbars();
       enhanceMobileSplitNavbars();
+      applyEnglishOnlyMode();
       updateAuthLinksFromSession();
       renderSharedFooters();
       if (isCoursePage) {
@@ -523,7 +547,7 @@
         return;
       }
       window.changeLanguage = function(lang) {
-        applyLanguageToDocument(lang);
+        applyLanguageToDocument(isEnglishOnlyPage() ? 'en' : lang);
       };
       applyLanguageToDocument(readSavedLanguage() || document.documentElement.lang || 'en');
     }
@@ -537,6 +561,7 @@
     var navbarObserver = new MutationObserver(function() {
       ensureSiteFavicon();
       enhanceMobileSplitNavbars();
+      applyEnglishOnlyMode();
     });
 
     navbarObserver.observe(document.body, {
