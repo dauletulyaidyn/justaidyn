@@ -73,7 +73,7 @@
       align-items: center;
       background:
         linear-gradient(90deg, rgba(238, 242, 247, 0.98) 0%, rgba(238, 242, 247, 0.92) 48%, rgba(238, 242, 247, 0.66) 100%),
-        url("/images/aerial-view-man-using-computer-laptop-wooden-table.jpg") center / cover no-repeat;
+        url("/images/generated/screencam-hero-bg.png") center / cover no-repeat;
     }
 
     .hero-grid {
@@ -209,181 +209,17 @@
 
     .product-frame {
       position: relative;
-      min-height: 520px;
-      display: grid;
-      align-items: center;
-    }
-
-    .app-window {
-      width: min(470px, 100%);
-      margin-left: auto;
-      border: 1px solid rgba(21, 32, 43, 0.14);
-      border-radius: 8px;
-      overflow: hidden;
-      background: #fbfcfe;
-      box-shadow: var(--sc-shadow);
-    }
-
-    .window-bar {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      height: 46px;
-      padding: 0 16px;
-      border-bottom: 1px solid var(--sc-line);
-      background: #fff;
+      justify-content: center;
     }
 
-    .window-brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-      font-size: 0.86rem;
-      font-weight: 700;
-      color: var(--sc-ink);
-    }
-
-    .window-brand img {
-      width: 24px;
-      height: 24px;
-      object-fit: contain;
-    }
-
-    .window-dots {
-      display: flex;
-      gap: 6px;
-    }
-
-    .window-dots span {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: #d8dde6;
-    }
-
-    .preview-area {
-      position: relative;
-      aspect-ratio: 16 / 10;
-      background:
-        linear-gradient(135deg, rgba(24, 116, 196, 0.90), rgba(83, 93, 161, 0.84)),
-        url("/images/white-desk-work-study-aesthetics.jpg") center / cover no-repeat;
-    }
-
-    .capture-region {
-      position: absolute;
-      inset: 12% 9%;
-      border: 2px solid rgba(255, 255, 255, 0.9);
-      border-radius: 6px;
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .camera-bubble {
-      position: absolute;
-      right: 20px;
-      bottom: 20px;
-      width: 116px;
-      height: 116px;
-      border: 4px solid #fff;
-      border-radius: 50%;
-      background:
-        linear-gradient(rgba(83, 93, 161, 0.12), rgba(83, 93, 161, 0.12)),
-        url("/images/aidyn-avatar.jpg") center / cover no-repeat;
-      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.24);
-    }
-
-    .recording-chip {
-      position: absolute;
-      left: 20px;
-      top: 18px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 10px;
-      border-radius: 8px;
-      background: rgba(21, 32, 43, 0.72);
-      color: #fff;
-      font-size: 0.78rem;
-      font-weight: 700;
-    }
-
-    .recording-chip::before {
-      content: "";
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #ff5b57;
-    }
-
-    .tool-strip {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      padding: 16px;
-      background: #fff;
-    }
-
-    .tool-tile {
-      min-height: 76px;
-      display: grid;
-      place-items: center;
-      gap: 4px;
-      padding: 10px;
-      border: 1px solid var(--sc-line);
-      border-radius: 8px;
-      color: #344353;
-      text-align: center;
-      font-size: 0.74rem;
-      font-weight: 700;
-    }
-
-    .tool-tile i {
-      color: var(--sc-primary);
-      font-size: 1.15rem;
-    }
-
-    .floating-panel {
-      position: absolute;
-      left: 0;
-      bottom: 34px;
-      width: 230px;
-      padding: 18px;
-      border: 1px solid rgba(21, 32, 43, 0.12);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.94);
-      box-shadow: 0 16px 40px rgba(24, 35, 44, 0.14);
-    }
-
-    .floating-panel strong {
+    .product-mockup-image {
+      width: min(640px, 100%);
+      height: auto;
       display: block;
-      margin-bottom: 11px;
-      font-size: 0.92rem;
-    }
-
-    .meter-row {
-      display: grid;
-      grid-template-columns: 68px 1fr;
-      align-items: center;
-      gap: 10px;
-      margin-top: 10px;
-      color: var(--sc-muted);
-      font-size: 0.76rem;
-      font-weight: 700;
-    }
-
-    .meter {
-      height: 8px;
-      overflow: hidden;
-      border-radius: 999px;
-      background: #e5e9f0;
-    }
-
-    .meter span {
-      display: block;
-      height: 100%;
-      border-radius: inherit;
-      background: var(--sc-green);
+      border-radius: 8px;
+      filter: drop-shadow(0 22px 42px rgba(24, 35, 44, 0.16));
     }
 
     .section-heading {
@@ -644,11 +480,91 @@
       font-weight: 700;
     }
 
+    .contact-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 390px;
+      gap: 34px;
+      align-items: stretch;
+    }
+
+    .contact-card,
+    .contact-support-card {
+      border: 1px solid var(--sc-line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 10px 28px rgba(24, 35, 44, 0.06);
+    }
+
+    .contact-card {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      padding: 24px;
+    }
+
+    .contact-link-card {
+      min-height: 132px;
+      padding: 18px;
+      border: 1px solid var(--sc-line);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--sc-ink);
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .contact-link-card:hover {
+      color: var(--sc-ink);
+      border-color: rgba(83, 93, 161, 0.38);
+      box-shadow: 0 14px 28px rgba(24, 35, 44, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .contact-link-card i {
+      display: inline-grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      margin-bottom: 14px;
+      border-radius: 8px;
+      background: rgba(83, 93, 161, 0.10);
+      color: var(--sc-primary);
+      font-size: 1.15rem;
+    }
+
+    .contact-link-card strong {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 0.98rem;
+    }
+
+    .contact-link-card span {
+      display: block;
+      color: var(--sc-muted);
+      font-size: 0.86rem;
+      line-height: 1.55;
+    }
+
+    .contact-support-card {
+      padding: 26px;
+    }
+
+    .contact-support-card h3 {
+      margin: 0 0 12px;
+      color: var(--sc-ink);
+      font-size: 1.28rem;
+    }
+
+    .contact-support-card p {
+      color: var(--sc-muted);
+      line-height: 1.65;
+      margin-bottom: 20px;
+    }
+
     .final-cta {
       text-align: center;
       background:
         linear-gradient(rgba(21, 32, 43, 0.74), rgba(21, 32, 43, 0.74)),
-        url("/images/couple-working-from-home-together-sofa.jpg") center / cover no-repeat;
+        url("/images/generated/screencam-final-cta-bg.png") center / cover no-repeat;
       color: #fff;
     }
 
@@ -673,22 +589,13 @@
       }
 
       .hero-grid,
-      .price-layout {
+      .price-layout,
+      .contact-layout {
         grid-template-columns: 1fr;
       }
 
       .product-frame {
-        min-height: 430px;
-      }
-
-      .app-window {
-        margin: 0 auto;
-      }
-
-      .floating-panel {
-        left: 50%;
-        bottom: 0;
-        transform: translateX(-50%);
+        margin-top: 8px;
       }
 
       .use-grid,
@@ -722,27 +629,14 @@
       }
 
       .product-frame {
-        min-height: auto;
-        padding-bottom: 154px;
-      }
-
-      .tool-strip {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .camera-bubble {
-        width: 92px;
-        height: 92px;
-      }
-
-      .floating-panel {
-        width: min(100%, 270px);
+        margin-top: 4px;
       }
 
       .use-grid,
       .feature-grid,
       .workflow-grid,
-      .included-list {
+      .included-list,
+      .contact-card {
         grid-template-columns: 1fr;
       }
 
@@ -802,15 +696,16 @@
           <ul class="navbar-nav ms-lg-0 nav-row-primary">
             <li class="nav-item"><a class="nav-link" href="/apps">Apps</a></li>
             <li class="nav-item"><a class="nav-link active" href="/apps/justaidyn-screencam/">ScreenCam</a></li>
-            <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
             <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+            <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+            <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
           </ul>
         </div>
       </div>
     </div>
   </nav>
 
-  <main class="screen-cam-page">
+  <main class="screen-cam-page" id="top">
     <section class="landing-band hero-band">
       <div class="landing-inner hero-grid">
         <div>
@@ -844,32 +739,7 @@
         </div>
 
         <div class="product-frame" aria-label="JustAidyn ScreenCam product preview">
-          <div class="app-window">
-            <div class="window-bar">
-              <div class="window-brand">
-                <img src="/images/justaidyn-screencam-logo.png" alt="">
-                <span>JustAidyn ScreenCam</span>
-              </div>
-              <div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div>
-            </div>
-            <div class="preview-area">
-              <div class="recording-chip">REC 00:18:42</div>
-              <div class="capture-region"></div>
-              <div class="camera-bubble"></div>
-            </div>
-            <div class="tool-strip">
-              <div class="tool-tile"><i class="bi bi-cursor"></i><span>Pointer</span></div>
-              <div class="tool-tile"><i class="bi bi-brush"></i><span>Pen</span></div>
-              <div class="tool-tile"><i class="bi bi-highlighter"></i><span>Marker</span></div>
-              <div class="tool-tile"><i class="bi bi-badge-cc"></i><span>SRT</span></div>
-            </div>
-          </div>
-          <div class="floating-panel">
-            <strong>Live capture controls</strong>
-            <div class="meter-row"><span>Camera</span><div class="meter"><span style="width:88%"></span></div></div>
-            <div class="meter-row"><span>Audio</span><div class="meter"><span style="width:74%;background:var(--sc-blue)"></span></div></div>
-            <div class="meter-row"><span>Watermark</span><div class="meter"><span style="width:48%;background:var(--sc-yellow)"></span></div></div>
-          </div>
+          <img class="product-mockup-image" src="/images/generated/screencam-product-mockup.png" alt="JustAidyn ScreenCam product interface preview" loading="eager">
         </div>
       </div>
     </section>
@@ -1002,6 +872,7 @@
             <span class="requirement"><i class="bi bi-windows"></i> Windows</span>
             <span class="requirement"><i class="bi bi-camera-video"></i> Camera recommended</span>
             <span class="requirement"><i class="bi bi-google"></i> Google account</span>
+            <span class="requirement" id="pricing-download-count" style="display:none;color:var(--sc-green-dark);border-color:rgba(20,183,137,0.35);background:rgba(20,183,137,0.11)"><i class="bi bi-download"></i> <span id="pricing-download-count-val">0</span> downloads</span>
           </div>
         </div>
         <aside class="price-card">
@@ -1025,6 +896,49 @@
             </div>
           </div>
           <button id="cancel-subscription-btn" type="button" onclick="cancelSubscription()" style="display:none;margin-top:16px;background:none;border:none;color:#7a8491;font-size:0.82rem;cursor:pointer;text-decoration:underline;padding:0;">Cancel subscription</button>
+        </aside>
+      </div>
+    </section>
+
+    <section class="landing-band soft-band" id="contact">
+      <div class="landing-inner contact-layout">
+        <div>
+          <div class="section-heading">
+            <p class="section-kicker">Contact</p>
+            <h2>Need help with setup, billing, or the desktop app?</h2>
+            <p>Use the channel that fits the question. For account and subscription issues, include the email used for Google sign-in so support can find the correct JustAidyn profile.</p>
+          </div>
+          <div class="contact-card">
+            <a class="contact-link-card" href="mailto:aidyn.daulet@gmail.com">
+              <i class="bi bi-envelope"></i>
+              <strong>Email support</strong>
+              <span>Best for billing, installation issues, and detailed bug reports.</span>
+            </a>
+            <a class="contact-link-card" href="https://wa.me/77769889889" target="_blank" rel="noopener">
+              <i class="bi bi-whatsapp"></i>
+              <strong>WhatsApp</strong>
+              <span>Fast contact for setup questions and quick confirmations.</span>
+            </a>
+            <a class="contact-link-card" href="https://t.me/justaidyn" target="_blank" rel="noopener">
+              <i class="bi bi-telegram"></i>
+              <strong>Telegram</strong>
+              <span>Use Telegram for short product questions and release updates.</span>
+            </a>
+            <a class="contact-link-card" href="/refunds">
+              <i class="bi bi-receipt"></i>
+              <strong>Refund policy</strong>
+              <span>Review subscription, cancellation, and refund terms before purchase.</span>
+            </a>
+          </div>
+        </div>
+        <aside class="contact-support-card">
+          <span class="price-label"><i class="bi bi-life-preserver"></i> Product support</span>
+          <h3>What to send</h3>
+          <p>For faster support, send your Windows version, ScreenCam version, the exact error message, and whether the issue happens before or after Google sign-in.</p>
+          <div class="requirements">
+            <span class="requirement"><i class="bi bi-clock"></i> Async support</span>
+            <span class="requirement"><i class="bi bi-person-check"></i> Account lookup by email</span>
+          </div>
         </aside>
       </div>
     </section>
@@ -1072,6 +986,12 @@
       if (count > 0) {
         document.getElementById('dl-count-val').textContent = count;
         document.getElementById('dl-count-badge').style.display = 'inline-flex';
+        const pricingCount = document.getElementById('pricing-download-count');
+        const pricingCountVal = document.getElementById('pricing-download-count-val');
+        if (pricingCount && pricingCountVal) {
+          pricingCountVal.textContent = count;
+          pricingCount.style.display = 'inline-flex';
+        }
       }
     }).catch(() => {});
 

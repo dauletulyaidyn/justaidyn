@@ -1034,6 +1034,21 @@ strong {
   z-index: 22;
 }
 
+.hero-profile-visual {
+  width: min(100%, 520px);
+  border-radius: 8px;
+  box-shadow: 0 1rem 3rem rgba(0,0,0,.175);
+  overflow: hidden;
+  background: var(--white-color);
+}
+
+.hero-profile-visual img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  display: block;
+}
+
 .hero-text {
   position: relative;
   z-index: 22;

@@ -76,6 +76,32 @@ export interface PageModel {
   editPost?: PostDto | null;
   isPaywall?: boolean;
   thinkerPriceId?: string;
+  apps?: Array<{
+    slug: string;
+    name: string;
+    shortDescription: string;
+    description: string;
+    version: string;
+    releaseNotes: string;
+    downloadUrl: string;
+    downloadCount: number;
+    detailUrl: string;
+    trackUrl: string;
+  }>;
+  totalDownloads?: number;
+  appCount?: number;
+  downloadCount?: number;
+  releaseVersion?: string;
+  releaseNotes?: string;
+  features?: Array<{ icon: string; title: string; text: string }>;
+  pricingTitle?: string;
+  pricingText?: string;
+  planName?: string;
+  price?: string;
+  pricePeriod?: string;
+  oldPrice?: string;
+  pricingNote?: string;
+  included?: string[];
 }
 
 const ROOT_HOSTS = new Set([

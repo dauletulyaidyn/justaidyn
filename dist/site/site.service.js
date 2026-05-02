@@ -17,13 +17,13 @@ const ROOT_HOSTS = new Set([
     '127.0.0.1',
 ]);
 const PROJECT_LINKS = [
-    { labelEn: 'Skills and Minds Hub', labelRu: 'Skills and Minds Hub', labelKk: 'Skills and Minds Hub', url: '/articles/' },
-    { labelEn: 'no Face Thinker', labelRu: 'no Face Thinker', labelKk: 'no Face Thinker', url: '/nofacethinker' },
-    { labelEn: 'Courses', labelRu: 'Курсы', labelKk: 'Курстар', url: '/courses/ai-agents-course.html', showLangs: 'ru,kk' },
-    { labelEn: 'Apps', labelRu: 'Приложения', labelKk: 'Қосымшалар', url: '/apps' },
-    { labelEn: 'Games', labelRu: 'Игры', labelKk: 'Ойындар', url: '/games' },
-    { labelEn: 'Shop', labelRu: 'Магазин', labelKk: 'Дүкен', url: '/shop' },
-    { labelEn: 'API', labelRu: 'API', labelKk: 'API', url: '/api' },
+    { labelEn: 'Skills and Minds Hub', labelRu: 'Skills and Minds Hub', labelKk: 'Skills and Minds Hub', url: 'https://skillsminds.justaidyn.com' },
+    { labelEn: 'no Face Thinker', labelRu: 'no Face Thinker', labelKk: 'no Face Thinker', url: 'https://nofacethinker.justaidyn.com' },
+    { labelEn: 'Courses', labelRu: 'Курсы', labelKk: 'Курстар', url: 'https://courses.justaidyn.com', showLangs: 'ru,kk' },
+    { labelEn: 'Apps', labelRu: 'Приложения', labelKk: 'Қосымшалар', url: 'https://apps.justaidyn.com' },
+    { labelEn: 'Games', labelRu: 'Игры', labelKk: 'Ойындар', url: 'https://games.justaidyn.com' },
+    { labelEn: 'Shop', labelRu: 'Магазин', labelKk: 'Дүкен', url: 'https://shop.justaidyn.com' },
+    { labelEn: 'API', labelRu: 'API', labelKk: 'API', url: 'https://api.justaidyn.com' },
 ];
 let SiteService = class SiteService {
     resolveHost(hostname) {
@@ -410,6 +410,7 @@ let SiteService = class SiteService {
             cards: [
                 { title: 'Users', text: 'View registered users and roles.', href: '/admin/users', cta: 'Open' },
                 { title: 'Posts', text: 'Manage Skills and Minds Hub and no Face Thinker posts.', href: '/admin/posts', cta: 'Open' },
+                { title: 'Analytics', text: 'View post traffic, unique visitors, and reading time.', href: '/admin/analytics', cta: 'Open' },
                 { title: 'Apps', text: 'Manage app listings and releases.', href: '/admin/apps', cta: 'Open' },
                 { title: 'Games', text: 'Manage game listings and access.', href: '/admin/games', cta: 'Open' },
                 { title: 'Courses', text: 'Manage course pages, groups, and schedules.', href: '/admin/courses', cta: 'Open' },

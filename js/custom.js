@@ -303,6 +303,26 @@
         `;
       }
 
+      if (currentSection === 'apps') {
+        var path = (window.location.pathname || '/').toLowerCase();
+        if (path !== '/apps' && path !== '/apps/') {
+          return `
+            <li class="nav-item"><a class="nav-link" href="/apps" data-en="Apps" data-ru="Apps" data-kk="Apps">Apps</a></li>
+            <li class="nav-item"><a class="nav-link active" href="#top" data-en="Overview" data-ru="Overview" data-kk="Overview">Overview</a></li>
+            <li class="nav-item"><a class="nav-link" href="#features" data-en="Features" data-ru="Features" data-kk="Features">Features</a></li>
+            <li class="nav-item"><a class="nav-link" href="#pricing" data-en="Pricing" data-ru="Pricing" data-kk="Pricing">Pricing</a></li>
+            <li class="nav-item"><a class="nav-link" href="#contact" data-en="Contact" data-ru="Contact" data-kk="Contact">Contact</a></li>
+          `;
+        }
+
+        return `
+          <li class="nav-item"><a class="nav-link active" href="/apps" data-en="Apps" data-ru="Apps" data-kk="Apps">Apps</a></li>
+          <li class="nav-item"><a class="nav-link" href="/apps/justaidyn-screencam/" data-en="ScreenCam" data-ru="ScreenCam" data-kk="ScreenCam">ScreenCam</a></li>
+          <li class="nav-item"><a class="nav-link" href="#programs" data-en="Programs" data-ru="Programs" data-kk="Programs">Programs</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact" data-en="Contact" data-ru="Contact" data-kk="Contact">Contact</a></li>
+        `;
+      }
+
       return '';
     }
 

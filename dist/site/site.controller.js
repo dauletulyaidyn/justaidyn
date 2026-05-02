@@ -63,7 +63,7 @@ let SiteController = class SiteController {
             return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getPostsHubPage('nofacethinker', posts), req));
         }
         if (site === 'apps') {
-            return this.renderStaticHtmlFile(req, res, (0, path_1.join)(process.cwd(), 'apps', 'index.html'));
+            return res.render('pages/apps-landing', this.withSharedModel(this.getAppsLandingPage(), req));
         }
         if (site === 'shop') {
             return this.renderStaticHtmlFile(req, res, (0, path_1.join)(process.cwd(), 'shop', 'index.html'));
@@ -510,7 +510,7 @@ let SiteController = class SiteController {
         return res.redirect('/courses/ai-agents-course.html');
     }
     appsProject(req, res) {
-        return this.renderStaticHtmlFile(req, res, (0, path_1.join)(process.cwd(), 'apps', 'index.html'));
+        return res.render('pages/apps-landing', this.withSharedModel(this.getAppsLandingPage(), req));
     }
     gamesProject(req) {
         return this.withSharedModel(this.siteService.getComingSoonPage('games'), req);
@@ -812,13 +812,7 @@ let SiteController = class SiteController {
         return res.sendFile(found);
     }
     getDownloadStats() {
-        const countsFile = (0, path_1.join)(process.cwd(), 'data', 'download-counts.json');
-        try {
-            return JSON.parse((0, fs_1.readFileSync)(countsFile, 'utf-8'));
-        }
-        catch {
-            return {};
-        }
+        return this.readDownloadCounts();
     }
     trackDownload(app, res) {
         const countsFile = (0, path_1.join)(process.cwd(), 'data', 'download-counts.json');
@@ -831,7 +825,32 @@ let SiteController = class SiteController {
         }
         return res.redirect(this.appCatalogService.getDownloadUrl(app));
     }
+    getAppsLandingPage() {
+        const counts = this.readDownloadCounts();
+        const apps = this.appCatalogService.listPublished().map((app) => ({
+            ...app,
+            downloadCount: Number(counts[app.slug] || 0),
+            detailUrl: `/apps/${app.slug}`,
+            trackUrl: `/track/download/apps/${app.slug}`,
+        }));
+        const totalDownloads = apps.reduce((sum, app) => sum + app.downloadCount, 0);
+        return {
+            title: 'Apps | JustAidyn',
+            description: 'Download JustAidyn desktop applications and view latest releases.',
+            pageKey: 'apps',
+            view: 'apps-landing',
+            lowerNav: [
+                { labelEn: 'Apps', labelRu: 'Apps', labelKk: 'Apps', url: '/apps', active: true },
+            ],
+            heroTitle: 'JustAidyn Apps',
+            heroText: 'Desktop programs built for recording, productivity, and future JustAidyn tools.',
+            apps,
+            totalDownloads,
+            appCount: apps.length,
+        };
+    }
     getAppDetailPage(app) {
+        const downloadCount = Number(this.readDownloadCounts()[app.slug] || 0);
         return {
             title: `${app.name} | JustAidyn Apps`,
             description: app.shortDescription || app.description,
@@ -844,8 +863,40 @@ let SiteController = class SiteController {
             heroTitle: app.name,
             heroText: app.shortDescription || app.description,
             releaseVersion: app.version,
+            releaseNotes: app.releaseNotes || 'Latest installer is available for download.',
+            downloadCount,
             primaryAction: { label: 'Download latest', url: `/track/download/apps/${app.slug}` },
             secondaryAction: { label: 'All apps', url: '/apps' },
+            features: [
+                {
+                    icon: 'bi-cloud-arrow-down',
+                    title: 'Latest release delivery',
+                    text: 'The download button always points to the current installer published from the JustAidyn admin panel.',
+                },
+                {
+                    icon: 'bi-shield-check',
+                    title: 'Account-based access',
+                    text: 'Products can use JustAidyn sign-in and subscription status checks when access control is required.',
+                },
+                {
+                    icon: 'bi-arrow-repeat',
+                    title: 'Update-ready page',
+                    text: 'Version, release notes, and installer metadata are shown from the app catalog.',
+                },
+            ],
+            pricingTitle: 'Simple access for this JustAidyn program.',
+            pricingText: 'Each product page includes pricing, download, terms, and support sections so customers can evaluate the program before installing it.',
+            planName: 'Product access',
+            price: 'See plan',
+            pricePeriod: 'on checkout',
+            oldPrice: '',
+            pricingNote: 'Pricing and access rules are controlled by the product configuration. Subscription quantity can define simultaneous active sessions for products that require session checks.',
+            included: [
+                'Latest installer download',
+                'Release notes and current version information',
+                'JustAidyn account support',
+                'Subscription and refund terms linked from the page',
+            ],
             sections: [
                 {
                     id: 'about',
@@ -859,6 +910,18 @@ let SiteController = class SiteController {
                 },
             ],
         };
+    }
+    readDownloadCounts() {
+        const countsFile = (0, path_1.join)(process.cwd(), 'data', 'download-counts.json');
+        try {
+            const parsed = JSON.parse((0, fs_1.readFileSync)(countsFile, 'utf-8'));
+            if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed))
+                return {};
+            return Object.fromEntries(Object.entries(parsed).map(([key, value]) => [key, Number(value) || 0]));
+        }
+        catch {
+            return {};
+        }
     }
     withSharedModel(page, req) {
         const host = req?.hostname?.toLowerCase().split(':')[0] || '';
