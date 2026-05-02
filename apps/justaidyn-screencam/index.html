@@ -982,16 +982,14 @@
     }
 
     fetch('/api/stats/downloads').then(r => r.json()).then(data => {
-      const count = data['justaidyn-screencam'];
-      if (count > 0) {
-        document.getElementById('dl-count-val').textContent = count;
-        document.getElementById('dl-count-badge').style.display = 'inline-flex';
-        const pricingCount = document.getElementById('pricing-download-count');
-        const pricingCountVal = document.getElementById('pricing-download-count-val');
-        if (pricingCount && pricingCountVal) {
-          pricingCountVal.textContent = count;
-          pricingCount.style.display = 'inline-flex';
-        }
+      const count = Number(data['justaidyn-screencam'] || 0);
+      document.getElementById('dl-count-val').textContent = count;
+      document.getElementById('dl-count-badge').style.display = 'inline-flex';
+      const pricingCount = document.getElementById('pricing-download-count');
+      const pricingCountVal = document.getElementById('pricing-download-count-val');
+      if (pricingCount && pricingCountVal) {
+        pricingCountVal.textContent = count;
+        pricingCount.style.display = 'inline-flex';
       }
     }).catch(() => {});
 
