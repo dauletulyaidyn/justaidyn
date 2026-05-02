@@ -578,7 +578,8 @@
     .price {
       display: flex;
       align-items: baseline;
-      gap: 7px;
+      flex-wrap: wrap;
+      gap: 7px 12px;
       margin-bottom: 8px;
     }
 
@@ -591,6 +592,27 @@
     .price span {
       color: var(--sc-muted);
       font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .old-price {
+      color: var(--sc-muted);
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-decoration: line-through;
+      text-decoration-thickness: 2px;
+    }
+
+    .launch-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin: 0 0 12px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: rgba(242, 181, 68, 0.14);
+      color: #8a5b00;
+      font-size: 0.82rem;
       font-weight: 700;
     }
 
@@ -985,7 +1007,8 @@
         <aside class="price-card">
           <span class="price-label"><i class="bi bi-star-fill"></i> ScreenCam Monthly</span>
           <h3>Full recording workflow</h3>
-          <div class="price"><strong>$5.90</strong><span>/ month</span></div>
+          <div class="price"><strong>$5.90</strong><span>/ month</span><span class="old-price">$10.90</span></div>
+          <p class="launch-note"><i class="bi bi-tag-fill"></i> Launch discount: first release price. Regular price will be $10.90/month later.</p>
           <p class="trial-note">Includes a 14-day free trial. Subscription status is checked through your JustAidyn account. If you buy more than one quantity, that quantity becomes the number of devices that can use ScreenCam at the same time.</p>
           <div class="price-actions">
             <button class="btn-subscribe subscribe-action" type="button" onclick="openSubscribeCheckout()">
