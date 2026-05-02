@@ -523,6 +523,16 @@ export class SiteController {
     return res.redirect(301, '/terms');
   }
 
+  @Get('/refunds')
+  refunds(@Req() req: Request, @Res() res: Response) {
+    return this.renderStaticHtmlFile(req, res, join(process.cwd(), 'refunds.html'));
+  }
+
+  @Get('/refunds.html')
+  refundsHtml(@Req() req: Request, @Res() res: Response) {
+    return res.redirect(301, '/refunds');
+  }
+
   @Get('/logout')
   async logout(@Req() req: Request, @Res() res: Response) {
     await this.authService.logout(req, res);
