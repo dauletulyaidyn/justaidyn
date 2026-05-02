@@ -754,7 +754,9 @@ strong {
 .language-flags .lang-flag-btn:hover,
 .navbar-top-lang .lang-flag-btn:hover,
 .mobile-lang-selector .lang-flag-btn:hover {
+  background: #ffffff;
   border-color: #14b789;
+  color: #2f376d;
   transform: translateY(-1px);
 }
 
@@ -765,6 +767,14 @@ strong {
   border-color: #14b789;
   color: #ffffff;
   box-shadow: 0 6px 12px rgba(20, 183, 137, 0.3);
+}
+
+.language-flags .lang-flag-btn.active:hover,
+.navbar-top-lang .lang-flag-btn.active:hover,
+.mobile-lang-selector .lang-flag-btn.active:hover {
+  background: #14b789;
+  border-color: #14b789;
+  color: #ffffff;
 }
 
 .navbar-split .language-flags .lang-flag-btn,
