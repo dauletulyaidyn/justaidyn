@@ -1079,14 +1079,15 @@ body.course-page[data-page-key="learning-principles"] {
 
   .course-navbar .course-mobile-langs .lang-flag-btn {
     align-items: center;
-    border-radius: 999px;
+    border-radius: 50%;
     display: inline-flex;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: var(--font-weight-bold);
-    height: 40px;
+    height: 34px;
     justify-content: center;
-    min-width: 40px;
-    padding: 0 10px;
+    min-width: 34px;
+    padding: 0;
+    width: 34px;
   }
 
   .course-navbar .navbar-collapse {
@@ -1251,10 +1252,6 @@ body.course-page[data-page-key="learning-principles"] {
   .course-page .course-requirements-list > li > strong {
     font-size: 17px;
   }
-}
-
-.course-page .lang-flag-btn[data-lang-option="en"] {
-  display: none;
 }
 
 .course-page .course-step-num {
