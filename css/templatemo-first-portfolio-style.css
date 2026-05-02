@@ -725,6 +725,7 @@ strong {
 .lang-flag-btn.active {
   background: #14b789;
   border-color: #14b789;
+  color: #ffffff;
   box-shadow: 0 6px 12px rgba(20, 183, 137, 0.3);
 }
 

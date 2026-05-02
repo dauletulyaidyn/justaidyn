@@ -34,7 +34,17 @@
       <a class="navbar-brand mx-auto mx-lg-0" href="/">JustAidyn</a>
       <div class="collapse navbar-collapse" id="appNav">
         <div class="navbar-split-layout w-100">
-          <div class="navbar-top-contact d-none d-lg-flex"><div></div><div class="navbar-top-tools"><div class="language-selector navbar-top-lang language-flags"></div><div class="navbar-top-auth-links"></div></div></div>
+          <div class="navbar-top-contact d-none d-lg-flex">
+            <div class="navbar-top-contact-left"></div>
+            <div class="navbar-top-tools">
+              <div class="language-selector navbar-top-lang language-flags" role="group" aria-label="Language selector">
+                <button type="button" class="lang-flag-btn" data-lang-option="kk" onclick="changeLanguage('kk')" aria-label="Kazakh" title="Kazakh">KK</button>
+                <button type="button" class="lang-flag-btn" data-lang-option="en" onclick="changeLanguage('en')" aria-label="English" title="English">EN</button>
+                <button type="button" class="lang-flag-btn" data-lang-option="ru" onclick="changeLanguage('ru')" aria-label="Russian" title="Russian">RU</button>
+              </div>
+              <div class="navbar-top-auth-links"></div>
+            </div>
+          </div>
           <ul class="navbar-nav ms-lg-0 nav-row-primary">
             {{#each lowerNav}}
             <li class="nav-item"><a class="nav-link {{#if this.active}}active{{/if}}" href="{{this.url}}">{{this.labelEn}}</a></li>
