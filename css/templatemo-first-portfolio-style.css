@@ -767,6 +767,16 @@ strong {
   box-shadow: 0 6px 12px rgba(20, 183, 137, 0.3);
 }
 
+.navbar-split .language-flags .lang-flag-btn,
+.navbar-mobile-tools .mobile-lang-selector .lang-flag-btn {
+  border-radius: 50%;
+  height: 34px;
+  min-height: 34px;
+  min-width: 34px;
+  padding: 0;
+  width: 34px;
+}
+
 .navbar-split .dropdown-menu {
   z-index: 1200;
 }
@@ -3341,9 +3351,10 @@ h2[data-en="Group formats and pricing"] + .row .group-plan-accent {
     font-size: 12px;
     font-weight: var(--font-weight-bold);
     height: 34px;
+    min-height: 34px;
     min-width: 34px;
-    padding: 0 9px;
-    width: auto;
+    padding: 0;
+    width: 34px;
   }
 
   .navbar .navbar-collapse {
