@@ -915,9 +915,23 @@ export class SiteController {
       throw new NotFoundException();
     }
 
-    // Course HTML files are served via the root coursePageMap (/:file handler)
     if (section === 'courses' && /\.html$/i.test(file)) {
-      return res.redirect(301, `/${file}`);
+      const coursePageMap: Record<string, { title: string; key: string }> = {
+        'ai-agents-course.html': { title: 'JustAidyn Courses | AI Agents Course', key: 'course-home' },
+        'ai-agents-lite-group.html': { title: 'AI Agents Course | Lite Group', key: 'lite-group' },
+        'ai-agents-standard-group.html': { title: 'AI Agents Course | Standard Group', key: 'standard-group' },
+        'ai-agents-standard-plus-group.html': { title: 'AI Agents Course | Standard+ Group', key: 'standard-plus-group' },
+        'ai-agents-vip-group.html': { title: 'AI Agents Course | VIP Group', key: 'vip-group' },
+        'ai-agents-learning-steps.html': { title: 'AI Agents Course | Learning Steps', key: 'learning-steps' },
+        'ai-agents-learning-principles.html': { title: 'AI Agents Course | Learning Principles', key: 'learning-principles' },
+      };
+      const coursePage = coursePageMap[file.replace(/ /g, '+')];
+      if (coursePage) {
+        return res.render(
+          'pages/course-wrapper',
+          this.withSharedModel(this.siteService.getCoursePageModel(coursePage.title, coursePage.key), req),
+        );
+      }
     }
 
     const found = join(root, sectionMap[section], file);
