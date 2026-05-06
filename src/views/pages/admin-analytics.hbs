@@ -14,32 +14,26 @@
     .analytics-page { padding: 150px 0 72px; }
     .analytics-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 26px; }
     .analytics-header h1 { margin: 0; font-size: clamp(1.7rem,3vw,2.5rem); }
-    .analytics-header a { color: #535da1; font-weight: 700; text-decoration: none; }
-    .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; margin-bottom: 26px; }
-    .metric-card, .analytics-card { background: #fff; border: 1px solid rgba(24,35,44,0.1); border-radius: 12px; padding: 20px; }
-    .metric-card span { display: block; color: #7a8691; font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
-    .metric-card strong { color: #18232c; font-size: 1.65rem; line-height: 1; }
-    .analytics-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.8fr); gap: 20px; align-items: start; }
-    .analytics-card h2 { margin: 0 0 16px; font-size: 1.15rem; }
-    .analytics-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
-    .analytics-table th { color: #5e6c79; background: #f5f7fa; padding: 10px 12px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
-    .analytics-table td { padding: 12px; border-top: 1px solid #eef2f6; vertical-align: top; }
-    .analytics-table a { color: #535da1; font-weight: 700; text-decoration: none; }
-    .analytics-table-wrap { overflow-x: auto; }
+    .analytics-header a, .analytics-table a, .hub-card a { color: #535da1; font-weight: 700; text-decoration: none; }
     .analytics-nav { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
     .analytics-nav a { background: #fff; border: 1px solid rgba(83,93,161,0.18); border-radius: 999px; color: #535da1; font-size: 0.86rem; font-weight: 800; padding: 8px 14px; text-decoration: none; }
-    .analytics-nav a:hover { background: #535da1; color: #fff; }
-    .analytics-section-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
-    .analytics-section-title h2 { margin: 0; }
-    .analytics-section-title span { color: #7a8691; font-size: 0.84rem; }
-    .analytics-stack { display: grid; gap: 20px; }
-    .analytics-mini-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 12px; margin-bottom: 16px; }
-    .analytics-mini { background: #f7f9fc; border: 1px solid #edf1f6; border-radius: 8px; padding: 12px; }
-    .analytics-mini span { display:block; color:#7a8691; font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.05em; }
-    .analytics-mini strong { display:block; color:#18232c; font-size:1.25rem; margin-top:4px; }
+    .analytics-nav a.active, .analytics-nav a:hover { background: #535da1; color: #fff; }
+    .metric-grid, .hub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; margin-bottom: 22px; }
+    .metric-card, .analytics-card, .hub-card { background: #fff; border: 1px solid rgba(24,35,44,0.1); border-radius: 12px; padding: 20px; }
+    .metric-card span, .hub-card span { display: block; color: #7a8691; font-size: 0.76rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .metric-card strong, .hub-card strong { color: #18232c; font-size: 1.65rem; line-height: 1; }
+    .hub-card { display: grid; gap: 16px; }
+    .hub-card h2 { margin: 0; font-size: 1.12rem; }
+    .hub-card-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .analytics-card h2 { margin: 0 0 16px; font-size: 1.15rem; }
+    .analytics-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(280px, .8fr); gap: 20px; align-items: start; }
+    .analytics-table-wrap { overflow-x: auto; }
+    .analytics-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    .analytics-table th { color: #5e6c79; background: #f5f7fa; padding: 10px 12px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+    .analytics-table td { padding: 12px; border-top: 1px solid #eef2f6; vertical-align: top; }
     .ip-list { display: grid; gap: 6px; min-width: 190px; }
     .ip-row { display: grid; gap: 2px; }
-    .ip-row code { color: #18232c; background: #eef3f8; border-radius: 6px; padding: 2px 6px; font-size: .78rem; }
+    .ip-row code, .analytics-table code { color: #18232c; background: #eef3f8; border-radius: 6px; padding: 2px 6px; font-size: .78rem; }
     .ip-row span { color: #7a8691; font-size: .72rem; }
     .daily-list { display: grid; gap: 12px; }
     .daily-item { display: grid; grid-template-columns: 92px 1fr; gap: 12px; align-items: center; }
@@ -56,48 +50,52 @@
       <div class="analytics-header">
         <div>
           <a href="/admin"><i class="bi bi-arrow-left"></i> Admin</a>
-          <h1>Analytics</h1>
+          <h1>{{analytics.current.title}}</h1>
+          <p class="muted mb-0">{{analytics.current.description}}</p>
         </div>
         <a href="/admin/posts">Posts</a>
       </div>
 
       <nav class="analytics-nav" aria-label="Analytics sections">
-        <a href="#skillsminds">Skills and Minds Hub</a>
-        <a href="#nofacethinker">no Face Thinker</a>
-        <a href="#games">Games</a>
-        <a href="#apps">Apps</a>
-        <a href="#courses">Courses</a>
-        <a href="#recent-views">Recent views</a>
+        {{#each analytics.nav}}
+        <a class="{{#if this.active}}active{{/if}}" href="{{this.href}}">{{this.label}}</a>
+        {{/each}}
       </nav>
 
-      <section class="metric-grid" aria-label="Totals">
-        <article class="metric-card"><span>Post views</span><strong>{{analytics.totals.views}}</strong></article>
-        <article class="metric-card"><span>Post visitors</span><strong>{{analytics.totals.uniqueVisitors}}</strong></article>
-        <article class="metric-card"><span>Total reading time</span><strong>{{analytics.totals.totalDuration}}</strong></article>
-        <article class="metric-card"><span>Apps views</span><strong>{{analytics.sections.apps.totals.views}}</strong></article>
-        <article class="metric-card"><span>App downloads</span><strong>{{analytics.sections.apps.totals.downloads}}</strong></article>
-        <article class="metric-card"><span>Course views</span><strong>{{analytics.sections.courses.totals.views}}</strong></article>
-        <article class="metric-card"><span>Game views</span><strong>{{analytics.sections.games.totals.views}}</strong></article>
+      {{#if analytics.current.isHub}}
+      <section class="hub-grid" aria-label="Analytics pages">
+        {{#each analytics.current.cards}}
+        <article class="hub-card">
+          <div>
+            <h2>{{this.title}}</h2>
+            <a href="{{this.href}}">Open analytics <i class="bi bi-arrow-right"></i></a>
+          </div>
+          <div class="hub-card-metrics">
+            <div><span>{{this.primaryLabel}}</span><strong>{{this.primaryValue}}</strong></div>
+            <div><span>{{this.secondaryLabel}}</span><strong>{{this.secondaryValue}}</strong></div>
+          </div>
+        </article>
+        {{/each}}
+      </section>
+      {{/if}}
+
+      {{#if analytics.current.isPosts}}
+      <section class="metric-grid" aria-label="Post totals">
+        <article class="metric-card"><span>Posts</span><strong>{{analytics.current.totals.posts}}</strong></article>
+        <article class="metric-card"><span>Views</span><strong>{{analytics.current.totals.views}}</strong></article>
+        <article class="metric-card"><span>Unique visitors</span><strong>{{analytics.current.totals.uniqueVisitors}}</strong></article>
       </section>
 
-      <div class="analytics-stack">
-        <section class="analytics-card" id="skillsminds">
-          <div class="analytics-section-title">
-            <h2>Skills and Minds Hub</h2>
-            <span>Post analytics only for Skills and Minds Hub</span>
-          </div>
-          <div class="analytics-mini-grid">
-            <div class="analytics-mini"><span>Posts</span><strong>{{analytics.sections.skillsminds.totals.posts}}</strong></div>
-            <div class="analytics-mini"><span>Views</span><strong>{{analytics.sections.skillsminds.totals.views}}</strong></div>
-            <div class="analytics-mini"><span>Unique visitors</span><strong>{{analytics.sections.skillsminds.totals.uniqueVisitors}}</strong></div>
-          </div>
+      <section class="analytics-grid">
+        <article class="analytics-card">
+          <h2>Posts</h2>
           <div class="analytics-table-wrap">
             <table class="analytics-table">
               <thead>
                 <tr><th>Post</th><th>Views</th><th>Unique</th><th>Visitor IPs</th><th>Total time</th><th>Average</th><th>Last seen</th></tr>
               </thead>
               <tbody>
-                {{#each analytics.sections.skillsminds.posts}}
+                {{#each analytics.current.posts}}
                 <tr>
                   <td><a href="{{this.url}}">{{this.title}}</a></td>
                   <td>{{this.views}}</td>
@@ -116,251 +114,164 @@
                   <td class="muted">{{this.lastSeenAt}}</td>
                 </tr>
                 {{else}}
-                <tr><td colspan="7" class="muted">No Skills and Minds Hub views yet.</td></tr>
+                <tr><td colspan="7" class="muted">No post views yet.</td></tr>
                 {{/each}}
               </tbody>
             </table>
           </div>
-        </section>
+        </article>
 
-        <section class="analytics-card" id="nofacethinker">
-          <div class="analytics-section-title">
-            <h2>no Face Thinker</h2>
-            <span>Separate subscriber-post analytics</span>
-          </div>
-          <div class="analytics-mini-grid">
-            <div class="analytics-mini"><span>Posts</span><strong>{{analytics.sections.nofacethinker.totals.posts}}</strong></div>
-            <div class="analytics-mini"><span>Views</span><strong>{{analytics.sections.nofacethinker.totals.views}}</strong></div>
-            <div class="analytics-mini"><span>Unique visitors</span><strong>{{analytics.sections.nofacethinker.totals.uniqueVisitors}}</strong></div>
-          </div>
-          <div class="analytics-table-wrap">
-            <table class="analytics-table">
-              <thead>
-                <tr><th>Post</th><th>Views</th><th>Unique</th><th>Visitor IPs</th><th>Total time</th><th>Average</th><th>Last seen</th></tr>
-              </thead>
-              <tbody>
-                {{#each analytics.sections.nofacethinker.posts}}
-                <tr>
-                  <td><a href="{{this.url}}">{{this.title}}</a></td>
-                  <td>{{this.views}}</td>
-                  <td>{{this.uniqueVisitors}}</td>
-                  <td>
-                    <div class="ip-list">
-                      {{#each this.recentIps}}
-                      <div class="ip-row"><code>{{this.ip}}</code><span>{{this.views}} views {{#if this.userEmail}}| {{this.userEmail}}{{/if}}</span></div>
-                      {{else}}
-                      <span class="muted">No IP yet</span>
-                      {{/each}}
-                    </div>
-                  </td>
-                  <td>{{this.totalDuration}}</td>
-                  <td>{{this.averageDuration}}</td>
-                  <td class="muted">{{this.lastSeenAt}}</td>
-                </tr>
-                {{else}}
-                <tr><td colspan="7" class="muted">No no Face Thinker views yet.</td></tr>
-                {{/each}}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="analytics-card" id="games">
-          <div class="analytics-section-title">
-            <h2>Games</h2>
-            <span>Separate game page analytics</span>
-          </div>
-          <div class="analytics-mini-grid">
-            <div class="analytics-mini"><span>Game pages</span><strong>{{analytics.sections.games.items.length}}</strong></div>
-            <div class="analytics-mini"><span>Views</span><strong>{{analytics.sections.games.totals.views}}</strong></div>
-            <div class="analytics-mini"><span>Unique visitors</span><strong>{{analytics.sections.games.totals.uniqueVisitors}}</strong></div>
-          </div>
-          <div class="analytics-table-wrap">
-            <table class="analytics-table">
-              <thead><tr><th>Game</th><th>Views</th><th>Unique</th><th>Visitor IPs</th><th>Last seen</th></tr></thead>
-              <tbody>
-                {{#each analytics.sections.games.items}}
-                <tr>
-                  <td><a href="{{this.url}}">{{this.title}}</a></td>
-                  <td>{{this.views}}</td>
-                  <td>{{this.uniqueVisitors}}</td>
-                  <td>
-                    <div class="ip-list">
-                      {{#each this.recentIps}}
-                      <div class="ip-row"><code>{{this.ip}}</code><span>{{this.views}} views {{#if this.userEmail}}| {{this.userEmail}}{{/if}}</span></div>
-                      {{else}}
-                      <span class="muted">No IP yet</span>
-                      {{/each}}
-                    </div>
-                  </td>
-                  <td class="muted">{{this.lastSeenAt}}</td>
-                </tr>
-                {{else}}
-                <tr><td colspan="5" class="muted">No game views yet.</td></tr>
-                {{/each}}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="analytics-card" id="apps">
-          <div class="analytics-section-title">
-            <h2>Apps</h2>
-            <span>Each software has its own views, downloads, and IP totals</span>
-          </div>
-          <div class="analytics-mini-grid">
-            <div class="analytics-mini"><span>App views</span><strong>{{analytics.sections.apps.totals.views}}</strong></div>
-            <div class="analytics-mini"><span>Downloads</span><strong>{{analytics.sections.apps.totals.downloads}}</strong></div>
-            <div class="analytics-mini"><span>Download IPs</span><strong>{{analytics.sections.apps.totals.uniqueIps}}</strong></div>
-          </div>
-          <div class="analytics-table-wrap">
-            <table class="analytics-table">
-              <thead><tr><th>Software</th><th>Views</th><th>Visitor IPs</th><th>Downloads</th><th>Download IPs</th><th>Last view</th><th>Last download</th></tr></thead>
-              <tbody>
-                {{#each analytics.sections.apps.items}}
-                <tr>
-                  <td><a href="{{this.url}}">{{this.title}}</a><div class="muted">{{this.appSlug}}</div></td>
-                  <td>{{this.views}}</td>
-                  <td>
-                    <div class="ip-list">
-                      {{#each this.recentVisitorIps}}
-                      <div class="ip-row"><code>{{this.ip}}</code><span>{{this.views}} views {{#if this.userEmail}}| {{this.userEmail}}{{/if}}</span></div>
-                      {{else}}
-                      <span class="muted">No visitor IP yet</span>
-                      {{/each}}
-                    </div>
-                  </td>
-                  <td>{{this.downloads}}</td>
-                  <td>
-                    <div class="ip-list">
-                      {{#each this.recentDownloadIps}}
-                      <div class="ip-row"><code>{{this.ip}}</code><span>{{this.views}} downloads {{#if this.userEmail}}| {{this.userEmail}}{{/if}}</span></div>
-                      {{else}}
-                      <span class="muted">No download IP yet</span>
-                      {{/each}}
-                    </div>
-                  </td>
-                  <td class="muted">{{this.lastSeenAt}}</td>
-                  <td class="muted">{{this.lastDownloadedAt}}</td>
-                </tr>
-                {{else}}
-                <tr><td colspan="7" class="muted">No app analytics yet. Views start after this deploy; downloads are recorded only through /track/download/apps/:app.</td></tr>
-                {{/each}}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="analytics-card" id="courses">
-          <div class="analytics-section-title">
-            <h2>Courses</h2>
-            <span>Each course page has separate analytics</span>
-          </div>
-          <div class="analytics-mini-grid">
-            <div class="analytics-mini"><span>Course pages</span><strong>{{analytics.sections.courses.items.length}}</strong></div>
-            <div class="analytics-mini"><span>Views</span><strong>{{analytics.sections.courses.totals.views}}</strong></div>
-            <div class="analytics-mini"><span>Unique visitors</span><strong>{{analytics.sections.courses.totals.uniqueVisitors}}</strong></div>
-          </div>
-          <div class="analytics-table-wrap">
-            <table class="analytics-table">
-              <thead><tr><th>Course</th><th>Views</th><th>Unique</th><th>Visitor IPs</th><th>Last seen</th></tr></thead>
-              <tbody>
-                {{#each analytics.sections.courses.items}}
-                <tr>
-                  <td><a href="{{this.url}}">{{this.title}}</a><div class="muted">{{this.slug}}</div></td>
-                  <td>{{this.views}}</td>
-                  <td>{{this.uniqueVisitors}}</td>
-                  <td>
-                    <div class="ip-list">
-                      {{#each this.recentIps}}
-                      <div class="ip-row"><code>{{this.ip}}</code><span>{{this.views}} views {{#if this.userEmail}}| {{this.userEmail}}{{/if}}</span></div>
-                      {{else}}
-                      <span class="muted">No IP yet</span>
-                      {{/each}}
-                    </div>
-                  </td>
-                  <td class="muted">{{this.lastSeenAt}}</td>
-                </tr>
-                {{else}}
-                <tr><td colspan="5" class="muted">No course views yet.</td></tr>
-                {{/each}}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="analytics-card" id="download-events">
-          <div class="analytics-section-title">
-            <h2>Recent app download IPs</h2>
-            <span>Latest 50 download events</span>
-          </div>
-          <div class="analytics-table-wrap">
-            <table class="analytics-table">
-              <thead>
-                <tr><th>App</th><th>IP</th><th>User</th><th>Referrer</th><th>User agent</th><th>Downloaded</th></tr>
-              </thead>
-              <tbody>
-                {{#each analytics.downloads.recent}}
-                <tr>
-                  <td>{{this.appSlug}}</td>
-                  <td>{{this.ipAddress}}</td>
-                  <td class="muted">{{this.userEmail}}</td>
-                  <td class="muted">{{this.referrer}}</td>
-                  <td class="muted">{{this.userAgent}}</td>
-                  <td class="muted">{{this.downloadedAt}}</td>
-                </tr>
-                {{else}}
-                <tr><td colspan="6" class="muted">No recent download events yet.</td></tr>
-                {{/each}}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="analytics-grid" id="recent-views">
-          <article class="analytics-card">
-            <h2>Recent post views</h2>
-            <div class="analytics-table-wrap">
-              <table class="analytics-table">
-                <thead>
-                  <tr><th>Post</th><th>Visitor</th><th>IP</th><th>User</th><th>Duration</th><th>Started</th></tr>
-                </thead>
-                <tbody>
-                  {{#each analytics.recentViews}}
-                  <tr>
-                    <td><a href="{{this.url}}">{{this.title}}</a></td>
-                    <td>{{this.visitorId}}</td>
-                    <td><code>{{this.ipAddress}}</code></td>
-                    <td class="muted">{{this.userEmail}}</td>
-                    <td>{{this.duration}}</td>
-                    <td class="muted">{{this.startedAt}}</td>
-                  </tr>
-                  {{else}}
-                  <tr><td colspan="6" class="muted">No recent views yet.</td></tr>
-                  {{/each}}
-                </tbody>
-              </table>
-            </div>
-          </article>
-
-          <aside class="analytics-card">
-            <h2>Last 30 days</h2>
-            <div class="daily-list">
-              {{#each analytics.daily}}
-              <div class="daily-item">
-                <strong>{{this.date}}</strong>
-                <div>
-                  <div class="daily-bar"><span style="width: {{this.views}}%; max-width: 100%;"></span></div>
-                  <div class="muted">{{this.views}} post views, {{this.uniqueVisitors}} unique, {{this.totalDuration}}</div>
-                </div>
+        <aside class="analytics-card">
+          <h2>Last 30 days</h2>
+          <div class="daily-list">
+            {{#each analytics.current.daily}}
+            <div class="daily-item">
+              <strong>{{this.date}}</strong>
+              <div>
+                <div class="daily-bar"><span style="width: {{this.views}}%; max-width: 100%;"></span></div>
+                <div class="muted">{{this.views}} post views, {{this.uniqueVisitors}} unique, {{this.totalDuration}}</div>
               </div>
-              {{else}}
-              <p class="muted">No daily post analytics yet.</p>
-              {{/each}}
             </div>
-          </aside>
-        </section>
-      </div>
+            {{else}}
+            <p class="muted">No daily post analytics yet.</p>
+            {{/each}}
+          </div>
+        </aside>
+      </section>
+
+      <section class="analytics-card mt-3">
+        <h2>Recent post views</h2>
+        <div class="analytics-table-wrap">
+          <table class="analytics-table">
+            <thead><tr><th>Post</th><th>Visitor</th><th>IP</th><th>User</th><th>Duration</th><th>Started</th></tr></thead>
+            <tbody>
+              {{#each analytics.current.recentViews}}
+              <tr>
+                <td><a href="{{this.url}}">{{this.title}}</a></td>
+                <td>{{this.visitorId}}</td>
+                <td><code>{{this.ipAddress}}</code></td>
+                <td class="muted">{{this.userEmail}}</td>
+                <td>{{this.duration}}</td>
+                <td class="muted">{{this.startedAt}}</td>
+              </tr>
+              {{else}}
+              <tr><td colspan="6" class="muted">No recent views yet.</td></tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      {{/if}}
+
+      {{#if analytics.current.isPages}}
+      <section class="metric-grid" aria-label="Page totals">
+        <article class="metric-card"><span>Pages</span><strong>{{analytics.current.items.length}}</strong></article>
+        <article class="metric-card"><span>Views</span><strong>{{analytics.current.totals.views}}</strong></article>
+        <article class="metric-card"><span>Unique visitors</span><strong>{{analytics.current.totals.uniqueVisitors}}</strong></article>
+      </section>
+
+      <section class="analytics-card">
+        <h2>{{analytics.current.title}}</h2>
+        <div class="analytics-table-wrap">
+          <table class="analytics-table">
+            <thead><tr><th>{{analytics.current.itemLabel}}</th><th>Views</th><th>Unique</th><th>Visitor IPs</th><th>Last seen</th></tr></thead>
+            <tbody>
+              {{#each analytics.current.items}}
+              <tr>
+                <td><a href="{{this.url}}">{{this.title}}</a><div class="muted">{{this.slug}}</div></td>
+                <td>{{this.views}}</td>
+                <td>{{this.uniqueVisitors}}</td>
+                <td>
+                  <div class="ip-list">
+                    {{#each this.recentIps}}
+                    <div class="ip-row"><code>{{this.ip}}</code><span>{{this.views}} views {{#if this.userEmail}}| {{this.userEmail}}{{/if}}</span></div>
+                    {{else}}
+                    <span class="muted">No IP yet</span>
+                    {{/each}}
+                  </div>
+                </td>
+                <td class="muted">{{this.lastSeenAt}}</td>
+              </tr>
+              {{else}}
+              <tr><td colspan="5" class="muted">{{analytics.current.emptyText}}</td></tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      {{/if}}
+
+      {{#if analytics.current.isApps}}
+      <section class="metric-grid" aria-label="App totals">
+        <article class="metric-card"><span>App views</span><strong>{{analytics.current.totals.views}}</strong></article>
+        <article class="metric-card"><span>Unique visitors</span><strong>{{analytics.current.totals.uniqueVisitors}}</strong></article>
+        <article class="metric-card"><span>Downloads</span><strong>{{analytics.current.totals.downloads}}</strong></article>
+        <article class="metric-card"><span>Download IPs</span><strong>{{analytics.current.totals.uniqueIps}}</strong></article>
+      </section>
+
+      <section class="analytics-card">
+        <h2>Software</h2>
+        <div class="analytics-table-wrap">
+          <table class="analytics-table">
+            <thead><tr><th>Software</th><th>Views</th><th>Visitor IPs</th><th>Downloads</th><th>Download IPs</th><th>Last view</th><th>Last download</th></tr></thead>
+            <tbody>
+              {{#each analytics.current.items}}
+              <tr>
+                <td><a href="{{this.url}}">{{this.title}}</a><div class="muted">{{this.appSlug}}</div></td>
+                <td>{{this.views}}</td>
+                <td>
+                  <div class="ip-list">
+                    {{#each this.recentVisitorIps}}
+                    <div class="ip-row"><code>{{this.ip}}</code><span>{{this.views}} views {{#if this.userEmail}}| {{this.userEmail}}{{/if}}</span></div>
+                    {{else}}
+                    <span class="muted">No visitor IP yet</span>
+                    {{/each}}
+                  </div>
+                </td>
+                <td>{{this.downloads}}</td>
+                <td>
+                  <div class="ip-list">
+                    {{#each this.recentDownloadIps}}
+                    <div class="ip-row"><code>{{this.ip}}</code><span>{{this.views}} downloads {{#if this.userEmail}}| {{this.userEmail}}{{/if}}</span></div>
+                    {{else}}
+                    <span class="muted">No download IP yet</span>
+                    {{/each}}
+                  </div>
+                </td>
+                <td class="muted">{{this.lastSeenAt}}</td>
+                <td class="muted">{{this.lastDownloadedAt}}</td>
+              </tr>
+              {{else}}
+              <tr><td colspan="7" class="muted">No app analytics yet.</td></tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="analytics-card mt-3">
+        <h2>Recent download IPs</h2>
+        <div class="analytics-table-wrap">
+          <table class="analytics-table">
+            <thead><tr><th>App</th><th>IP</th><th>User</th><th>Referrer</th><th>User agent</th><th>Downloaded</th></tr></thead>
+            <tbody>
+              {{#each analytics.current.recentDownloads}}
+              <tr>
+                <td>{{this.appSlug}}</td>
+                <td><code>{{this.ipAddress}}</code></td>
+                <td class="muted">{{this.userEmail}}</td>
+                <td class="muted">{{this.referrer}}</td>
+                <td class="muted">{{this.userAgent}}</td>
+                <td class="muted">{{this.downloadedAt}}</td>
+              </tr>
+              {{else}}
+              <tr><td colspan="6" class="muted">No recent download events yet.</td></tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      {{/if}}
     </div>
   </main>
   {{> footer}}

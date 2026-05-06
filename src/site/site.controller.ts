@@ -21,6 +21,8 @@ const installerUpload = {
   limits: { fileSize: 1024 * 1024 * 1024 },
 };
 
+type AdminAnalyticsSection = 'hub' | 'skillsminds' | 'nofacethinker' | 'games' | 'apps' | 'courses';
+
 @Controller()
 export class SiteController {
   constructor(
@@ -159,15 +161,15 @@ export class SiteController {
   @Get('/admin/analytics')
   async adminAnalytics(@Req() req: Request, @Res() res: Response) {
     if (!this.tryRequireSuperadmin(req, res)) return;
-    const analytics = await this.analyticsService.getDashboard();
-    const page = {
-      ...this.siteService.getAdminSectionPage('Posts'),
-      title: 'Analytics | Admin | JustAidyn',
-      pageKey: 'admin-analytics',
-      heroTitle: 'Analytics',
-      heroText: 'Post views, reading time, and unique visitor analytics.',
-    };
-    return res.render('pages/admin-analytics', { ...this.withSharedModel(page, req), analytics });
+    return this.renderAdminAnalytics(req, res, 'hub');
+  }
+
+  @Get('/admin/analytics/:section')
+  async adminAnalyticsSection(@Req() req: Request, @Res() res: Response, @Param('section') section: string) {
+    if (!this.tryRequireSuperadmin(req, res)) return;
+    const allowed = ['skillsminds', 'nofacethinker', 'games', 'apps', 'courses'];
+    if (!allowed.includes(section)) throw new NotFoundException();
+    return this.renderAdminAnalytics(req, res, section as AdminAnalyticsSection);
   }
 
   @Get('/admin/posts/new')
@@ -1102,6 +1104,145 @@ export class SiteController {
     } catch {
       // Analytics should never block public pages.
     }
+  }
+
+  private async renderAdminAnalytics(req: Request, res: Response, section: AdminAnalyticsSection) {
+    const dashboard = await this.analyticsService.getDashboard();
+    const nav = [
+      { label: 'Overview', href: '/admin/analytics', active: section === 'hub' },
+      { label: 'Skills and Minds Hub', href: '/admin/analytics/skillsminds', active: section === 'skillsminds' },
+      { label: 'no Face Thinker', href: '/admin/analytics/nofacethinker', active: section === 'nofacethinker' },
+      { label: 'Games', href: '/admin/analytics/games', active: section === 'games' },
+      { label: 'Apps', href: '/admin/analytics/apps', active: section === 'apps' },
+      { label: 'Courses', href: '/admin/analytics/courses', active: section === 'courses' },
+    ];
+    const sections = dashboard.sections;
+    const current = this.buildAdminAnalyticsSection(section, dashboard, sections);
+    const page = {
+      ...this.siteService.getAdminSectionPage('Posts'),
+      title: `${current.title} | Analytics | Admin | JustAidyn`,
+      pageKey: 'admin-analytics',
+      heroTitle: current.title,
+      heroText: current.description,
+    };
+    return res.render('pages/admin-analytics', {
+      ...this.withSharedModel(page, req),
+      analytics: {
+        ...dashboard,
+        nav,
+        current,
+      },
+    });
+  }
+
+  private buildAdminAnalyticsSection(section: AdminAnalyticsSection, dashboard: any, sections: any) {
+    if (section === 'skillsminds') {
+      return {
+        type: 'posts',
+        isPosts: true,
+        title: 'Skills and Minds Hub',
+        description: 'Separate post analytics for Skills and Minds Hub.',
+        totals: sections.skillsminds.totals,
+        posts: sections.skillsminds.posts,
+        recentViews: dashboard.recentViews.filter((view: { url: string }) => view.url.startsWith('/skillsminds/')),
+        daily: dashboard.daily,
+      };
+    }
+    if (section === 'nofacethinker') {
+      return {
+        type: 'posts',
+        isPosts: true,
+        title: 'no Face Thinker',
+        description: 'Separate post analytics for no Face Thinker.',
+        totals: sections.nofacethinker.totals,
+        posts: sections.nofacethinker.posts,
+        recentViews: dashboard.recentViews.filter((view: { url: string }) => view.url.startsWith('/nofacethinker/')),
+        daily: dashboard.daily,
+      };
+    }
+    if (section === 'games') {
+      return {
+        type: 'pages',
+        isPages: true,
+        title: 'Games',
+        description: 'Separate page analytics for games.',
+        itemLabel: 'Game',
+        emptyText: 'No game views yet.',
+        totals: sections.games.totals,
+        items: sections.games.items,
+      };
+    }
+    if (section === 'apps') {
+      return {
+        type: 'apps',
+        isApps: true,
+        title: 'Apps',
+        description: 'Software analytics with views, unique visitors, downloads, and IPs per app.',
+        totals: sections.apps.totals,
+        items: sections.apps.items,
+        recentDownloads: dashboard.downloads.recent,
+      };
+    }
+    if (section === 'courses') {
+      return {
+        type: 'pages',
+        isPages: true,
+        title: 'Courses',
+        description: 'Separate page analytics for every course page.',
+        itemLabel: 'Course',
+        emptyText: 'No course views yet.',
+        totals: sections.courses.totals,
+        items: sections.courses.items,
+      };
+    }
+    return {
+      type: 'hub',
+      isHub: true,
+      title: 'Analytics',
+      description: 'Choose a separate analytics page for each JustAidyn area.',
+      cards: [
+        {
+          title: 'Skills and Minds Hub',
+          href: '/admin/analytics/skillsminds',
+          primaryLabel: 'Views',
+          primaryValue: sections.skillsminds.totals.views,
+          secondaryLabel: 'Posts',
+          secondaryValue: sections.skillsminds.totals.posts,
+        },
+        {
+          title: 'no Face Thinker',
+          href: '/admin/analytics/nofacethinker',
+          primaryLabel: 'Views',
+          primaryValue: sections.nofacethinker.totals.views,
+          secondaryLabel: 'Posts',
+          secondaryValue: sections.nofacethinker.totals.posts,
+        },
+        {
+          title: 'Games',
+          href: '/admin/analytics/games',
+          primaryLabel: 'Views',
+          primaryValue: sections.games.totals.views,
+          secondaryLabel: 'Pages',
+          secondaryValue: sections.games.items.length,
+        },
+        {
+          title: 'Apps',
+          href: '/admin/analytics/apps',
+          primaryLabel: 'Downloads',
+          primaryValue: sections.apps.totals.downloads,
+          secondaryLabel: 'Views',
+          secondaryValue: sections.apps.totals.views,
+        },
+        {
+          title: 'Courses',
+          href: '/admin/analytics/courses',
+          primaryLabel: 'Views',
+          primaryValue: sections.courses.totals.views,
+          secondaryLabel: 'Pages',
+          secondaryValue: sections.courses.items.length,
+        },
+      ],
+    };
   }
 
   private getAppDetailPage(app: { name: string; shortDescription: string; description: string; slug: string; version: string; releaseNotes: string; downloadUrl: string; updatedAt: string }): PageModel {
