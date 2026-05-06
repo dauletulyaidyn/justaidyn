@@ -24,7 +24,8 @@
     .metric-card strong, .hub-card strong { color: #18232c; font-size: 1.65rem; line-height: 1; }
     .hub-card { display: grid; gap: 16px; }
     .hub-card h2 { margin: 0; font-size: 1.12rem; }
-    .hub-card-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .hub-card p { margin: 0; color: #7a8691; }
+    .hub-card-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
     .analytics-card h2 { margin: 0 0 16px; font-size: 1.15rem; }
     .analytics-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(280px, .8fr); gap: 20px; align-items: start; }
     .analytics-table-wrap { overflow-x: auto; }
@@ -68,11 +69,13 @@
         <article class="hub-card">
           <div>
             <h2>{{this.title}}</h2>
+            <p>{{this.description}}</p>
             <a href="{{this.href}}">Open analytics <i class="bi bi-arrow-right"></i></a>
           </div>
           <div class="hub-card-metrics">
-            <div><span>{{this.primaryLabel}}</span><strong>{{this.primaryValue}}</strong></div>
-            <div><span>{{this.secondaryLabel}}</span><strong>{{this.secondaryValue}}</strong></div>
+            {{#each this.metrics}}
+            <div><span>{{this.label}}</span><strong>{{this.value}}</strong></div>
+            {{/each}}
           </div>
         </article>
         {{/each}}

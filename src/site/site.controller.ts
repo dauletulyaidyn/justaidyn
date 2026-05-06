@@ -161,7 +161,7 @@ export class SiteController {
   @Get('/admin/analytics')
   async adminAnalytics(@Req() req: Request, @Res() res: Response) {
     if (!this.tryRequireSuperadmin(req, res)) return;
-    return res.redirect('/admin/analytics/skillsminds');
+    return this.renderAdminAnalytics(req, res, 'hub');
   }
 
   @Get('/admin/analytics/:section')
@@ -1110,6 +1110,7 @@ export class SiteController {
     const dashboard = await this.analyticsService.getDashboard();
     res.setHeader('Cache-Control', 'no-store, max-age=0');
     const nav = [
+      { label: 'Overview', href: '/admin/analytics', active: section === 'hub' },
       { label: 'Skills and Minds Hub', href: '/admin/analytics/skillsminds', active: section === 'skillsminds' },
       { label: 'no Face Thinker', href: '/admin/analytics/nofacethinker', active: section === 'nofacethinker' },
       { label: 'Games', href: '/admin/analytics/games', active: section === 'games' },
@@ -1204,42 +1205,52 @@ export class SiteController {
         {
           title: 'Skills and Minds Hub',
           href: '/admin/analytics/skillsminds',
-          primaryLabel: 'Views',
-          primaryValue: sections.skillsminds.totals.views,
-          secondaryLabel: 'Posts',
-          secondaryValue: sections.skillsminds.totals.posts,
+          description: 'Separate post analytics.',
+          metrics: [
+            { label: 'Views', value: sections.skillsminds.totals.views },
+            { label: 'Unique visitors', value: sections.skillsminds.totals.uniqueVisitors },
+            { label: 'Posts', value: sections.skillsminds.totals.posts },
+          ],
         },
         {
           title: 'no Face Thinker',
           href: '/admin/analytics/nofacethinker',
-          primaryLabel: 'Views',
-          primaryValue: sections.nofacethinker.totals.views,
-          secondaryLabel: 'Posts',
-          secondaryValue: sections.nofacethinker.totals.posts,
+          description: 'Separate post analytics.',
+          metrics: [
+            { label: 'Views', value: sections.nofacethinker.totals.views },
+            { label: 'Unique visitors', value: sections.nofacethinker.totals.uniqueVisitors },
+            { label: 'Posts', value: sections.nofacethinker.totals.posts },
+          ],
         },
         {
           title: 'Games',
           href: '/admin/analytics/games',
-          primaryLabel: 'Views',
-          primaryValue: sections.games.totals.views,
-          secondaryLabel: 'Pages',
-          secondaryValue: sections.games.items.length,
+          description: 'Separate page analytics.',
+          metrics: [
+            { label: 'Views', value: sections.games.totals.views },
+            { label: 'Unique visitors', value: sections.games.totals.uniqueVisitors },
+            { label: 'Pages', value: sections.games.items.length },
+          ],
         },
         {
           title: 'Apps',
           href: '/admin/analytics/apps',
-          primaryLabel: 'Downloads',
-          primaryValue: sections.apps.totals.downloads,
-          secondaryLabel: 'Views',
-          secondaryValue: sections.apps.totals.views,
+          description: 'Analytics per software.',
+          metrics: [
+            { label: 'Views', value: sections.apps.totals.views },
+            { label: 'Downloads', value: sections.apps.totals.downloads },
+            { label: 'Unique IPs', value: sections.apps.totals.uniqueIps },
+          ],
         },
         {
           title: 'Courses',
           href: '/admin/analytics/courses',
-          primaryLabel: 'Views',
-          primaryValue: sections.courses.totals.views,
-          secondaryLabel: 'Pages',
-          secondaryValue: sections.courses.items.length,
+          description: 'Separate analytics per course page.',
+          metrics: [
+            { label: 'Views', value: sections.courses.totals.views },
+            { label: 'Unique visitors', value: sections.courses.totals.uniqueVisitors },
+            { label: 'Pages', value: sections.courses.items.length },
+          ],
         },
       ],
     };
