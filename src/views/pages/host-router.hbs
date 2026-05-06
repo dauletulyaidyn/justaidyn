@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{title}}</title>
     <meta name="description" content="{{description}}">
+    {{#if noIndex}}<meta name="robots" content="noindex,follow">{{else}}<meta name="robots" content="index,follow,max-image-preview:large">{{/if}}
+    {{#if canonicalUrl}}<link rel="canonical" href="{{canonicalUrl}}">{{/if}}
     <link rel="icon" type="image/png" href="/images/aidyn-avatar.jpg">
     <link rel="shortcut icon" type="image/png" href="/images/aidyn-avatar.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">

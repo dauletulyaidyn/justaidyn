@@ -2,9 +2,6 @@ User-agent: *
 Allow: /
 
 Disallow: /admin
-Disallow: /profile
-Disallow: /login
-Disallow: /logout
 Disallow: /auth/
 Disallow: /api/
 

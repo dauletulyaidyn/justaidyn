@@ -933,15 +933,37 @@ let SiteController = class SiteController {
         const host = req?.hostname?.toLowerCase().split(':')[0] || '';
         const isLocalIp = host === 'localhost' || host === '127.0.0.1';
         const isLocalDomain = host.endsWith('.justaidyn.local');
+        const noIndexPageKeys = new Set([
+            'login',
+            'register',
+            'profile',
+            'profile-edit',
+            'admin',
+            'admin-login',
+            'admin-users',
+            'admin-section',
+            'admin-reset-request',
+            'admin-reset-set',
+            'admin-posts',
+            'admin-post-form',
+            'admin-analytics',
+            'admin-apps',
+        ]);
         const mainSiteUrl = isLocalIp ? 'http://localhost:3000'
             : isLocalDomain ? 'http://justaidyn.local:3000'
                 : 'https://justaidyn.com';
+        const requestPath = (req?.originalUrl || req?.url || '/').split('?')[0].split('#')[0] || '/';
+        const canonicalPath = requestPath === '/articles' ? '/articles/' : requestPath;
+        const canonicalHost = !host || isLocalIp || isLocalDomain ? 'justaidyn.com' : host;
+        const canonicalUrl = `https://${canonicalHost}${canonicalPath}`;
         const sub = (name) => isLocalIp
             ? `http://localhost:3000/${name}`
             : isLocalDomain ? `http://${name}.justaidyn.local:3000`
                 : `https://${name}.justaidyn.com`;
         return {
             ...page,
+            noIndex: noIndexPageKeys.has(page.pageKey),
+            canonicalUrl,
             year: new Date().getFullYear(),
             currentUser: req ? this.authService.getCurrentUser(req) : null,
             projectLinks: this.siteService.getProjects(),
