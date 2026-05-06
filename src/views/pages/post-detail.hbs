@@ -47,7 +47,8 @@
     .post-back { display: inline-flex; align-items: center; gap: 6px; font-size: 0.88rem; color: #535da1; text-decoration: none; margin-bottom: 24px; font-weight: 600; }
     .post-back:hover { color: #3d4680; }
     .post-article { background: rgba(255,255,255,0.97); border: 1px solid rgba(24,35,44,0.1); border-radius: 16px; overflow: hidden; max-width: 860px; margin: 0 auto; }
-    .post-cover { width: 100%; max-height: 420px; object-fit: cover; display: block; }
+    .post-cover { width: 100%; height: clamp(260px, 48vw, 520px); object-fit: contain; object-position: center; display: block; background: #eef3f8; }
+    @media (max-width: 700px) { .post-cover { height: 240px; } }
     .post-body { padding: 40px 52px 52px; }
     @media (max-width: 767px) { .post-body { padding: 28px 24px 36px; } }
     .post-platform-badge { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #535da1; background: rgba(83,93,161,0.1); border-radius: 99px; padding: 2px 10px; display: inline-block; margin-bottom: 14px; }
