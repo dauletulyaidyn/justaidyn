@@ -41,6 +41,7 @@ model User {
   desktopOtcs         DesktopOtc[]
   apiTokens           ApiToken[]
   postViews           PostView[]
+  downloadEvents      DownloadEvent[]
 
   @@map("users")
 }
@@ -146,6 +147,23 @@ model PostView {
   @@index([visitorId])
   @@index([userId])
   @@map("post_views")
+}
+
+model DownloadEvent {
+  id        String   @id @default(cuid())
+  appSlug   String
+  userId    String?
+  ipAddress String
+  referrer  String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([appSlug, createdAt])
+  @@index([appSlug, ipAddress])
+  @@index([userId])
+  @@map("download_events")
 }
 
 enum Role {

@@ -1038,7 +1038,7 @@ export class SiteController {
   }
 
   @Get('/track/download/apps/:app')
-  trackDownload(@Param('app') app: string, @Res() res: Response) {
+  async trackDownload(@Param('app') app: string, @Req() req: Request, @Res() res: Response) {
     const countsFile = join(process.cwd(), 'data', 'download-counts.json');
     try {
       const counts = JSON.parse(readFileSync(countsFile, 'utf-8'));
@@ -1046,6 +1046,13 @@ export class SiteController {
       writeFileSync(countsFile, JSON.stringify(counts, null, 2));
     } catch {
       // don't block download if counter fails
+    }
+
+    try {
+      const user = this.authService.getCurrentUser(req) ?? await this.authService.verifyBearerToken(req);
+      await this.analyticsService.recordDownload(req, app, user?.id);
+    } catch {
+      // don't block download if analytics fails
     }
 
     return res.redirect(this.appCatalogService.getDownloadUrl(app));

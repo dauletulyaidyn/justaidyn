@@ -19,6 +19,21 @@ export interface HeartbeatPostViewInput {
 export class AnalyticsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async recordDownload(req: Request, appSlug: string, userId?: string) {
+    const cleanAppSlug = this.cleanSlug(appSlug);
+    if (!cleanAppSlug) throw new BadRequestException('appSlug is required.');
+
+    await this.prisma.downloadEvent.create({
+      data: {
+        appSlug: cleanAppSlug,
+        userId: userId || null,
+        ipAddress: this.getClientIp(req),
+        referrer: this.cleanOptional(req.headers.referer || req.headers.referrer, 500),
+        userAgent: this.cleanOptional(req.headers['user-agent'], 500),
+      },
+    });
+  }
+
   async startPostView(req: Request, input: StartPostViewInput, userId?: string) {
     const postId = this.cleanId(input.postId);
     const visitorId = this.cleanVisitorId(input.visitorId);
@@ -59,7 +74,16 @@ export class AnalyticsService {
   }
 
   async getDashboard() {
-    const [views, totalViews, durationAggregate, uniqueVisitorRows, uniqueUserRows] = await Promise.all([
+    const [
+      views,
+      totalViews,
+      durationAggregate,
+      uniqueVisitorRows,
+      uniqueUserRows,
+      downloadEvents,
+      totalDownloads,
+      uniqueDownloadIpRows,
+    ] = await Promise.all([
       this.prisma.postView.findMany({
         orderBy: { startedAt: 'desc' },
         take: 10000,
@@ -69,6 +93,13 @@ export class AnalyticsService {
       this.prisma.postView.aggregate({ _sum: { durationSeconds: true } }),
       this.prisma.postView.findMany({ distinct: ['visitorId'], select: { visitorId: true } }),
       this.prisma.postView.findMany({ where: { userId: { not: null } }, distinct: ['userId'], select: { userId: true } }),
+      this.prisma.downloadEvent.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 10000,
+        include: { user: { select: { email: true } } },
+      }),
+      this.prisma.downloadEvent.count(),
+      this.prisma.downloadEvent.findMany({ distinct: ['ipAddress'], select: { ipAddress: true } }),
     ]);
 
     const totalDurationSeconds = durationAggregate._sum.durationSeconds ?? 0;
@@ -107,6 +138,20 @@ export class AnalyticsService {
       dailyMap.set(date, daily);
     });
 
+    const downloadAppMap = new Map<string, { appSlug: string; downloads: number; uniqueIps: Set<string>; lastDownloadedAt: Date }>();
+    downloadEvents.forEach((event) => {
+      const current = downloadAppMap.get(event.appSlug) ?? {
+        appSlug: event.appSlug,
+        downloads: 0,
+        uniqueIps: new Set<string>(),
+        lastDownloadedAt: event.createdAt,
+      };
+      current.downloads += 1;
+      current.uniqueIps.add(event.ipAddress);
+      if (event.createdAt > current.lastDownloadedAt) current.lastDownloadedAt = event.createdAt;
+      downloadAppMap.set(event.appSlug, current);
+    });
+
     return {
       totals: {
         views: totalViews,
@@ -143,7 +188,33 @@ export class AnalyticsService {
         duration: this.formatDuration(view.durationSeconds),
         startedAt: view.startedAt.toISOString(),
       })),
+      downloads: {
+        totals: {
+          downloads: totalDownloads,
+          uniqueIps: uniqueDownloadIpRows.length,
+        },
+        apps: Array.from(downloadAppMap.values())
+          .map((app) => ({
+            appSlug: app.appSlug,
+            downloads: app.downloads,
+            uniqueIps: app.uniqueIps.size,
+            lastDownloadedAt: app.lastDownloadedAt.toISOString(),
+          }))
+          .sort((left, right) => right.downloads - left.downloads),
+        recent: downloadEvents.slice(0, 50).map((event) => ({
+          appSlug: event.appSlug,
+          ipAddress: event.ipAddress,
+          userEmail: event.user?.email ?? '',
+          referrer: event.referrer ?? '',
+          userAgent: event.userAgent ?? '',
+          downloadedAt: event.createdAt.toISOString(),
+        })),
+      },
     };
+  }
+
+  private cleanSlug(value: unknown): string {
+    return typeof value === 'string' && /^[a-z0-9-]{1,80}$/.test(value) ? value : '';
   }
 
   private cleanId(value: unknown): string {
@@ -171,10 +242,16 @@ export class AnalyticsService {
   }
 
   private hashIp(req: Request): string {
-    const forwarded = this.cleanOptional(req.headers['x-forwarded-for'], 200);
-    const ip = forwarded?.split(',')[0]?.trim() || req.socket.remoteAddress || '';
+    const ip = this.getClientIp(req);
     const salt = process.env.ANALYTICS_HASH_SALT || process.env.SESSION_SECRET || 'justaidyn-analytics';
     return createHash('sha256').update(`${salt}:${ip}`).digest('hex');
+  }
+
+  private getClientIp(req: Request): string {
+    const cfIp = this.cleanOptional(req.headers['cf-connecting-ip'], 200);
+    const realIp = this.cleanOptional(req.headers['x-real-ip'], 200);
+    const forwarded = this.cleanOptional(req.headers['x-forwarded-for'], 200);
+    return (cfIp || realIp || forwarded?.split(',')[0]?.trim() || req.socket.remoteAddress || '').slice(0, 80);
   }
 
   private formatDuration(seconds: number): string {

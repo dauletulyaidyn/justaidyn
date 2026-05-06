@@ -820,12 +820,18 @@ let SiteController = class SiteController {
     getDownloadStats() {
         return this.readDownloadCounts();
     }
-    trackDownload(app, res) {
+    async trackDownload(app, req, res) {
         const countsFile = (0, path_1.join)(process.cwd(), 'data', 'download-counts.json');
         try {
             const counts = JSON.parse((0, fs_1.readFileSync)(countsFile, 'utf-8'));
             counts[app] = (counts[app] || 0) + 1;
             (0, fs_1.writeFileSync)(countsFile, JSON.stringify(counts, null, 2));
+        }
+        catch {
+        }
+        try {
+            const user = this.authService.getCurrentUser(req) ?? await this.authService.verifyBearerToken(req);
+            await this.analyticsService.recordDownload(req, app, user?.id);
         }
         catch {
         }
@@ -1720,10 +1726,11 @@ __decorate([
 __decorate([
     (0, common_1.Get)('/track/download/apps/:app'),
     __param(0, (0, common_1.Param)('app')),
-    __param(1, (0, common_1.Res)()),
+    __param(1, (0, common_1.Req)()),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:returntype", Promise)
 ], SiteController.prototype, "trackDownload", null);
 exports.SiteController = SiteController = __decorate([
     (0, common_1.Controller)(),

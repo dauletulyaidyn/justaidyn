@@ -25,6 +25,13 @@
     .analytics-table th { color: #5e6c79; background: #f5f7fa; padding: 10px 12px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
     .analytics-table td { padding: 12px; border-top: 1px solid #eef2f6; vertical-align: top; }
     .analytics-table a { color: #535da1; font-weight: 700; text-decoration: none; }
+    .analytics-table-wrap { overflow-x: auto; }
+    .analytics-nav { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+    .analytics-nav a { background: #fff; border: 1px solid rgba(83,93,161,0.18); border-radius: 999px; color: #535da1; font-size: 0.86rem; font-weight: 800; padding: 8px 14px; text-decoration: none; }
+    .analytics-nav a:hover { background: #535da1; color: #fff; }
+    .analytics-section-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+    .analytics-section-title h2 { margin: 0; }
+    .analytics-section-title span { color: #7a8691; font-size: 0.84rem; }
     .daily-list { display: grid; gap: 12px; }
     .daily-item { display: grid; grid-template-columns: 92px 1fr; gap: 12px; align-items: center; }
     .daily-bar { height: 8px; border-radius: 999px; background: #e8edf5; overflow: hidden; }
@@ -45,36 +52,108 @@
         <a href="/admin/posts">Posts</a>
       </div>
 
+      <nav class="analytics-nav" aria-label="Analytics sections">
+        <a href="#downloads">Application downloads</a>
+        <a href="#download-events">Download IPs</a>
+        <a href="#posts">Post analytics</a>
+        <a href="#recent-views">Recent views</a>
+      </nav>
+
       <section class="metric-grid" aria-label="Totals">
         <article class="metric-card"><span>Total views</span><strong>{{analytics.totals.views}}</strong></article>
         <article class="metric-card"><span>Unique visitors</span><strong>{{analytics.totals.uniqueVisitors}}</strong></article>
         <article class="metric-card"><span>Logged-in users</span><strong>{{analytics.totals.uniqueUsers}}</strong></article>
         <article class="metric-card"><span>Total reading time</span><strong>{{analytics.totals.totalDuration}}</strong></article>
         <article class="metric-card"><span>Average time</span><strong>{{analytics.totals.averageDuration}}</strong></article>
+        <article class="metric-card"><span>App downloads</span><strong>{{analytics.downloads.totals.downloads}}</strong></article>
+        <article class="metric-card"><span>Download IPs</span><strong>{{analytics.downloads.totals.uniqueIps}}</strong></article>
       </section>
 
-      <section class="analytics-grid">
+      <section class="analytics-grid" id="downloads">
         <article class="analytics-card">
-          <h2>Posts</h2>
+          <div class="analytics-section-title">
+            <h2>Application downloads</h2>
+            <span>Grouped by app</span>
+          </div>
+          <div class="analytics-table-wrap">
+            <table class="analytics-table">
+              <thead>
+                <tr><th>App</th><th>Downloads</th><th>Unique IPs</th><th>Last download</th></tr>
+              </thead>
+              <tbody>
+                {{#each analytics.downloads.apps}}
+                <tr>
+                  <td>{{this.appSlug}}</td>
+                  <td>{{this.downloads}}</td>
+                  <td>{{this.uniqueIps}}</td>
+                  <td class="muted">{{this.lastDownloadedAt}}</td>
+                </tr>
+                {{else}}
+                <tr><td colspan="4" class="muted">No app downloads yet. Downloads are recorded only through /track/download/apps/:app.</td></tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <aside class="analytics-card">
+          <h2>Download tracking</h2>
+          <p class="muted">Use tracked links such as <code>/track/download/apps/justaidyn-screencam</code>. Direct files under <code>/downloads/...</code> are served statically and do not create analytics events.</p>
+        </aside>
+      </section>
+
+      <section class="analytics-card" id="download-events" style="margin-top:20px;">
+        <div class="analytics-section-title">
+          <h2>Recent download IPs</h2>
+          <span>Latest 50 events</span>
+        </div>
+        <div class="analytics-table-wrap">
           <table class="analytics-table">
             <thead>
-              <tr><th>Post</th><th>Views</th><th>Unique</th><th>Total time</th><th>Average</th><th>Last seen</th></tr>
+              <tr><th>App</th><th>IP</th><th>User</th><th>Referrer</th><th>User agent</th><th>Downloaded</th></tr>
             </thead>
             <tbody>
-              {{#each analytics.posts}}
+              {{#each analytics.downloads.recent}}
               <tr>
-                <td><a href="{{this.url}}">{{this.title}}</a></td>
-                <td>{{this.views}}</td>
-                <td>{{this.uniqueVisitors}}</td>
-                <td>{{this.totalDuration}}</td>
-                <td>{{this.averageDuration}}</td>
-                <td class="muted">{{this.lastSeenAt}}</td>
+                <td>{{this.appSlug}}</td>
+                <td>{{this.ipAddress}}</td>
+                <td class="muted">{{this.userEmail}}</td>
+                <td class="muted">{{this.referrer}}</td>
+                <td class="muted">{{this.userAgent}}</td>
+                <td class="muted">{{this.downloadedAt}}</td>
               </tr>
               {{else}}
-              <tr><td colspan="6" class="muted">No post views yet.</td></tr>
+              <tr><td colspan="6" class="muted">No recent download events yet.</td></tr>
               {{/each}}
             </tbody>
           </table>
+        </div>
+      </section>
+
+      <section class="analytics-grid" id="posts" style="margin-top:20px;">
+        <article class="analytics-card">
+          <h2>Posts</h2>
+          <div class="analytics-table-wrap">
+            <table class="analytics-table">
+              <thead>
+                <tr><th>Post</th><th>Views</th><th>Unique</th><th>Total time</th><th>Average</th><th>Last seen</th></tr>
+              </thead>
+              <tbody>
+                {{#each analytics.posts}}
+                <tr>
+                  <td><a href="{{this.url}}">{{this.title}}</a></td>
+                  <td>{{this.views}}</td>
+                  <td>{{this.uniqueVisitors}}</td>
+                  <td>{{this.totalDuration}}</td>
+                  <td>{{this.averageDuration}}</td>
+                  <td class="muted">{{this.lastSeenAt}}</td>
+                </tr>
+                {{else}}
+                <tr><td colspan="6" class="muted">No post views yet.</td></tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
         </article>
 
         <aside class="analytics-card">
@@ -95,26 +174,28 @@
         </aside>
       </section>
 
-      <section class="analytics-card" style="margin-top:20px;">
+      <section class="analytics-card" id="recent-views" style="margin-top:20px;">
         <h2>Recent views</h2>
-        <table class="analytics-table">
-          <thead>
-            <tr><th>Post</th><th>Visitor</th><th>User</th><th>Duration</th><th>Started</th></tr>
-          </thead>
-          <tbody>
-            {{#each analytics.recentViews}}
-            <tr>
-              <td><a href="{{this.url}}">{{this.title}}</a></td>
-              <td>{{this.visitorId}}</td>
-              <td class="muted">{{this.userEmail}}</td>
-              <td>{{this.duration}}</td>
-              <td class="muted">{{this.startedAt}}</td>
-            </tr>
-            {{else}}
-            <tr><td colspan="5" class="muted">No recent views yet.</td></tr>
-            {{/each}}
-          </tbody>
-        </table>
+        <div class="analytics-table-wrap">
+          <table class="analytics-table">
+            <thead>
+              <tr><th>Post</th><th>Visitor</th><th>User</th><th>Duration</th><th>Started</th></tr>
+            </thead>
+            <tbody>
+              {{#each analytics.recentViews}}
+              <tr>
+                <td><a href="{{this.url}}">{{this.title}}</a></td>
+                <td>{{this.visitorId}}</td>
+                <td class="muted">{{this.userEmail}}</td>
+                <td>{{this.duration}}</td>
+                <td class="muted">{{this.startedAt}}</td>
+              </tr>
+              {{else}}
+              <tr><td colspan="5" class="muted">No recent views yet.</td></tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
       </section>
     </div>
   </main>
