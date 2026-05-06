@@ -114,7 +114,7 @@
                   </td>
                   <td>{{this.totalDuration}}</td>
                   <td>{{this.averageDuration}}</td>
-                  <td class="muted">{{this.lastSeenAt}}</td>
+                  <td class="muted"><time data-utc="{{this.lastSeenAt}}">{{this.lastSeenAt}}</time></td>
                 </tr>
                 {{else}}
                 <tr><td colspan="7" class="muted">No post views yet.</td></tr>
@@ -155,7 +155,7 @@
                 <td><code>{{this.ipAddress}}</code></td>
                 <td class="muted">{{this.userEmail}}</td>
                 <td>{{this.duration}}</td>
-                <td class="muted">{{this.startedAt}}</td>
+                <td class="muted"><time data-utc="{{this.startedAt}}">{{this.startedAt}}</time></td>
               </tr>
               {{else}}
               <tr><td colspan="6" class="muted">No recent views yet.</td></tr>
@@ -193,7 +193,7 @@
                     {{/each}}
                   </div>
                 </td>
-                <td class="muted">{{this.lastSeenAt}}</td>
+                <td class="muted"><time data-utc="{{this.lastSeenAt}}">{{this.lastSeenAt}}</time></td>
               </tr>
               {{else}}
               <tr><td colspan="5" class="muted">{{analytics.current.emptyText}}</td></tr>
@@ -241,8 +241,8 @@
                     {{/each}}
                   </div>
                 </td>
-                <td class="muted">{{this.lastSeenAt}}</td>
-                <td class="muted">{{this.lastDownloadedAt}}</td>
+                <td class="muted"><time data-utc="{{this.lastSeenAt}}">{{this.lastSeenAt}}</time></td>
+                <td class="muted"><time data-utc="{{this.lastDownloadedAt}}">{{this.lastDownloadedAt}}</time></td>
               </tr>
               {{else}}
               <tr><td colspan="7" class="muted">No app analytics yet.</td></tr>
@@ -265,7 +265,7 @@
                 <td class="muted">{{this.userEmail}}</td>
                 <td class="muted">{{this.referrer}}</td>
                 <td class="muted">{{this.userAgent}}</td>
-                <td class="muted">{{this.downloadedAt}}</td>
+                <td class="muted"><time data-utc="{{this.downloadedAt}}">{{this.downloadedAt}}</time></td>
               </tr>
               {{else}}
               <tr><td colspan="6" class="muted">No recent download events yet.</td></tr>
@@ -282,5 +282,27 @@
   <script src="/js/bootstrap.min.js"></script>
   <script src="/js/jquery.sticky.js"></script>
   <script src="/js/custom.js?v=20260502-project-nav"></script>
+  <script>
+    (function () {
+      var formatter = new Intl.DateTimeFormat(undefined, {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+        timeZoneName: 'short'
+      });
+      document.querySelectorAll('time[data-utc]').forEach(function (node) {
+        var value = node.getAttribute('data-utc');
+        if (!value) return;
+        var date = new Date(value);
+        if (Number.isNaN(date.getTime())) return;
+        node.textContent = formatter.format(date);
+        node.title = value;
+      });
+    })();
+  </script>
 </body>
 </html>
