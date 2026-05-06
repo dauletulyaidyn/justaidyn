@@ -17,6 +17,25 @@ let AnalyticsService = class AnalyticsService {
     constructor(prisma) {
         this.prisma = prisma;
     }
+    async recordPageView(req, input, userId) {
+        const section = this.cleanSection(input.section);
+        const entitySlug = this.cleanSlug(input.entitySlug);
+        const entityTitle = this.cleanText(input.entityTitle, 160);
+        if (!section || !entitySlug || !entityTitle)
+            return;
+        await this.prisma.pageView.create({
+            data: {
+                section,
+                entitySlug,
+                entityTitle,
+                userId: userId || null,
+                path: this.cleanPath(input.path || req.originalUrl || req.path),
+                referrer: this.cleanOptional(req.headers.referer || req.headers.referrer, 500),
+                userAgent: this.cleanOptional(req.headers['user-agent'], 500),
+                ipHash: this.hashIp(req),
+            },
+        });
+    }
     async recordDownload(req, appSlug, userId) {
         const cleanAppSlug = this.cleanSlug(appSlug);
         if (!cleanAppSlug)
@@ -66,7 +85,7 @@ let AnalyticsService = class AnalyticsService {
         return { ok: true };
     }
     async getDashboard() {
-        const [views, totalViews, durationAggregate, uniqueVisitorRows, uniqueUserRows, downloadEvents, totalDownloads, uniqueDownloadIpRows,] = await Promise.all([
+        const [views, totalViews, durationAggregate, uniqueVisitorRows, uniqueUserRows, downloadEvents, totalDownloads, uniqueDownloadIpRows, pageViews,] = await Promise.all([
             this.prisma.postView.findMany({
                 orderBy: { startedAt: 'desc' },
                 take: 10000,
@@ -83,6 +102,11 @@ let AnalyticsService = class AnalyticsService {
             }),
             this.prisma.downloadEvent.count(),
             this.prisma.downloadEvent.findMany({ distinct: ['ipAddress'], select: { ipAddress: true } }),
+            this.prisma.pageView.findMany({
+                orderBy: { createdAt: 'desc' },
+                take: 10000,
+                include: { user: { select: { email: true } } },
+            }),
         ]);
         const totalDurationSeconds = durationAggregate._sum.durationSeconds ?? 0;
         const postMap = new Map();
@@ -91,6 +115,7 @@ let AnalyticsService = class AnalyticsService {
             const key = view.postId;
             const platform = view.post.platform === 'SKILLSMINDS' ? 'skillsminds' : 'nofacethinker';
             const current = postMap.get(key) ?? {
+                platform,
                 title: view.post.title,
                 url: `/${platform}/post/${view.post.slug}`,
                 views: 0,
@@ -125,6 +150,53 @@ let AnalyticsService = class AnalyticsService {
                 current.lastDownloadedAt = event.createdAt;
             downloadAppMap.set(event.appSlug, current);
         });
+        const pageSections = this.buildPageSections(pageViews);
+        const posts = Array.from(postMap.values())
+            .map((post) => ({
+            platform: post.platform,
+            title: post.title,
+            url: post.url,
+            views: post.views,
+            uniqueVisitors: post.uniqueVisitors.size,
+            totalDuration: this.formatDuration(post.durationSeconds),
+            averageDuration: this.formatDuration(post.views ? Math.round(post.durationSeconds / post.views) : 0),
+            lastSeenAt: post.lastSeenAt.toISOString(),
+        }))
+            .sort((left, right) => right.views - left.views);
+        const appPageItems = pageSections.apps.items.filter((item) => item.slug !== 'apps-hub');
+        const downloadApps = Array.from(downloadAppMap.values())
+            .map((app) => {
+            const viewStats = appPageItems.find((item) => item.slug === app.appSlug);
+            return {
+                appSlug: app.appSlug,
+                title: viewStats?.title || app.appSlug,
+                url: viewStats?.url || `/apps/${app.appSlug}`,
+                views: viewStats?.views || 0,
+                uniqueVisitors: viewStats?.uniqueVisitors || 0,
+                downloads: app.downloads,
+                uniqueIps: app.uniqueIps.size,
+                uniqueVisitorKeys: viewStats?.visitorKeys || [],
+                lastSeenAt: viewStats?.lastSeenAt || '',
+                lastDownloadedAt: app.lastDownloadedAt.toISOString(),
+            };
+        })
+            .sort((left, right) => (right.downloads + right.views) - (left.downloads + left.views));
+        appPageItems.forEach((item) => {
+            if (!downloadApps.some((app) => app.appSlug === item.slug)) {
+                downloadApps.push({
+                    appSlug: item.slug,
+                    title: item.title,
+                    url: item.url,
+                    views: item.views,
+                    uniqueVisitors: item.uniqueVisitors,
+                    downloads: 0,
+                    uniqueIps: 0,
+                    uniqueVisitorKeys: item.visitorKeys,
+                    lastSeenAt: item.lastSeenAt,
+                    lastDownloadedAt: '',
+                });
+            }
+        });
         return {
             totals: {
                 views: totalViews,
@@ -133,17 +205,31 @@ let AnalyticsService = class AnalyticsService {
                 totalDuration: this.formatDuration(totalDurationSeconds),
                 averageDuration: this.formatDuration(totalViews ? Math.round(totalDurationSeconds / totalViews) : 0),
             },
-            posts: Array.from(postMap.values())
-                .map((post) => ({
-                title: post.title,
-                url: post.url,
-                views: post.views,
-                uniqueVisitors: post.uniqueVisitors.size,
-                totalDuration: this.formatDuration(post.durationSeconds),
-                averageDuration: this.formatDuration(post.views ? Math.round(post.durationSeconds / post.views) : 0),
-                lastSeenAt: post.lastSeenAt.toISOString(),
-            }))
-                .sort((left, right) => right.views - left.views),
+            sections: {
+                skillsminds: {
+                    title: 'Skills and Minds Hub',
+                    totals: this.buildPostTotals(posts.filter((post) => post.platform === 'skillsminds')),
+                    posts: posts.filter((post) => post.platform === 'skillsminds'),
+                },
+                nofacethinker: {
+                    title: 'no Face Thinker',
+                    totals: this.buildPostTotals(posts.filter((post) => post.platform === 'nofacethinker')),
+                    posts: posts.filter((post) => post.platform === 'nofacethinker'),
+                },
+                games: pageSections.games,
+                apps: {
+                    title: 'Apps',
+                    totals: {
+                        views: downloadApps.reduce((sum, app) => sum + app.views, 0),
+                        uniqueVisitors: new Set(downloadApps.flatMap((app) => app.uniqueVisitorKeys)).size,
+                        downloads: totalDownloads,
+                        uniqueIps: uniqueDownloadIpRows.length,
+                    },
+                    items: downloadApps.map(({ uniqueVisitorKeys: _keys, ...app }) => app),
+                },
+                courses: pageSections.courses,
+            },
+            posts,
             daily: Array.from(dailyMap.values())
                 .sort((left, right) => left.date.localeCompare(right.date))
                 .slice(-30)
@@ -185,8 +271,89 @@ let AnalyticsService = class AnalyticsService {
             },
         };
     }
+    buildPageSections(pageViews) {
+        const sections = {
+            apps: this.emptyPageSection('Apps'),
+            games: this.emptyPageSection('Games'),
+            courses: this.emptyPageSection('Courses'),
+        };
+        pageViews.forEach((view) => {
+            const section = view.section;
+            if (!sections[section])
+                return;
+            const key = view.entitySlug;
+            const current = sections[section].map.get(key) ?? {
+                slug: key,
+                title: view.entityTitle,
+                url: this.pageEntityUrl(view.section, key, view.path),
+                views: 0,
+                uniqueVisitors: new Set(),
+                lastSeenAt: view.createdAt,
+            };
+            current.views += 1;
+            if (view.ipHash)
+                current.uniqueVisitors.add(view.ipHash);
+            if (view.createdAt > current.lastSeenAt)
+                current.lastSeenAt = view.createdAt;
+            sections[section].map.set(key, current);
+        });
+        return {
+            apps: this.finalizePageSection(sections.apps),
+            games: this.finalizePageSection(sections.games),
+            courses: this.finalizePageSection(sections.courses),
+        };
+    }
+    emptyPageSection(title) {
+        return {
+            title,
+            map: new Map(),
+        };
+    }
+    finalizePageSection(section) {
+        const items = Array.from(section.map.values())
+            .map((item) => ({
+            slug: item.slug,
+            title: item.title,
+            url: item.url,
+            views: item.views,
+            uniqueVisitors: item.uniqueVisitors.size,
+            visitorKeys: Array.from(item.uniqueVisitors),
+            lastSeenAt: item.lastSeenAt.toISOString(),
+        }))
+            .sort((left, right) => right.views - left.views);
+        return {
+            title: section.title,
+            totals: {
+                views: items.reduce((sum, item) => sum + item.views, 0),
+                uniqueVisitors: new Set(Array.from(section.map.values()).flatMap((item) => Array.from(item.uniqueVisitors))).size,
+            },
+            items,
+        };
+    }
+    buildPostTotals(posts) {
+        return {
+            views: posts.reduce((sum, post) => sum + post.views, 0),
+            uniqueVisitors: posts.reduce((sum, post) => sum + post.uniqueVisitors, 0),
+            posts: posts.length,
+        };
+    }
+    pageEntityUrl(section, slug, path) {
+        if (section === 'apps')
+            return slug === 'apps-hub' ? '/apps' : `/apps/${slug}`;
+        if (section === 'courses')
+            return slug.endsWith('.html') ? `/courses/${slug}` : path;
+        if (section === 'games')
+            return slug === 'games-hub' ? '/games' : `/games/${slug}`;
+        return path;
+    }
     cleanSlug(value) {
-        return typeof value === 'string' && /^[a-z0-9-]{1,80}$/.test(value) ? value : '';
+        return typeof value === 'string' && /^[a-z0-9-.]{1,100}$/.test(value) ? value : '';
+    }
+    cleanSection(value) {
+        return value === 'apps' || value === 'games' || value === 'courses' ? value : '';
+    }
+    cleanText(value, maxLength) {
+        return typeof value === 'string' && value.trim() ? value.trim().slice(0, maxLength) : '';
     }
     cleanId(value) {
         return typeof value === 'string' && /^[a-z0-9_-]{8,80}$/i.test(value) ? value : '';

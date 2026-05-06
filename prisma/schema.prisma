@@ -42,6 +42,7 @@ model User {
   apiTokens           ApiToken[]
   postViews           PostView[]
   downloadEvents      DownloadEvent[]
+  pageViews           PageView[]
 
   @@map("users")
 }
@@ -164,6 +165,25 @@ model DownloadEvent {
   @@index([appSlug, ipAddress])
   @@index([userId])
   @@map("download_events")
+}
+
+model PageView {
+  id          String   @id @default(cuid())
+  section     String
+  entitySlug  String
+  entityTitle String
+  userId      String?
+  path        String
+  referrer    String?
+  userAgent   String?
+  ipHash      String?
+  createdAt   DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([section, entitySlug, createdAt])
+  @@index([userId])
+  @@map("page_views")
 }
 
 enum Role {

@@ -47,6 +47,7 @@ let SiteController = class SiteController {
             return res.render('pages/home', this.withSharedModel(this.siteService.getHomePage(), req));
         }
         if (site === 'courses') {
+            this.trackPageView(req, 'courses', 'ai-agents-course.html', 'JustAidyn Courses | AI Agents Course');
             return res.render('pages/course-wrapper', this.withSharedModel(this.siteService.getCoursePageModel('JustAidyn Courses | AI Agents Course', 'course-home'), req));
         }
         if (site === 'skillsminds') {
@@ -63,6 +64,7 @@ let SiteController = class SiteController {
             return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getPostsHubPage('nofacethinker', posts), req));
         }
         if (site === 'apps') {
+            this.trackPageView(req, 'apps', 'apps-hub', 'Apps Hub');
             return res.render('pages/apps-landing', this.withSharedModel(this.getAppsLandingPage(), req));
         }
         if (site === 'shop') {
@@ -516,9 +518,11 @@ let SiteController = class SiteController {
         return res.redirect('/courses/ai-agents-course.html');
     }
     appsProject(req, res) {
+        this.trackPageView(req, 'apps', 'apps-hub', 'Apps Hub');
         return res.render('pages/apps-landing', this.withSharedModel(this.getAppsLandingPage(), req));
     }
     gamesProject(req) {
+        this.trackPageView(req, 'games', 'games-hub', 'Games Hub');
         return this.withSharedModel(this.siteService.getComingSoonPage('games'), req);
     }
     shopProject(req) {
@@ -532,9 +536,11 @@ let SiteController = class SiteController {
         if (site !== 'apps') {
             throw new common_1.NotFoundException();
         }
+        this.trackPageView(req, 'apps', 'justaidyn-screencam', 'JustAidyn ScreenCam');
         return res.sendFile((0, path_1.join)(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
     }
     appDetailPath(req, res) {
+        this.trackPageView(req, 'apps', 'justaidyn-screencam', 'JustAidyn ScreenCam');
         return res.sendFile((0, path_1.join)(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
     }
     appDetailAlias(res) {
@@ -542,6 +548,7 @@ let SiteController = class SiteController {
     }
     dynamicAppDetail(req, res, slug) {
         const app = this.appCatalogService.getPublished(slug);
+        this.trackPageView(req, 'apps', app.slug, app.name);
         return res.render('pages/app-detail', this.withSharedModel(this.getAppDetailPage(app), req));
     }
     aiAgentsCourse(res) {
@@ -743,6 +750,7 @@ let SiteController = class SiteController {
             };
             const coursePage = coursePageMap[file.replace(/ /g, '+')];
             if (coursePage) {
+                this.trackPageView(req, 'courses', file.replace(/ /g, '+'), coursePage.title);
                 return res.render('pages/course-wrapper', this.withSharedModel(this.siteService.getCoursePageModel(coursePage.title, coursePage.key), req));
             }
         }
@@ -751,6 +759,10 @@ let SiteController = class SiteController {
             throw new common_1.NotFoundException();
         }
         if (/\.html$/i.test(file)) {
+            if (section === 'apps')
+                this.trackPageView(req, 'apps', file.replace(/\.html$/i, ''), file);
+            if (section === 'games')
+                this.trackPageView(req, 'games', file.replace(/\.html$/i, ''), file);
             return this.renderStaticHtmlFile(req, res, found);
         }
         return res.sendFile(found);
@@ -796,6 +808,7 @@ let SiteController = class SiteController {
         }
         if ((site === 'main' || site === 'courses') && coursePageMap[normalizedFile]) {
             const coursePage = coursePageMap[normalizedFile];
+            this.trackPageView(req, 'courses', normalizedFile, coursePage.title);
             return res.render('pages/course-wrapper', this.withSharedModel(this.siteService.getCoursePageModel(coursePage.title, coursePage.key), req));
         }
         const siteFolder = this.siteService.getLegacyFolderForSite(site);
@@ -860,6 +873,14 @@ let SiteController = class SiteController {
             totalDownloads,
             appCount: apps.length,
         };
+    }
+    trackPageView(req, section, entitySlug, entityTitle) {
+        try {
+            const user = this.authService.getCurrentUser(req);
+            void this.analyticsService.recordPageView(req, { section, entitySlug, entityTitle }, user?.id).catch(() => { });
+        }
+        catch {
+        }
     }
     getAppDetailPage(app) {
         const downloadCount = Number(this.readDownloadCounts()[app.slug] || 0);

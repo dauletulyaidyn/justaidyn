@@ -39,6 +39,7 @@ export class SiteController {
       return res.render('pages/home', this.withSharedModel(this.siteService.getHomePage(), req));
     }
     if (site === 'courses') {
+      this.trackPageView(req, 'courses', 'ai-agents-course.html', 'JustAidyn Courses | AI Agents Course');
       return res.render('pages/course-wrapper', this.withSharedModel(this.siteService.getCoursePageModel('JustAidyn Courses | AI Agents Course', 'course-home'), req));
     }
     if (site === 'skillsminds') {
@@ -55,6 +56,7 @@ export class SiteController {
       return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getPostsHubPage('nofacethinker', posts), req));
     }
     if (site === 'apps') {
+      this.trackPageView(req, 'apps', 'apps-hub', 'Apps Hub');
       return res.render('pages/apps-landing', this.withSharedModel(this.getAppsLandingPage(), req));
     }
     if (site === 'shop') {
@@ -639,12 +641,14 @@ export class SiteController {
 
   @Get('/apps')
   appsProject(@Req() req: Request, @Res() res: Response) {
+    this.trackPageView(req, 'apps', 'apps-hub', 'Apps Hub');
     return res.render('pages/apps-landing', this.withSharedModel(this.getAppsLandingPage(), req));
   }
 
   @Get('/games')
   @Render('pages/host-router')
   gamesProject(@Req() req: Request) {
+    this.trackPageView(req, 'games', 'games-hub', 'Games Hub');
     return this.withSharedModel(this.siteService.getComingSoonPage('games'), req);
   }
 
@@ -667,11 +671,13 @@ export class SiteController {
       throw new NotFoundException();
     }
 
+    this.trackPageView(req, 'apps', 'justaidyn-screencam', 'JustAidyn ScreenCam');
     return res.sendFile(join(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
   }
 
   @Get(['/apps/justaidyn-screencam', '/apps/justaidyn-screencam/'])
   appDetailPath(@Req() req: Request, @Res() res: Response) {
+    this.trackPageView(req, 'apps', 'justaidyn-screencam', 'JustAidyn ScreenCam');
     return res.sendFile(join(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
   }
 
@@ -683,6 +689,7 @@ export class SiteController {
   @Get('/apps/:slug')
   dynamicAppDetail(@Req() req: Request, @Res() res: Response, @Param('slug') slug: string) {
     const app = this.appCatalogService.getPublished(slug);
+    this.trackPageView(req, 'apps', app.slug, app.name);
     return res.render('pages/app-detail', this.withSharedModel(this.getAppDetailPage(app), req));
   }
 
@@ -937,6 +944,7 @@ export class SiteController {
       };
       const coursePage = coursePageMap[file.replace(/ /g, '+')];
       if (coursePage) {
+        this.trackPageView(req, 'courses', file.replace(/ /g, '+'), coursePage.title);
         return res.render(
           'pages/course-wrapper',
           this.withSharedModel(this.siteService.getCoursePageModel(coursePage.title, coursePage.key), req),
@@ -950,6 +958,8 @@ export class SiteController {
     }
 
     if (/\.html$/i.test(file)) {
+      if (section === 'apps') this.trackPageView(req, 'apps', file.replace(/\.html$/i, ''), file);
+      if (section === 'games') this.trackPageView(req, 'games', file.replace(/\.html$/i, ''), file);
       return this.renderStaticHtmlFile(req, res, found);
     }
 
@@ -1001,6 +1011,7 @@ export class SiteController {
 
     if ((site === 'main' || site === 'courses') && coursePageMap[normalizedFile]) {
       const coursePage = coursePageMap[normalizedFile];
+      this.trackPageView(req, 'courses', normalizedFile, coursePage.title);
       return res.render(
         'pages/course-wrapper',
         this.withSharedModel(this.siteService.getCoursePageModel(coursePage.title, coursePage.key), req),
@@ -1082,6 +1093,15 @@ export class SiteController {
       totalDownloads,
       appCount: apps.length,
     };
+  }
+
+  private trackPageView(req: Request, section: 'apps' | 'games' | 'courses', entitySlug: string, entityTitle: string) {
+    try {
+      const user = this.authService.getCurrentUser(req);
+      void this.analyticsService.recordPageView(req, { section, entitySlug, entityTitle }, user?.id).catch(() => {});
+    } catch {
+      // Analytics should never block public pages.
+    }
   }
 
   private getAppDetailPage(app: { name: string; shortDescription: string; description: string; slug: string; version: string; releaseNotes: string; downloadUrl: string; updatedAt: string }): PageModel {
