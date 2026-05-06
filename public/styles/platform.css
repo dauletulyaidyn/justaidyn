@@ -24,6 +24,7 @@ body.platform-body {
 
 .platform-main {
   min-height: calc(100vh - 120px);
+  padding-top: calc(var(--site-header-offset, 148px) + 24px);
 }
 
 .platform-hero {
@@ -165,7 +166,7 @@ body.platform-body {
   }
 
   .platform-auth-section {
-    padding: 40px 0 56px;
+    padding: 24px 0 56px;
   }
 
   .platform-auth-shell {

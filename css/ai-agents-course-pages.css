@@ -1,7 +1,7 @@
 body.course-page {
   background: var(--section-bg-color);
   font-family: "Roboto Slab", serif;
-  --course-header-offset: 108px;
+  --course-header-offset: var(--site-header-offset, 108px);
   --course-hero-gap: -34px;
 }
 

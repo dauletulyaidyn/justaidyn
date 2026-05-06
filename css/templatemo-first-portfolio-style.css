@@ -41,6 +41,8 @@ https://templatemo.com/tm-578-first-portfolio
   --font-weight-normal:           400;
   --font-weight-medium:           500;
   --font-weight-bold:             700;
+
+  --site-header-offset:           148px;
 }
 
 body {
@@ -3256,6 +3258,10 @@ h2[data-en="Group formats and pricing"] + .row .group-plan-accent {
 }
 
 @media screen and (max-width: 991px) {
+  :root {
+    --site-header-offset: 188px;
+  }
+
   h1 {
     font-size: 48px;
   }
@@ -3293,6 +3299,8 @@ h2[data-en="Group formats and pricing"] + .row .group-plan-accent {
 
   .navbar .container {
     background: var(--white-color);
+    padding: 14px 18px 12px;
+    row-gap: 10px;
   }
 
   .is-sticky .navbar .container,
@@ -3352,9 +3360,29 @@ h2[data-en="Group formats and pricing"] + .row .group-plan-accent {
     width: 100%;
   }
 
+  .navbar .container > .d-flex.align-items-center.d-lg-none {
+    display: flex !important;
+    flex: 0 0 100%;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+    order: 3;
+    width: 100%;
+  }
+
   .navbar .navbar-collapse {
     order: 4;
     width: 100%;
+  }
+
+  .apps-page,
+  .app-page,
+  .posts-page,
+  .post-page,
+  .admin-shell,
+  .analytics-page,
+  .form-shell {
+    padding-top: calc(var(--site-header-offset) + 24px) !important;
   }
 
   .navbar-mobile-tools .navbar-icon {
