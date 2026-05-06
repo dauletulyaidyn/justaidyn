@@ -161,7 +161,7 @@ export class SiteController {
   @Get('/admin/analytics')
   async adminAnalytics(@Req() req: Request, @Res() res: Response) {
     if (!this.tryRequireSuperadmin(req, res)) return;
-    return this.renderAdminAnalytics(req, res, 'hub');
+    return res.redirect('/admin/analytics/skillsminds');
   }
 
   @Get('/admin/analytics/:section')
@@ -1108,8 +1108,8 @@ export class SiteController {
 
   private async renderAdminAnalytics(req: Request, res: Response, section: AdminAnalyticsSection) {
     const dashboard = await this.analyticsService.getDashboard();
+    res.setHeader('Cache-Control', 'no-store, max-age=0');
     const nav = [
-      { label: 'Overview', href: '/admin/analytics', active: section === 'hub' },
       { label: 'Skills and Minds Hub', href: '/admin/analytics/skillsminds', active: section === 'skillsminds' },
       { label: 'no Face Thinker', href: '/admin/analytics/nofacethinker', active: section === 'nofacethinker' },
       { label: 'Games', href: '/admin/analytics/games', active: section === 'games' },

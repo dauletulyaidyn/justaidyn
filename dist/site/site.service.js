@@ -410,7 +410,7 @@ let SiteService = class SiteService {
             cards: [
                 { title: 'Users', text: 'View registered users and roles.', href: '/admin/users', cta: 'Open' },
                 { title: 'Posts', text: 'Manage Skills and Minds Hub and no Face Thinker posts.', href: '/admin/posts', cta: 'Open' },
-                { title: 'Analytics', text: 'View post traffic, unique visitors, and reading time.', href: '/admin/analytics', cta: 'Open' },
+                { title: 'Analytics', text: 'Open separate analytics pages for posts, games, apps, and courses.', href: '/admin/analytics/skillsminds', cta: 'Open' },
                 { title: 'Apps', text: 'Manage app listings and releases.', href: '/admin/apps', cta: 'Open' },
                 { title: 'Games', text: 'Manage game listings and access.', href: '/admin/games', cta: 'Open' },
                 { title: 'Courses', text: 'Manage course pages, groups, and schedules.', href: '/admin/courses', cta: 'Open' },
