@@ -37,6 +37,10 @@
     .analytics-mini { background: #f7f9fc; border: 1px solid #edf1f6; border-radius: 8px; padding: 12px; }
     .analytics-mini span { display:block; color:#7a8691; font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.05em; }
     .analytics-mini strong { display:block; color:#18232c; font-size:1.25rem; margin-top:4px; }
+    .ip-list { display: grid; gap: 6px; min-width: 190px; }
+    .ip-row { display: grid; gap: 2px; }
+    .ip-row code { color: #18232c; background: #eef3f8; border-radius: 6px; padding: 2px 6px; font-size: .78rem; }
+    .ip-row span { color: #7a8691; font-size: .72rem; }
     .daily-list { display: grid; gap: 12px; }
     .daily-item { display: grid; grid-template-columns: 92px 1fr; gap: 12px; align-items: center; }
     .daily-bar { height: 8px; border-radius: 999px; background: #e8edf5; overflow: hidden; }
@@ -90,7 +94,7 @@
           <div class="analytics-table-wrap">
             <table class="analytics-table">
               <thead>
-                <tr><th>Post</th><th>Views</th><th>Unique</th><th>Total time</th><th>Average</th><th>Last seen</th></tr>
+                <tr><th>Post</th><th>Views</th><th>Unique</th><th>Visitor IPs</th><th>Total time</th><th>Average</th><th>Last seen</th></tr>
               </thead>
               <tbody>
                 {{#each analytics.sections.skillsminds.posts}}
@@ -98,12 +102,21 @@
                   <td><a href="{{this.url}}">{{this.title}}</a></td>
                   <td>{{this.views}}</td>
                   <td>{{this.uniqueVisitors}}</td>
+                  <td>
+                    <div class="ip-list">
+                      {{#each this.recentIps}}
+                      <div class="ip-row"><code>{{this.ip}}</code><span>{{this.views}} views {{#if this.userEmail}}| {{this.userEmail}}{{/if}}</span></div>
+                      {{else}}
+                      <span class="muted">No IP yet</span>
+                      {{/each}}
+                    </div>
+                  </td>
                   <td>{{this.totalDuration}}</td>
                   <td>{{this.averageDuration}}</td>
                   <td class="muted">{{this.lastSeenAt}}</td>
                 </tr>
                 {{else}}
-                <tr><td colspan="6" class="muted">No Skills and Minds Hub views yet.</td></tr>
+                <tr><td colspan="7" class="muted">No Skills and Minds Hub views yet.</td></tr>
                 {{/each}}
               </tbody>
             </table>
@@ -123,7 +136,7 @@
           <div class="analytics-table-wrap">
             <table class="analytics-table">
               <thead>
-                <tr><th>Post</th><th>Views</th><th>Unique</th><th>Total time</th><th>Average</th><th>Last seen</th></tr>
+                <tr><th>Post</th><th>Views</th><th>Unique</th><th>Visitor IPs</th><th>Total time</th><th>Average</th><th>Last seen</th></tr>
               </thead>
               <tbody>
                 {{#each analytics.sections.nofacethinker.posts}}
@@ -131,12 +144,21 @@
                   <td><a href="{{this.url}}">{{this.title}}</a></td>
                   <td>{{this.views}}</td>
                   <td>{{this.uniqueVisitors}}</td>
+                  <td>
+                    <div class="ip-list">
+                      {{#each this.recentIps}}
+                      <div class="ip-row"><code>{{this.ip}}</code><span>{{this.views}} views {{#if this.userEmail}}| {{this.userEmail}}{{/if}}</span></div>
+                      {{else}}
+                      <span class="muted">No IP yet</span>
+                      {{/each}}
+                    </div>
+                  </td>
                   <td>{{this.totalDuration}}</td>
                   <td>{{this.averageDuration}}</td>
                   <td class="muted">{{this.lastSeenAt}}</td>
                 </tr>
                 {{else}}
-                <tr><td colspan="6" class="muted">No no Face Thinker views yet.</td></tr>
+                <tr><td colspan="7" class="muted">No no Face Thinker views yet.</td></tr>
                 {{/each}}
               </tbody>
             </table>
@@ -155,12 +177,26 @@
           </div>
           <div class="analytics-table-wrap">
             <table class="analytics-table">
-              <thead><tr><th>Game</th><th>Views</th><th>Unique</th><th>Last seen</th></tr></thead>
+              <thead><tr><th>Game</th><th>Views</th><th>Unique</th><th>Visitor IPs</th><th>Last seen</th></tr></thead>
               <tbody>
                 {{#each analytics.sections.games.items}}
-                <tr><td><a href="{{this.url}}">{{this.title}}</a></td><td>{{this.views}}</td><td>{{this.uniqueVisitors}}</td><td class="muted">{{this.lastSeenAt}}</td></tr>
+                <tr>
+                  <td><a href="{{this.url}}">{{this.title}}</a></td>
+                  <td>{{this.views}}</td>
+                  <td>{{this.uniqueVisitors}}</td>
+                  <td>
+                    <div class="ip-list">
+                      {{#each this.recentIps}}
+                      <div class="ip-row"><code>{{this.ip}}</code><span>{{this.views}} views {{#if this.userEmail}}| {{this.userEmail}}{{/if}}</span></div>
+                      {{else}}
+                      <span class="muted">No IP yet</span>
+                      {{/each}}
+                    </div>
+                  </td>
+                  <td class="muted">{{this.lastSeenAt}}</td>
+                </tr>
                 {{else}}
-                <tr><td colspan="4" class="muted">No game views yet.</td></tr>
+                <tr><td colspan="5" class="muted">No game views yet.</td></tr>
                 {{/each}}
               </tbody>
             </table>
@@ -179,15 +215,31 @@
           </div>
           <div class="analytics-table-wrap">
             <table class="analytics-table">
-              <thead><tr><th>Software</th><th>Views</th><th>Unique visitors</th><th>Downloads</th><th>Unique IPs</th><th>Last view</th><th>Last download</th></tr></thead>
+              <thead><tr><th>Software</th><th>Views</th><th>Visitor IPs</th><th>Downloads</th><th>Download IPs</th><th>Last view</th><th>Last download</th></tr></thead>
               <tbody>
                 {{#each analytics.sections.apps.items}}
                 <tr>
                   <td><a href="{{this.url}}">{{this.title}}</a><div class="muted">{{this.appSlug}}</div></td>
                   <td>{{this.views}}</td>
-                  <td>{{this.uniqueVisitors}}</td>
+                  <td>
+                    <div class="ip-list">
+                      {{#each this.recentVisitorIps}}
+                      <div class="ip-row"><code>{{this.ip}}</code><span>{{this.views}} views {{#if this.userEmail}}| {{this.userEmail}}{{/if}}</span></div>
+                      {{else}}
+                      <span class="muted">No visitor IP yet</span>
+                      {{/each}}
+                    </div>
+                  </td>
                   <td>{{this.downloads}}</td>
-                  <td>{{this.uniqueIps}}</td>
+                  <td>
+                    <div class="ip-list">
+                      {{#each this.recentDownloadIps}}
+                      <div class="ip-row"><code>{{this.ip}}</code><span>{{this.views}} downloads {{#if this.userEmail}}| {{this.userEmail}}{{/if}}</span></div>
+                      {{else}}
+                      <span class="muted">No download IP yet</span>
+                      {{/each}}
+                    </div>
+                  </td>
                   <td class="muted">{{this.lastSeenAt}}</td>
                   <td class="muted">{{this.lastDownloadedAt}}</td>
                 </tr>
@@ -211,12 +263,26 @@
           </div>
           <div class="analytics-table-wrap">
             <table class="analytics-table">
-              <thead><tr><th>Course</th><th>Views</th><th>Unique</th><th>Last seen</th></tr></thead>
+              <thead><tr><th>Course</th><th>Views</th><th>Unique</th><th>Visitor IPs</th><th>Last seen</th></tr></thead>
               <tbody>
                 {{#each analytics.sections.courses.items}}
-                <tr><td><a href="{{this.url}}">{{this.title}}</a><div class="muted">{{this.slug}}</div></td><td>{{this.views}}</td><td>{{this.uniqueVisitors}}</td><td class="muted">{{this.lastSeenAt}}</td></tr>
+                <tr>
+                  <td><a href="{{this.url}}">{{this.title}}</a><div class="muted">{{this.slug}}</div></td>
+                  <td>{{this.views}}</td>
+                  <td>{{this.uniqueVisitors}}</td>
+                  <td>
+                    <div class="ip-list">
+                      {{#each this.recentIps}}
+                      <div class="ip-row"><code>{{this.ip}}</code><span>{{this.views}} views {{#if this.userEmail}}| {{this.userEmail}}{{/if}}</span></div>
+                      {{else}}
+                      <span class="muted">No IP yet</span>
+                      {{/each}}
+                    </div>
+                  </td>
+                  <td class="muted">{{this.lastSeenAt}}</td>
+                </tr>
                 {{else}}
-                <tr><td colspan="4" class="muted">No course views yet.</td></tr>
+                <tr><td colspan="5" class="muted">No course views yet.</td></tr>
                 {{/each}}
               </tbody>
             </table>
@@ -257,19 +323,20 @@
             <div class="analytics-table-wrap">
               <table class="analytics-table">
                 <thead>
-                  <tr><th>Post</th><th>Visitor</th><th>User</th><th>Duration</th><th>Started</th></tr>
+                  <tr><th>Post</th><th>Visitor</th><th>IP</th><th>User</th><th>Duration</th><th>Started</th></tr>
                 </thead>
                 <tbody>
                   {{#each analytics.recentViews}}
                   <tr>
                     <td><a href="{{this.url}}">{{this.title}}</a></td>
                     <td>{{this.visitorId}}</td>
+                    <td><code>{{this.ipAddress}}</code></td>
                     <td class="muted">{{this.userEmail}}</td>
                     <td>{{this.duration}}</td>
                     <td class="muted">{{this.startedAt}}</td>
                   </tr>
                   {{else}}
-                  <tr><td colspan="5" class="muted">No recent views yet.</td></tr>
+                  <tr><td colspan="6" class="muted">No recent views yet.</td></tr>
                   {{/each}}
                 </tbody>
               </table>

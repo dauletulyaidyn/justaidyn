@@ -41,6 +41,7 @@ export class AnalyticsService {
         path: this.cleanPath(input.path || req.originalUrl || req.path),
         referrer: this.cleanOptional(req.headers.referer || req.headers.referrer, 500),
         userAgent: this.cleanOptional(req.headers['user-agent'], 500),
+        ipAddress: this.getClientIp(req),
         ipHash: this.hashIp(req),
       },
     });
@@ -79,6 +80,7 @@ export class AnalyticsService {
         path: this.cleanPath(input.path),
         referrer: this.cleanOptional(input.referrer, 500),
         userAgent: this.cleanOptional(req.headers['user-agent'], 500),
+        ipAddress: this.getClientIp(req),
         ipHash: this.hashIp(req),
       },
       select: { id: true, startedAt: true },
@@ -144,6 +146,7 @@ export class AnalyticsService {
       uniqueVisitors: Set<string>;
       durationSeconds: number;
       lastSeenAt: Date;
+      recentIps: Map<string, { ip: string; views: number; userEmail: string; lastSeenAt: Date }>;
     }>();
     const dailyMap = new Map<string, { date: string; views: number; uniqueVisitors: Set<string>; durationSeconds: number }>();
 
@@ -158,11 +161,13 @@ export class AnalyticsService {
         uniqueVisitors: new Set<string>(),
         durationSeconds: 0,
         lastSeenAt: view.lastSeenAt,
+        recentIps: new Map<string, { ip: string; views: number; userEmail: string; lastSeenAt: Date }>(),
       };
       current.views += 1;
       current.uniqueVisitors.add(view.visitorId);
       current.durationSeconds += view.durationSeconds;
       if (view.lastSeenAt > current.lastSeenAt) current.lastSeenAt = view.lastSeenAt;
+      this.addIpSummary(current.recentIps, this.displayIp(view.ipAddress, view.ipHash), view.user?.email ?? '', view.lastSeenAt);
       postMap.set(key, current);
 
       const date = view.startedAt.toISOString().slice(0, 10);
@@ -198,6 +203,7 @@ export class AnalyticsService {
         totalDuration: this.formatDuration(post.durationSeconds),
         averageDuration: this.formatDuration(post.views ? Math.round(post.durationSeconds / post.views) : 0),
         lastSeenAt: post.lastSeenAt.toISOString(),
+        recentIps: this.formatIpSummaries(post.recentIps),
       }))
       .sort((left, right) => right.views - left.views);
     const appPageItems = pageSections.apps.items.filter((item) => item.slug !== 'apps-hub');
@@ -213,6 +219,8 @@ export class AnalyticsService {
           downloads: app.downloads,
           uniqueIps: app.uniqueIps.size,
           uniqueVisitorKeys: viewStats?.visitorKeys || [],
+          recentVisitorIps: viewStats?.recentIps || [],
+          recentDownloadIps: this.formatDownloadIps(downloadEvents.filter((event) => event.appSlug === app.appSlug)),
           lastSeenAt: viewStats?.lastSeenAt || '',
           lastDownloadedAt: app.lastDownloadedAt.toISOString(),
         };
@@ -229,6 +237,8 @@ export class AnalyticsService {
           downloads: 0,
           uniqueIps: 0,
           uniqueVisitorKeys: item.visitorKeys,
+          recentVisitorIps: item.recentIps,
+          recentDownloadIps: [],
           lastSeenAt: item.lastSeenAt,
           lastDownloadedAt: '',
         });
@@ -282,6 +292,7 @@ export class AnalyticsService {
         url: `/${view.post.platform === 'SKILLSMINDS' ? 'skillsminds' : 'nofacethinker'}/post/${view.post.slug}`,
         visitorId: view.visitorId.slice(0, 10),
         userEmail: view.user?.email ?? '',
+        ipAddress: this.displayIp(view.ipAddress, view.ipHash),
         duration: this.formatDuration(view.durationSeconds),
         startedAt: view.startedAt.toISOString(),
       })),
@@ -315,6 +326,8 @@ export class AnalyticsService {
     entitySlug: string;
     entityTitle: string;
     path: string;
+    user?: { email: string } | null;
+    ipAddress?: string | null;
     ipHash: string | null;
     createdAt: Date;
   }>) {
@@ -334,11 +347,13 @@ export class AnalyticsService {
         url: this.pageEntityUrl(view.section, key, view.path),
         views: 0,
         uniqueVisitors: new Set<string>(),
+        recentIps: new Map<string, { ip: string; views: number; userEmail: string; lastSeenAt: Date }>(),
         lastSeenAt: view.createdAt,
       };
       current.views += 1;
       if (view.ipHash) current.uniqueVisitors.add(view.ipHash);
       if (view.createdAt > current.lastSeenAt) current.lastSeenAt = view.createdAt;
+      this.addIpSummary(current.recentIps, this.displayIp(view.ipAddress, view.ipHash), view.user?.email ?? '', view.createdAt);
       sections[section].map.set(key, current);
     });
 
@@ -358,6 +373,7 @@ export class AnalyticsService {
         url: string;
         views: number;
         uniqueVisitors: Set<string>;
+        recentIps: Map<string, { ip: string; views: number; userEmail: string; lastSeenAt: Date }>;
         lastSeenAt: Date;
       }>(),
     };
@@ -372,6 +388,7 @@ export class AnalyticsService {
         views: item.views,
         uniqueVisitors: item.uniqueVisitors.size,
         visitorKeys: Array.from(item.uniqueVisitors),
+        recentIps: this.formatIpSummaries(item.recentIps),
         lastSeenAt: item.lastSeenAt.toISOString(),
       }))
       .sort((left, right) => right.views - left.views);
@@ -391,6 +408,43 @@ export class AnalyticsService {
       uniqueVisitors: posts.reduce((sum, post) => sum + post.uniqueVisitors, 0),
       posts: posts.length,
     };
+  }
+
+  private addIpSummary(
+    map: Map<string, { ip: string; views: number; userEmail: string; lastSeenAt: Date }>,
+    ip: string,
+    userEmail: string,
+    seenAt: Date,
+  ) {
+    if (!ip) return;
+    const current = map.get(ip) ?? { ip, views: 0, userEmail: '', lastSeenAt: seenAt };
+    current.views += 1;
+    if (userEmail && !current.userEmail) current.userEmail = userEmail;
+    if (seenAt > current.lastSeenAt) current.lastSeenAt = seenAt;
+    map.set(ip, current);
+  }
+
+  private formatIpSummaries(map: Map<string, { ip: string; views: number; userEmail: string; lastSeenAt: Date }>) {
+    return Array.from(map.values())
+      .sort((left, right) => right.lastSeenAt.getTime() - left.lastSeenAt.getTime())
+      .slice(0, 6)
+      .map((entry) => ({
+        ip: entry.ip,
+        views: entry.views,
+        userEmail: entry.userEmail,
+        lastSeenAt: entry.lastSeenAt.toISOString(),
+      }));
+  }
+
+  private formatDownloadIps(events: Array<{ ipAddress: string; user?: { email: string } | null; createdAt: Date }>) {
+    const map = new Map<string, { ip: string; views: number; userEmail: string; lastSeenAt: Date }>();
+    events.forEach((event) => this.addIpSummary(map, event.ipAddress, event.user?.email ?? '', event.createdAt));
+    return this.formatIpSummaries(map);
+  }
+
+  private displayIp(ipAddress?: string | null, ipHash?: string | null): string {
+    if (ipAddress) return ipAddress;
+    return ipHash ? `hash:${ipHash.slice(0, 12)}` : '';
   }
 
   private pageEntityUrl(section: string, slug: string, path: string): string {
