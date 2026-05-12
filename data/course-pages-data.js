@@ -4,8 +4,8 @@ window.__COURSE_PAGES__ = {
       "meta": {
         "title": "Курс AI-агенты | Главная страница",
         "description": "Главная страница курса AI-агенты: информация о курсе, 4 формата групп и ссылки на Lite, Standard, Standard+ и VIP.",
-        "canonical": "https://justaidyn.vercel.app/ai-agents-course.html",
-        "structuredData": "\n    {\n      \"@context\": \"https://schema.org\",\n      \"@type\": \"Course\",\n      \"name\": \"Курс AI-агенты\",\n      \"description\": \"Практический курс по прикладным AI-агентам с форматами Lite, Standard, Standard+ и VIP.\",\n      \"url\": \"https://justaidyn.vercel.app/ai-agents-course.html\",\n      \"provider\": {\n        \"@type\": \"Person\",\n        \"name\": \"Dauletuly Aidyn\",\n        \"alternateName\": \"JustAidyn\"\n      }\n    }\n    ",
+        "canonical": "https://justaidyn.com/courses/ai-agents-course.html",
+        "structuredData": "\n    {\n      \"@context\": \"https://schema.org\",\n      \"@type\": \"Course\",\n      \"name\": \"Курс AI-агенты\",\n      \"description\": \"Практический курс по прикладным AI-агентам с форматами Lite, Standard, Standard+ и VIP.\",\n      \"url\": \"https://justaidyn.com/courses/ai-agents-course.html\",\n      \"provider\": {\n        \"@type\": \"Person\",\n        \"name\": \"Dauletuly Aidyn\",\n        \"alternateName\": \"JustAidyn\"\n      }\n    }\n    ",
         "named": {
           "viewport": "width=device-width, initial-scale=1",
           "description": "Главная страница курса AI-агенты: информация о курсе, 4 формата групп и ссылки на Lite, Standard, Standard+ и VIP.",
@@ -13,14 +13,14 @@ window.__COURSE_PAGES__ = {
           "twitter:card": "summary_large_image",
           "twitter:title": "Курс AI-агенты | Главная страница",
           "twitter:description": "Главная страница курса AI-агенты: информация о курсе, 4 формата групп и ссылки на Lite, Standard, Standard+ и VIP.",
-          "twitter:image": "https://justaidyn.vercel.app/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
+          "twitter:image": "https://justaidyn.com/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
         },
         "property": {
           "og:title": "Курс AI-агенты | Главная страница",
           "og:description": "Главная страница курса AI-агенты: информация о курсе, 4 формата групп и ссылки на Lite, Standard, Standard+ и VIP.",
           "og:type": "website",
-          "og:url": "https://justaidyn.vercel.app/ai-agents-course.html",
-          "og:image": "https://justaidyn.vercel.app/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
+          "og:url": "https://justaidyn.com/courses/ai-agents-course.html",
+          "og:image": "https://justaidyn.com/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
         }
       },
       "defaultLang": "ru",
@@ -31,8 +31,8 @@ window.__COURSE_PAGES__ = {
       "meta": {
         "title": "Курс AI-агенты | Группа Lite",
         "description": "Страница группа lite курса AI-агенты: 5 учебных дней, цена 65 000 тг и структура модулей.",
-        "canonical": "https://justaidyn.vercel.app/ai-agents-lite-group.html",
-        "structuredData": "\n    {\n      \"@context\": \"https://schema.org\",\n      \"@type\": \"Course\",\n      \"name\": \"Курс AI-агенты | Группа Lite\",\n      \"description\": \"Группа Lite: 5 учебных дней, цена 65 000 тг и прикладная структура модулей.\",\n      \"url\": \"https://justaidyn.vercel.app/ai-agents-lite-group.html\",\n      \"provider\": {\n        \"@type\": \"Person\",\n        \"name\": \"Dauletuly Aidyn\",\n        \"alternateName\": \"JustAidyn\"\n      }\n    }\n    ",
+        "canonical": "https://justaidyn.com/courses/ai-agents-lite-group.html",
+        "structuredData": "\n    {\n      \"@context\": \"https://schema.org\",\n      \"@type\": \"Course\",\n      \"name\": \"Курс AI-агенты | Группа Lite\",\n      \"description\": \"Группа Lite: 5 учебных дней, цена 65 000 тг и прикладная структура модулей.\",\n      \"url\": \"https://justaidyn.com/courses/ai-agents-lite-group.html\",\n      \"provider\": {\n        \"@type\": \"Person\",\n        \"name\": \"Dauletuly Aidyn\",\n        \"alternateName\": \"JustAidyn\"\n      }\n    }\n    ",
         "named": {
           "viewport": "width=device-width, initial-scale=1",
           "description": "Страница группа lite курса AI-агенты: 5 учебных дней, цена 65 000 тг и структура модулей.",
@@ -40,14 +40,14 @@ window.__COURSE_PAGES__ = {
           "twitter:card": "summary_large_image",
           "twitter:title": "Курс AI-агенты | Группа Lite",
           "twitter:description": "Страница группа lite курса AI-агенты: 5 учебных дней, цена 65 000 тг и структура модулей.",
-          "twitter:image": "https://justaidyn.vercel.app/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
+          "twitter:image": "https://justaidyn.com/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
         },
         "property": {
           "og:title": "Курс AI-агенты | Группа Lite",
           "og:description": "Страница группа lite курса AI-агенты: 5 учебных дней, цена 65 000 тг и структура модулей.",
           "og:type": "website",
-          "og:url": "https://justaidyn.vercel.app/ai-agents-lite-group.html",
-          "og:image": "https://justaidyn.vercel.app/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
+          "og:url": "https://justaidyn.com/courses/ai-agents-lite-group.html",
+          "og:image": "https://justaidyn.com/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
         }
       },
       "defaultLang": "ru",
@@ -58,8 +58,8 @@ window.__COURSE_PAGES__ = {
       "meta": {
         "title": "Курс AI-агенты | Группа Standard",
         "description": "Страница группа standard курса AI-агенты: 8 учебных дней, цена 135 000 тг и структура модулей.",
-        "canonical": "https://justaidyn.vercel.app/ai-agents-standard-group.html",
-        "structuredData": "\n    {\n      \"@context\": \"https://schema.org\",\n      \"@type\": \"Course\",\n      \"name\": \"Курс AI-агенты | Группа Standard\",\n      \"description\": \"Группа Standard: 8 учебных дней, цена 135 000 тг и прикладная структура модулей.\",\n      \"url\": \"https://justaidyn.vercel.app/ai-agents-standard-group.html\",\n      \"provider\": {\n        \"@type\": \"Person\",\n        \"name\": \"Dauletuly Aidyn\",\n        \"alternateName\": \"JustAidyn\"\n      }\n    }\n    ",
+        "canonical": "https://justaidyn.com/courses/ai-agents-standard-group.html",
+        "structuredData": "\n    {\n      \"@context\": \"https://schema.org\",\n      \"@type\": \"Course\",\n      \"name\": \"Курс AI-агенты | Группа Standard\",\n      \"description\": \"Группа Standard: 8 учебных дней, цена 135 000 тг и прикладная структура модулей.\",\n      \"url\": \"https://justaidyn.com/courses/ai-agents-standard-group.html\",\n      \"provider\": {\n        \"@type\": \"Person\",\n        \"name\": \"Dauletuly Aidyn\",\n        \"alternateName\": \"JustAidyn\"\n      }\n    }\n    ",
         "named": {
           "viewport": "width=device-width, initial-scale=1",
           "description": "Страница группа standard курса AI-агенты: 8 учебных дней, цена 135 000 тг и структура модулей.",
@@ -67,14 +67,14 @@ window.__COURSE_PAGES__ = {
           "twitter:card": "summary_large_image",
           "twitter:title": "Курс AI-агенты | Группа Standard",
           "twitter:description": "Страница группа standard курса AI-агенты: 8 учебных дней, цена 135 000 тг и структура модулей.",
-          "twitter:image": "https://justaidyn.vercel.app/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
+          "twitter:image": "https://justaidyn.com/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
         },
         "property": {
           "og:title": "Курс AI-агенты | Группа Standard",
           "og:description": "Страница группа standard курса AI-агенты: 8 учебных дней, цена 135 000 тг и структура модулей.",
           "og:type": "website",
-          "og:url": "https://justaidyn.vercel.app/ai-agents-standard-group.html",
-          "og:image": "https://justaidyn.vercel.app/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
+          "og:url": "https://justaidyn.com/courses/ai-agents-standard-group.html",
+          "og:image": "https://justaidyn.com/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
         }
       },
       "defaultLang": "ru",
@@ -85,8 +85,8 @@ window.__COURSE_PAGES__ = {
       "meta": {
         "title": "Курс AI-агенты | Группа VIP",
         "description": "Страница группа vip курса AI-агенты: 14 учебных дней, цена 1 350 000 тг и структура модулей.",
-        "canonical": "https://justaidyn.vercel.app/ai-agents-vip-group.html",
-        "structuredData": "\n    {\n      \"@context\": \"https://schema.org\",\n      \"@type\": \"Course\",\n      \"name\": \"Курс AI-агенты | Группа VIP\",\n      \"description\": \"Группа VIP: 14 учебных дней, цена 1 350 000 тг и прикладная структура модулей.\",\n      \"url\": \"https://justaidyn.vercel.app/ai-agents-vip-group.html\",\n      \"provider\": {\n        \"@type\": \"Person\",\n        \"name\": \"Dauletuly Aidyn\",\n        \"alternateName\": \"JustAidyn\"\n      }\n    }\n    ",
+        "canonical": "https://justaidyn.com/courses/ai-agents-vip-group.html",
+        "structuredData": "\n    {\n      \"@context\": \"https://schema.org\",\n      \"@type\": \"Course\",\n      \"name\": \"Курс AI-агенты | Группа VIP\",\n      \"description\": \"Группа VIP: 14 учебных дней, цена 1 350 000 тг и прикладная структура модулей.\",\n      \"url\": \"https://justaidyn.com/courses/ai-agents-vip-group.html\",\n      \"provider\": {\n        \"@type\": \"Person\",\n        \"name\": \"Dauletuly Aidyn\",\n        \"alternateName\": \"JustAidyn\"\n      }\n    }\n    ",
         "named": {
           "viewport": "width=device-width, initial-scale=1",
           "description": "Страница группа vip курса AI-агенты: 14 учебных дней, цена 1 350 000 тг и структура модулей.",
@@ -94,14 +94,14 @@ window.__COURSE_PAGES__ = {
           "twitter:card": "summary_large_image",
           "twitter:title": "Курс AI-агенты | Группа VIP",
           "twitter:description": "Страница группа vip курса AI-агенты: 14 учебных дней, цена 1 350 000 тг и структура модулей.",
-          "twitter:image": "https://justaidyn.vercel.app/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
+          "twitter:image": "https://justaidyn.com/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
         },
         "property": {
           "og:title": "Курс AI-агенты | Группа VIP",
           "og:description": "Страница группа vip курса AI-агенты: 14 учебных дней, цена 1 350 000 тг и структура модулей.",
           "og:type": "website",
-          "og:url": "https://justaidyn.vercel.app/ai-agents-vip-group.html",
-          "og:image": "https://justaidyn.vercel.app/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
+          "og:url": "https://justaidyn.com/courses/ai-agents-vip-group.html",
+          "og:image": "https://justaidyn.com/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
         }
       },
       "defaultLang": "ru",
@@ -112,8 +112,8 @@ window.__COURSE_PAGES__ = {
       "meta": {
         "title": "Курс AI-агенты | Группа Standard+",
         "description": "Страница группы Standard+ курса AI-агенты: 11 учебных дней, цена 270 000 тг и отдельный модуль Task Manager.",
-        "canonical": "https://justaidyn.vercel.app/ai-agents-standard-plus-group.html",
-        "structuredData": "\n    {\n      \"@context\": \"https://schema.org\",\n      \"@type\": \"Course\",\n      \"name\": \"Курс AI-агенты | Группа Standard+\",\n      \"description\": \"Группа Standard+: 11 учебных дней, цена 270 000 тг и отдельный модуль Task Manager.\",\n      \"url\": \"https://justaidyn.vercel.app/ai-agents-standard-plus-group.html\",\n      \"provider\": {\n        \"@type\": \"Person\",\n        \"name\": \"Dauletuly Aidyn\",\n        \"alternateName\": \"JustAidyn\"\n      }\n    }\n    ",
+        "canonical": "https://justaidyn.com/courses/ai-agents-standard-plus-group.html",
+        "structuredData": "\n    {\n      \"@context\": \"https://schema.org\",\n      \"@type\": \"Course\",\n      \"name\": \"Курс AI-агенты | Группа Standard+\",\n      \"description\": \"Группа Standard+: 11 учебных дней, цена 270 000 тг и отдельный модуль Task Manager.\",\n      \"url\": \"https://justaidyn.com/courses/ai-agents-standard-plus-group.html\",\n      \"provider\": {\n        \"@type\": \"Person\",\n        \"name\": \"Dauletuly Aidyn\",\n        \"alternateName\": \"JustAidyn\"\n      }\n    }\n    ",
         "named": {
           "viewport": "width=device-width, initial-scale=1",
           "description": "Страница группы Standard+ курса AI-агенты: 11 учебных дней, цена 270 000 тг и отдельный модуль Task Manager.",
@@ -121,14 +121,14 @@ window.__COURSE_PAGES__ = {
           "twitter:card": "summary_large_image",
           "twitter:title": "Курс AI-агенты | Группа Standard+",
           "twitter:description": "Страница группы Standard+ курса AI-агенты: 11 учебных дней, цена 270 000 тг и отдельный модуль Task Manager.",
-          "twitter:image": "https://justaidyn.vercel.app/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
+          "twitter:image": "https://justaidyn.com/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
         },
         "property": {
           "og:title": "Курс AI-агенты | Группа Standard+",
           "og:description": "Страница группы Standard+ курса AI-агенты: 11 учебных дней, цена 270 000 тг и отдельный модуль Task Manager.",
           "og:type": "website",
-          "og:url": "https://justaidyn.vercel.app/ai-agents-standard-plus-group.html",
-          "og:image": "https://justaidyn.vercel.app/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
+          "og:url": "https://justaidyn.com/courses/ai-agents-standard-plus-group.html",
+          "og:image": "https://justaidyn.com/images/ChatGPT%20Image%20Feb%2023,%202026,%2005_37_07%20PM.png"
         }
       },
       "defaultLang": "ru",

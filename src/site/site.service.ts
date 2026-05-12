@@ -36,6 +36,9 @@ export interface PageModel {
   title: string;
   description: string;
   pageKey: string;
+  analyticsSection?: 'apps' | 'games' | 'courses';
+  analyticsEntitySlug?: string;
+  analyticsEntityTitle?: string;
   isAuthPage?: boolean;
   lowerNav: NavLink[];
   heroTitle: string;

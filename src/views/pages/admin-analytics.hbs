@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -216,7 +216,7 @@
         <h2>Software</h2>
         <div class="analytics-table-wrap">
           <table class="analytics-table">
-            <thead><tr><th>Software</th><th>Views</th><th>Visitor IPs</th><th>Downloads</th><th>Download IPs</th><th>Last view</th><th>Last download</th></tr></thead>
+            <thead><tr><th>Software</th><th>Views</th><th>Visitor IPs</th><th>Time on page</th><th>Downloads</th><th>Download IPs</th><th>Last view</th><th>Last download</th></tr></thead>
             <tbody>
               {{#each analytics.current.items}}
               <tr>
@@ -225,17 +225,18 @@
                 <td>
                   <div class="ip-list">
                     {{#each this.recentVisitorIps}}
-                    <div class="ip-row"><code>{{this.ip}}</code><span>{{this.views}} views {{#if this.userEmail}}| {{this.userEmail}}{{/if}}</span></div>
+                    <div class="ip-row"><code>{{this.ip}}</code><span>{{this.views}} views {{#if this.userEmail}}| {{this.userEmail}}{{/if}} | <time data-utc="{{this.lastSeenAt}}">{{this.lastSeenAt}}</time></span></div>
                     {{else}}
                     <span class="muted">No visitor IP yet</span>
                     {{/each}}
                   </div>
                 </td>
+                <td>{{this.totalDuration}}<div class="muted">avg {{this.averageDuration}}</div></td>
                 <td>{{this.downloads}}</td>
                 <td>
                   <div class="ip-list">
                     {{#each this.recentDownloadIps}}
-                    <div class="ip-row"><code>{{this.ip}}</code><span>{{this.views}} downloads {{#if this.userEmail}}| {{this.userEmail}}{{/if}}</span></div>
+                    <div class="ip-row"><code>{{this.ip}}</code><span>{{this.views}} downloads {{#if this.userEmail}}| {{this.userEmail}}{{/if}} | <time data-utc="{{this.lastSeenAt}}">{{this.lastSeenAt}}</time></span></div>
                     {{else}}
                     <span class="muted">No download IP yet</span>
                     {{/each}}
@@ -245,7 +246,7 @@
                 <td class="muted"><time data-utc="{{this.lastDownloadedAt}}">{{this.lastDownloadedAt}}</time></td>
               </tr>
               {{else}}
-              <tr><td colspan="7" class="muted">No app analytics yet.</td></tr>
+              <tr><td colspan="8" class="muted">No app analytics yet.</td></tr>
               {{/each}}
             </tbody>
           </table>
@@ -256,7 +257,7 @@
         <h2>Recent download IPs</h2>
         <div class="analytics-table-wrap">
           <table class="analytics-table">
-            <thead><tr><th>App</th><th>IP</th><th>User</th><th>Referrer</th><th>User agent</th><th>Downloaded</th></tr></thead>
+            <thead><tr><th>App</th><th>IP</th><th>User</th><th>Referrer</th><th>User agent</th><th>Started</th><th>Ended</th><th>Duration</th></tr></thead>
             <tbody>
               {{#each analytics.current.recentDownloads}}
               <tr>
@@ -265,10 +266,12 @@
                 <td class="muted">{{this.userEmail}}</td>
                 <td class="muted">{{this.referrer}}</td>
                 <td class="muted">{{this.userAgent}}</td>
-                <td class="muted"><time data-utc="{{this.downloadedAt}}">{{this.downloadedAt}}</time></td>
+                <td class="muted"><time data-utc="{{this.startedAt}}">{{this.startedAt}}</time></td>
+                <td class="muted"><time data-utc="{{this.completedAt}}">{{this.completedAt}}</time></td>
+                <td>{{this.duration}}</td>
               </tr>
               {{else}}
-              <tr><td colspan="6" class="muted">No recent download events yet.</td></tr>
+              <tr><td colspan="8" class="muted">No recent download events yet.</td></tr>
               {{/each}}
             </tbody>
           </table>

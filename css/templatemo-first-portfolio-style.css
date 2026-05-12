@@ -337,7 +337,7 @@ strong {
 .sticky-wrapper {
   position: relative;
   z-index: 222;
-  height: auto !important;
+  min-height: var(--site-header-offset);
 }
 
 .is-sticky {

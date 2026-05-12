@@ -135,7 +135,7 @@
     const block = document.createElement('div');
     block.className = 'article-callout note';
     block.setAttribute('data-course-brand-block', 'true');
-    block.innerHTML = `<strong>${copy.label}:</strong> ${copy.text} <a href="https://justaidyn.vercel.app/ai-agents-course.html">${copy.link}</a>.`;
+    block.innerHTML = `<strong>${copy.label}:</strong> ${copy.text} <a href="https://justaidyn.com/courses/ai-agents-course.html">${copy.link}</a>.`;
 
     const anchor = article.querySelector('.article-meta') || article.firstElementChild;
     if (anchor && anchor.nextSibling) {

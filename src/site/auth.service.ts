@@ -41,6 +41,9 @@ export interface AuthUser {
   createdAt: string;
   updatedAt: string;
   lastLoginAt: string;
+  deletedAt?: string;
+  accountStatus?: 'active' | 'inactive' | 'deleted';
+  statusClass?: string;
 }
 
 export interface ProfileUpdateInput {
@@ -103,6 +106,7 @@ export class AuthService {
       createdAt: u.createdAt.toISOString(),
       updatedAt: u.updatedAt.toISOString(),
       lastLoginAt: u.lastLoginAt.toISOString(),
+      deletedAt: u.deletedAt?.toISOString(),
     };
   }
 
@@ -115,7 +119,7 @@ export class AuthService {
       where: { id: sessionId, expiresAt: { gt: new Date() } },
       include: { user: true },
     });
-    return session ? this.mapUser(session.user) : null;
+    return session && !session.user.deletedAt ? this.mapUser(session.user) : null;
   }
 
   getCurrentUser(req: Request): AuthUser | null {
@@ -231,7 +235,19 @@ export class AuthService {
     if (currentUser.thinkerSubscriptionId && (currentUser.thinkerSubscriptionStatus === 'active' || currentUser.thinkerSubscriptionStatus === 'trialing')) {
       await this.cancelSubscriptionById(currentUser.thinkerSubscriptionId);
     }
-    await this.prisma.user.delete({ where: { id: currentUser.id } });
+    await Promise.all([
+      this.prisma.session.deleteMany({ where: { userId: currentUser.id } }),
+      this.prisma.apiToken.deleteMany({ where: { userId: currentUser.id } }),
+      this.prisma.passwordResetToken.deleteMany({ where: { userId: currentUser.id } }),
+      this.prisma.user.update({
+        where: { id: currentUser.id },
+        data: {
+          deletedAt: new Date(),
+          paddleSubscriptionStatus: currentUser.paddleSubscriptionStatus ? 'canceled' : null,
+          thinkerSubscriptionStatus: currentUser.thinkerSubscriptionStatus ? 'canceled' : null,
+        },
+      }),
+    ]);
     res.clearCookie(this.sessionCookie, { path: '/' });
   }
 
@@ -266,7 +282,16 @@ export class AuthService {
     return users.map((u) => {
       const mapped = this.mapUser(u);
       const { passwordHash: _, ...rest } = mapped;
-      return rest;
+      const isSubscribed = rest.paddleSubscriptionStatus === 'active'
+        || rest.paddleSubscriptionStatus === 'trialing'
+        || rest.thinkerSubscriptionStatus === 'active'
+        || rest.thinkerSubscriptionStatus === 'trialing';
+      const accountStatus = rest.deletedAt ? 'deleted' : isSubscribed ? 'active' : 'inactive';
+      return {
+        ...rest,
+        accountStatus,
+        statusClass: `user-status-${accountStatus}`,
+      };
     });
   }
 
@@ -506,6 +531,7 @@ export class AuthService {
           lastName: existingUser.lastName || googleUser.family_name || this.getLastName(googleUser.name),
           picture: googleUser.picture,
           lastLoginAt: now,
+          deletedAt: null,
           ...(isSuperadmin && { role: 'SUPERADMIN' as const }),
         },
       });
@@ -792,7 +818,7 @@ export class AuthService {
     const token = this.readBearerToken(req);
     if (!token) return null;
     const record = await this.prisma.apiToken.findUnique({ where: { token }, include: { user: true } });
-    if (!record || record.expiresAt < new Date()) return null;
+    if (!record || record.expiresAt < new Date() || record.user.deletedAt) return null;
     this.prisma.apiToken.update({ where: { id: record.id }, data: { lastUsedAt: new Date() } }).catch(() => {});
     return this.mapUser(record.user);
   }
@@ -803,7 +829,7 @@ export class AuthService {
 
     const now = new Date();
     const record = await this.prisma.apiToken.findUnique({ where: { token }, include: { user: true } });
-    if (!record || record.expiresAt < now) {
+    if (!record || record.expiresAt < now || record.user.deletedAt) {
       throw new UnauthorizedException('Invalid or expired token.');
     }
 

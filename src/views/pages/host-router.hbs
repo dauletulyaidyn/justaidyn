@@ -171,12 +171,26 @@
               </div>
             </div>
             <div class="platform-auth-grid">
+              <style>
+                .admin-user-card { border-left: 5px solid #8a96a3; }
+                .admin-user-card.user-status-active { border-left-color: #14b789; background: rgba(20,183,137,0.06); }
+                .admin-user-card.user-status-inactive { border-left-color: #f2b544; background: rgba(242,181,68,0.08); }
+                .admin-user-card.user-status-deleted { border-left-color: #c0392b; background: rgba(192,57,43,0.07); opacity: 0.9; }
+                .admin-user-status { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 4px 10px; font-size: 0.76rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; }
+                .admin-user-status.user-status-active { color: #0e8a63; background: rgba(20,183,137,0.14); }
+                .admin-user-status.user-status-inactive { color: #936400; background: rgba(242,181,68,0.18); }
+                .admin-user-status.user-status-deleted { color: #a93226; background: rgba(192,57,43,0.14); }
+              </style>
               {{#each adminUsers}}
-              <article class="platform-card">
+              <article class="platform-card admin-user-card {{this.statusClass}}">
                 <h2>{{this.name}}</h2>
                 <p>{{this.email}}</p>
+                <p><span class="admin-user-status {{this.statusClass}}">{{this.accountStatus}}</span></p>
                 <p>Role: {{this.role}}</p>
                 <p>Last login: {{this.lastLoginAt}}</p>
+                {{#if this.deletedAt}}<p>Deleted: {{this.deletedAt}}</p>{{/if}}
+                {{#if this.paddleSubscriptionStatus}}<p>ScreenCam: {{this.paddleSubscriptionStatus}}</p>{{/if}}
+                {{#if this.thinkerSubscriptionStatus}}<p>Thinker: {{this.thinkerSubscriptionStatus}}</p>{{/if}}
               </article>
               {{/each}}
             </div>

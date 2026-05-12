@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+﻿import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { createHash } from 'crypto';
 import { Request } from 'express';
 import { PrismaService } from '../prisma.service';
@@ -20,6 +20,12 @@ export interface PageViewInput {
   entitySlug: string;
   entityTitle: string;
   path?: string;
+  referrer?: string;
+}
+
+export interface HeartbeatPageViewInput {
+  viewId?: string;
+  durationSeconds?: number;
 }
 
 @Injectable()
@@ -30,26 +36,31 @@ export class AnalyticsService {
     const section = this.cleanSection(input.section);
     const entitySlug = this.cleanSlug(input.entitySlug);
     const entityTitle = this.cleanText(input.entityTitle, 160);
-    if (!section || !entitySlug || !entityTitle) return;
+    if (!section || !entitySlug || !entityTitle) return null;
 
-    await this.prisma.pageView.create({
+    const view = await this.prisma.pageView.create({
       data: {
         section,
         entitySlug,
         entityTitle,
         userId: userId || null,
         path: this.cleanPath(input.path || req.originalUrl || req.path),
-        referrer: this.cleanOptional(req.headers.referer || req.headers.referrer, 500),
+        referrer: this.cleanOptional(input.referrer, 500) || this.cleanOptional(req.headers.referer || req.headers.referrer, 500),
         userAgent: this.cleanOptional(req.headers['user-agent'], 500),
         ipAddress: this.getClientIp(req),
         ipHash: this.hashIp(req),
       },
+      select: { id: true, startedAt: true },
     });
+
+    return { viewId: view.id, startedAt: view.startedAt.toISOString() };
   }
 
   async recordDownload(req: Request, appSlug: string, userId?: string) {
     const cleanAppSlug = this.cleanSlug(appSlug);
     if (!cleanAppSlug) throw new BadRequestException('appSlug is required.');
+    const startedAt = new Date();
+    const completedAt = new Date();
 
     await this.prisma.downloadEvent.create({
       data: {
@@ -58,6 +69,9 @@ export class AnalyticsService {
         ipAddress: this.getClientIp(req),
         referrer: this.cleanOptional(req.headers.referer || req.headers.referrer, 500),
         userAgent: this.cleanOptional(req.headers['user-agent'], 500),
+        startedAt,
+        completedAt,
+        durationMs: Math.max(0, completedAt.getTime() - startedAt.getTime()),
       },
     });
   }
@@ -102,6 +116,19 @@ export class AnalyticsService {
     return { ok: true };
   }
 
+  async heartbeatPageView(input: HeartbeatPageViewInput) {
+    const viewId = this.cleanId(input.viewId);
+    if (!viewId) throw new BadRequestException('viewId is required.');
+    const durationSeconds = this.cleanDuration(input.durationSeconds);
+
+    await this.prisma.pageView.updateMany({
+      where: { id: viewId },
+      data: { durationSeconds, lastSeenAt: new Date() },
+    });
+
+    return { ok: true };
+  }
+
   async getDashboard() {
     const [
       views,
@@ -131,7 +158,7 @@ export class AnalyticsService {
       this.prisma.downloadEvent.count(),
       this.prisma.downloadEvent.findMany({ distinct: ['ipAddress'], select: { ipAddress: true } }),
       this.prisma.pageView.findMany({
-        orderBy: { createdAt: 'desc' },
+        orderBy: { startedAt: 'desc' },
         take: 10000,
         include: { user: { select: { email: true } } },
       }),
@@ -216,6 +243,8 @@ export class AnalyticsService {
           url: viewStats?.url || `/apps/${app.appSlug}`,
           views: viewStats?.views || 0,
           uniqueVisitors: viewStats?.uniqueVisitors || 0,
+          totalDuration: viewStats?.totalDuration || '0m 0s',
+          averageDuration: viewStats?.averageDuration || '0m 0s',
           downloads: app.downloads,
           uniqueIps: app.uniqueIps.size,
           uniqueVisitorKeys: viewStats?.visitorKeys || [],
@@ -234,6 +263,8 @@ export class AnalyticsService {
           url: item.url,
           views: item.views,
           uniqueVisitors: item.uniqueVisitors,
+          totalDuration: item.totalDuration,
+          averageDuration: item.averageDuration,
           downloads: 0,
           uniqueIps: 0,
           uniqueVisitorKeys: item.visitorKeys,
@@ -315,6 +346,9 @@ export class AnalyticsService {
           userEmail: event.user?.email ?? '',
           referrer: event.referrer ?? '',
           userAgent: event.userAgent ?? '',
+          startedAt: event.startedAt.toISOString(),
+          completedAt: event.completedAt?.toISOString() ?? '',
+          duration: this.formatMilliseconds(event.durationMs),
           downloadedAt: event.createdAt.toISOString(),
         })),
       },
@@ -329,6 +363,9 @@ export class AnalyticsService {
     user?: { email: string } | null;
     ipAddress?: string | null;
     ipHash: string | null;
+    durationSeconds: number;
+    startedAt: Date;
+    lastSeenAt: Date;
     createdAt: Date;
   }>) {
     const sections = {
@@ -347,13 +384,15 @@ export class AnalyticsService {
         url: this.pageEntityUrl(view.section, key, view.path),
         views: 0,
         uniqueVisitors: new Set<string>(),
+        durationSeconds: 0,
         recentIps: new Map<string, { ip: string; views: number; userEmail: string; lastSeenAt: Date }>(),
-        lastSeenAt: view.createdAt,
+        lastSeenAt: view.lastSeenAt,
       };
       current.views += 1;
       if (view.ipHash) current.uniqueVisitors.add(view.ipHash);
-      if (view.createdAt > current.lastSeenAt) current.lastSeenAt = view.createdAt;
-      this.addIpSummary(current.recentIps, this.displayIp(view.ipAddress, view.ipHash), view.user?.email ?? '', view.createdAt);
+      current.durationSeconds += view.durationSeconds;
+      if (view.lastSeenAt > current.lastSeenAt) current.lastSeenAt = view.lastSeenAt;
+      this.addIpSummary(current.recentIps, this.displayIp(view.ipAddress, view.ipHash), view.user?.email ?? '', view.lastSeenAt);
       sections[section].map.set(key, current);
     });
 
@@ -373,6 +412,7 @@ export class AnalyticsService {
         url: string;
         views: number;
         uniqueVisitors: Set<string>;
+        durationSeconds: number;
         recentIps: Map<string, { ip: string; views: number; userEmail: string; lastSeenAt: Date }>;
         lastSeenAt: Date;
       }>(),
@@ -387,6 +427,8 @@ export class AnalyticsService {
         url: item.url,
         views: item.views,
         uniqueVisitors: item.uniqueVisitors.size,
+        totalDuration: this.formatDuration(item.durationSeconds),
+        averageDuration: this.formatDuration(item.views ? Math.round(item.durationSeconds / item.views) : 0),
         visitorKeys: Array.from(item.uniqueVisitors),
         recentIps: this.formatIpSummaries(item.recentIps),
         lastSeenAt: item.lastSeenAt.toISOString(),
@@ -436,9 +478,9 @@ export class AnalyticsService {
       }));
   }
 
-  private formatDownloadIps(events: Array<{ ipAddress: string; user?: { email: string } | null; createdAt: Date }>) {
+  private formatDownloadIps(events: Array<{ ipAddress: string; user?: { email: string } | null; startedAt: Date }>) {
     const map = new Map<string, { ip: string; views: number; userEmail: string; lastSeenAt: Date }>();
-    events.forEach((event) => this.addIpSummary(map, event.ipAddress, event.user?.email ?? '', event.createdAt));
+    events.forEach((event) => this.addIpSummary(map, event.ipAddress, event.user?.email ?? '', event.startedAt));
     return this.formatIpSummaries(map);
   }
 
@@ -510,5 +552,11 @@ export class AnalyticsService {
     if (minutes < 60) return `${minutes}m ${restSeconds}s`;
     const hours = Math.floor(minutes / 60);
     return `${hours}h ${minutes % 60}m`;
+  }
+
+  private formatMilliseconds(milliseconds: number): string {
+    const safeMilliseconds = Math.max(0, Math.round(milliseconds));
+    if (safeMilliseconds < 1000) return `${safeMilliseconds}ms`;
+    return this.formatDuration(Math.round(safeMilliseconds / 1000));
   }
 }

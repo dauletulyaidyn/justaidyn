@@ -395,6 +395,13 @@ let SiteController = class SiteController {
     async analyticsPostViewHeartbeat(body) {
         return this.analyticsService.heartbeatPostView(body);
     }
+    async analyticsPageViewStart(req, body) {
+        const user = this.authService.getCurrentUser(req);
+        return this.analyticsService.recordPageView(req, body, user?.id);
+    }
+    async analyticsPageViewHeartbeat(body) {
+        return this.analyticsService.heartbeatPageView(body);
+    }
     async apiMe(req) {
         const sessionUser = this.authService.getCurrentUser(req);
         const user = sessionUser ?? await this.authService.verifyBearerToken(req);
@@ -1036,6 +1043,9 @@ let SiteController = class SiteController {
             title: `${app.name} | JustAidyn Apps`,
             description: app.shortDescription || app.description,
             pageKey: `app-${app.slug}`,
+            analyticsSection: 'apps',
+            analyticsEntitySlug: app.slug,
+            analyticsEntityTitle: app.name,
             view: 'app-detail',
             lowerNav: [
                 { labelEn: 'Apps', labelRu: 'Приложения', labelKk: 'Қолданбалар', url: '/apps' },
@@ -1549,6 +1559,21 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], SiteController.prototype, "analyticsPostViewHeartbeat", null);
+__decorate([
+    (0, common_1.Post)('/api/analytics/page-view/start'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "analyticsPageViewStart", null);
+__decorate([
+    (0, common_1.Post)('/api/analytics/page-view/heartbeat'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "analyticsPageViewHeartbeat", null);
 __decorate([
     (0, common_1.Get)('/api/me'),
     __param(0, (0, common_1.Req)()),

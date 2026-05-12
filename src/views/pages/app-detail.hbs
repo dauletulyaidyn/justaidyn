@@ -236,5 +236,42 @@
   <script src="/js/bootstrap.min.js"></script>
   <script src="/js/jquery.sticky.js"></script>
   <script src="/js/custom.js?v=20260428-profile-i18n"></script>
+  <script>
+    (function () {
+      var section = '{{analyticsSection}}';
+      var entitySlug = '{{analyticsEntitySlug}}';
+      var entityTitle = '{{analyticsEntityTitle}}';
+      if (!section || !entitySlug || !entityTitle) return;
+      var viewId = '';
+      var activeSeconds = 0;
+      var lastTick = Date.now();
+      function tick() {
+        var now = Date.now();
+        if (!document.hidden) activeSeconds += Math.max(0, Math.round((now - lastTick) / 1000));
+        lastTick = now;
+      }
+      function post(url, payload) {
+        var body = JSON.stringify(payload);
+        if (!(navigator.sendBeacon && navigator.sendBeacon(url, new Blob([body], { type: 'application/json' })))) {
+          fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true }).catch(function () {});
+        }
+      }
+      fetch('/api/analytics/page-view/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section: section, entitySlug: entitySlug, entityTitle: entityTitle, path: location.pathname, referrer: document.referrer || '' })
+      }).then(function (res) { return res.ok ? res.json() : null; }).then(function (data) {
+        viewId = data && data.viewId ? data.viewId : '';
+      }).catch(function () {});
+      setInterval(function () {
+        tick();
+        if (viewId) post('/api/analytics/page-view/heartbeat', { viewId: viewId, durationSeconds: activeSeconds });
+      }, 15000);
+      window.addEventListener('pagehide', function () {
+        tick();
+        if (viewId) post('/api/analytics/page-view/heartbeat', { viewId: viewId, durationSeconds: activeSeconds });
+      });
+    })();
+  </script>
 </body>
 </html>

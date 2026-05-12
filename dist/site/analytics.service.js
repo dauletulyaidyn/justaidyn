@@ -22,25 +22,29 @@ let AnalyticsService = class AnalyticsService {
         const entitySlug = this.cleanSlug(input.entitySlug);
         const entityTitle = this.cleanText(input.entityTitle, 160);
         if (!section || !entitySlug || !entityTitle)
-            return;
-        await this.prisma.pageView.create({
+            return null;
+        const view = await this.prisma.pageView.create({
             data: {
                 section,
                 entitySlug,
                 entityTitle,
                 userId: userId || null,
                 path: this.cleanPath(input.path || req.originalUrl || req.path),
-                referrer: this.cleanOptional(req.headers.referer || req.headers.referrer, 500),
+                referrer: this.cleanOptional(input.referrer, 500) || this.cleanOptional(req.headers.referer || req.headers.referrer, 500),
                 userAgent: this.cleanOptional(req.headers['user-agent'], 500),
                 ipAddress: this.getClientIp(req),
                 ipHash: this.hashIp(req),
             },
+            select: { id: true, startedAt: true },
         });
+        return { viewId: view.id, startedAt: view.startedAt.toISOString() };
     }
     async recordDownload(req, appSlug, userId) {
         const cleanAppSlug = this.cleanSlug(appSlug);
         if (!cleanAppSlug)
             throw new common_1.BadRequestException('appSlug is required.');
+        const startedAt = new Date();
+        const completedAt = new Date();
         await this.prisma.downloadEvent.create({
             data: {
                 appSlug: cleanAppSlug,
@@ -48,6 +52,9 @@ let AnalyticsService = class AnalyticsService {
                 ipAddress: this.getClientIp(req),
                 referrer: this.cleanOptional(req.headers.referer || req.headers.referrer, 500),
                 userAgent: this.cleanOptional(req.headers['user-agent'], 500),
+                startedAt,
+                completedAt,
+                durationMs: Math.max(0, completedAt.getTime() - startedAt.getTime()),
             },
         });
     }
@@ -86,6 +93,17 @@ let AnalyticsService = class AnalyticsService {
         });
         return { ok: true };
     }
+    async heartbeatPageView(input) {
+        const viewId = this.cleanId(input.viewId);
+        if (!viewId)
+            throw new common_1.BadRequestException('viewId is required.');
+        const durationSeconds = this.cleanDuration(input.durationSeconds);
+        await this.prisma.pageView.updateMany({
+            where: { id: viewId },
+            data: { durationSeconds, lastSeenAt: new Date() },
+        });
+        return { ok: true };
+    }
     async getDashboard() {
         const [views, totalViews, durationAggregate, uniqueVisitorRows, uniqueUserRows, downloadEvents, totalDownloads, uniqueDownloadIpRows, pageViews,] = await Promise.all([
             this.prisma.postView.findMany({
@@ -105,7 +123,7 @@ let AnalyticsService = class AnalyticsService {
             this.prisma.downloadEvent.count(),
             this.prisma.downloadEvent.findMany({ distinct: ['ipAddress'], select: { ipAddress: true } }),
             this.prisma.pageView.findMany({
-                orderBy: { createdAt: 'desc' },
+                orderBy: { startedAt: 'desc' },
                 take: 10000,
                 include: { user: { select: { email: true } } },
             }),
@@ -178,6 +196,8 @@ let AnalyticsService = class AnalyticsService {
                 url: viewStats?.url || `/apps/${app.appSlug}`,
                 views: viewStats?.views || 0,
                 uniqueVisitors: viewStats?.uniqueVisitors || 0,
+                totalDuration: viewStats?.totalDuration || '0m 0s',
+                averageDuration: viewStats?.averageDuration || '0m 0s',
                 downloads: app.downloads,
                 uniqueIps: app.uniqueIps.size,
                 uniqueVisitorKeys: viewStats?.visitorKeys || [],
@@ -196,6 +216,8 @@ let AnalyticsService = class AnalyticsService {
                     url: item.url,
                     views: item.views,
                     uniqueVisitors: item.uniqueVisitors,
+                    totalDuration: item.totalDuration,
+                    averageDuration: item.averageDuration,
                     downloads: 0,
                     uniqueIps: 0,
                     uniqueVisitorKeys: item.visitorKeys,
@@ -276,6 +298,9 @@ let AnalyticsService = class AnalyticsService {
                     userEmail: event.user?.email ?? '',
                     referrer: event.referrer ?? '',
                     userAgent: event.userAgent ?? '',
+                    startedAt: event.startedAt.toISOString(),
+                    completedAt: event.completedAt?.toISOString() ?? '',
+                    duration: this.formatMilliseconds(event.durationMs),
                     downloadedAt: event.createdAt.toISOString(),
                 })),
             },
@@ -298,15 +323,17 @@ let AnalyticsService = class AnalyticsService {
                 url: this.pageEntityUrl(view.section, key, view.path),
                 views: 0,
                 uniqueVisitors: new Set(),
+                durationSeconds: 0,
                 recentIps: new Map(),
-                lastSeenAt: view.createdAt,
+                lastSeenAt: view.lastSeenAt,
             };
             current.views += 1;
             if (view.ipHash)
                 current.uniqueVisitors.add(view.ipHash);
-            if (view.createdAt > current.lastSeenAt)
-                current.lastSeenAt = view.createdAt;
-            this.addIpSummary(current.recentIps, this.displayIp(view.ipAddress, view.ipHash), view.user?.email ?? '', view.createdAt);
+            current.durationSeconds += view.durationSeconds;
+            if (view.lastSeenAt > current.lastSeenAt)
+                current.lastSeenAt = view.lastSeenAt;
+            this.addIpSummary(current.recentIps, this.displayIp(view.ipAddress, view.ipHash), view.user?.email ?? '', view.lastSeenAt);
             sections[section].map.set(key, current);
         });
         return {
@@ -329,6 +356,8 @@ let AnalyticsService = class AnalyticsService {
             url: item.url,
             views: item.views,
             uniqueVisitors: item.uniqueVisitors.size,
+            totalDuration: this.formatDuration(item.durationSeconds),
+            averageDuration: this.formatDuration(item.views ? Math.round(item.durationSeconds / item.views) : 0),
             visitorKeys: Array.from(item.uniqueVisitors),
             recentIps: this.formatIpSummaries(item.recentIps),
             lastSeenAt: item.lastSeenAt.toISOString(),
@@ -374,7 +403,7 @@ let AnalyticsService = class AnalyticsService {
     }
     formatDownloadIps(events) {
         const map = new Map();
-        events.forEach((event) => this.addIpSummary(map, event.ipAddress, event.user?.email ?? '', event.createdAt));
+        events.forEach((event) => this.addIpSummary(map, event.ipAddress, event.user?.email ?? '', event.startedAt));
         return this.formatIpSummaries(map);
     }
     displayIp(ipAddress, ipHash) {
@@ -439,6 +468,12 @@ let AnalyticsService = class AnalyticsService {
             return `${minutes}m ${restSeconds}s`;
         const hours = Math.floor(minutes / 60);
         return `${hours}h ${minutes % 60}m`;
+    }
+    formatMilliseconds(milliseconds) {
+        const safeMilliseconds = Math.max(0, Math.round(milliseconds));
+        if (safeMilliseconds < 1000)
+            return `${safeMilliseconds}ms`;
+        return this.formatDuration(Math.round(safeMilliseconds / 1000));
     }
 };
 exports.AnalyticsService = AnalyticsService;

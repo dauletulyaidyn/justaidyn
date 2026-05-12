@@ -478,6 +478,17 @@ export class SiteController {
     return this.analyticsService.heartbeatPostView(body);
   }
 
+  @Post('/api/analytics/page-view/start')
+  async analyticsPageViewStart(@Req() req: Request, @Body() body: Record<string, unknown>) {
+    const user = this.authService.getCurrentUser(req);
+    return this.analyticsService.recordPageView(req, body as any, user?.id);
+  }
+
+  @Post('/api/analytics/page-view/heartbeat')
+  async analyticsPageViewHeartbeat(@Body() body: Record<string, unknown>) {
+    return this.analyticsService.heartbeatPageView(body);
+  }
+
   @Get('/api/me')
   async apiMe(@Req() req: Request) {
     // Web session takes priority, then Bearer token (desktop)
@@ -1262,6 +1273,9 @@ export class SiteController {
       title: `${app.name} | JustAidyn Apps`,
       description: app.shortDescription || app.description,
       pageKey: `app-${app.slug}`,
+      analyticsSection: 'apps',
+      analyticsEntitySlug: app.slug,
+      analyticsEntityTitle: app.name,
       view: 'app-detail',
       lowerNav: [
         { labelEn: 'Apps', labelRu: 'Приложения', labelKk: 'Қолданбалар', url: '/apps' },
