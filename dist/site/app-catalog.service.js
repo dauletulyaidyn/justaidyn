@@ -73,6 +73,32 @@ let AppCatalogService = class AppCatalogService {
         if (!file?.path)
             throw new common_1.BadRequestException('Installer file is required.');
         const app = this.get(slug);
+        return this.attachInstallerToApp(app, file);
+    }
+    publishInstaller(slug, file, input = {}) {
+        if (!file?.path)
+            throw new common_1.BadRequestException('Installer file is required.');
+        const app = this.get(slug);
+        const version = input.version?.trim() || this.inferVersionFromFileName(file.originalname) || app.version;
+        if (!/^\d+\.\d+\.\d+$/.test(version)) {
+            (0, fs_1.rmSync)(file.path, { force: true });
+            throw new common_1.BadRequestException('version must be in format X.Y.Z.');
+        }
+        const releaseNotes = typeof input.releaseNotes === 'string' && input.releaseNotes.trim()
+            ? input.releaseNotes.trim()
+            : `${app.name} ${version} release.`;
+        const updatedApp = {
+            ...app,
+            version,
+            minVersion: version,
+            releaseNotes,
+            published: typeof input.published === 'boolean' ? input.published : true,
+            required: true,
+            updatedAt: new Date().toISOString(),
+        };
+        return this.attachInstallerToApp(updatedApp, file);
+    }
+    attachInstallerToApp(app, file) {
         const extension = (0, path_1.extname)(file.originalname).toLowerCase();
         if (!this.installerExtensions.has(extension)) {
             (0, fs_1.rmSync)(file.path, { force: true });
@@ -177,6 +203,9 @@ let AppCatalogService = class AppCatalogService {
     safeInstallerName(name, version, extension) {
         const base = name.replace(/[<>:"/\\|?*\x00-\x1F]/g, '').replace(/\s+/g, ' ').trim() || 'app';
         return `${base} ${version}${extension}`;
+    }
+    inferVersionFromFileName(fileName) {
+        return fileName.match(/(?:^|[^\d])(\d+\.\d+\.\d+)(?:[^\d]|$)/)?.[1] ?? '';
     }
 };
 exports.AppCatalogService = AppCatalogService;

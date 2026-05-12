@@ -280,6 +280,33 @@ export class SiteController {
     return res.redirect(`/admin/apps/${slug}/edit`);
   }
 
+  @Post('/api/apps/:slug/installer')
+  @UseInterceptors(FileInterceptor('installer', installerUpload))
+  async apiAppInstallerUpload(@Req() req: Request, @Param('slug') slug: string, @UploadedFile() file: any, @Body() body: Record<string, string>) {
+    await this.requireInstallerUploadAccess(req);
+    const app = this.appCatalogService.publishInstaller(slug, file, {
+      version: body.version,
+      releaseNotes: body.releaseNotes,
+      published: body.published === undefined ? undefined : body.published === 'true' || body.published === '1' || body.published === 'on',
+    });
+    return {
+      ok: true,
+      app: {
+        slug: app.slug,
+        name: app.name,
+        version: app.version,
+        minVersion: app.minVersion,
+        releaseNotes: app.releaseNotes,
+        downloadUrl: app.downloadUrl,
+        absoluteDownloadUrl: this.toAbsoluteSiteUrl(req, app.downloadUrl),
+        fileName: app.fileName,
+        fileSize: app.fileSize,
+        published: app.published,
+        updatedAt: app.updatedAt,
+      },
+    };
+  }
+
   @Get('/admin/games')
   adminGames(@Req() req: Request, @Res() res: Response) {
     return this.renderAdminSection(req, res, 'Games');
@@ -1447,6 +1474,31 @@ export class SiteController {
       res.redirect('/admin/login');
       return false;
     }
+  }
+
+  private async requireInstallerUploadAccess(req: Request): Promise<void> {
+    const token = this.readBearerToken(req);
+    const configuredToken = process.env.INSTALLER_UPLOAD_TOKEN || process.env.AI_INSTALLER_UPLOAD_TOKEN;
+    if (configuredToken && token === configuredToken) return;
+
+    const sessionUser = this.authService.getCurrentUser(req);
+    const bearerUser = token ? await this.authService.verifyBearerToken(req) : null;
+    if (sessionUser?.role === 'superadmin' || bearerUser?.role === 'superadmin') return;
+
+    throw new UnauthorizedException('Installer upload token is required.');
+  }
+
+  private readBearerToken(req: Request): string {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) return '';
+    return authHeader.slice(7).trim();
+  }
+
+  private toAbsoluteSiteUrl(req: Request, path: string): string {
+    if (/^https?:\/\//i.test(path)) return path;
+    const host = req.hostname?.toLowerCase().split(':')[0];
+    const origin = host === 'localhost' || host === '127.0.0.1' ? 'http://localhost:3000' : 'https://justaidyn.com';
+    return `${origin}${path.startsWith('/') ? path : `/${path}`}`;
   }
 
 

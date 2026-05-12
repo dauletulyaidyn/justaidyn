@@ -244,6 +244,30 @@ let SiteController = class SiteController {
         this.appCatalogService.attachInstaller(slug, file);
         return res.redirect(`/admin/apps/${slug}/edit`);
     }
+    async apiAppInstallerUpload(req, slug, file, body) {
+        await this.requireInstallerUploadAccess(req);
+        const app = this.appCatalogService.publishInstaller(slug, file, {
+            version: body.version,
+            releaseNotes: body.releaseNotes,
+            published: body.published === undefined ? undefined : body.published === 'true' || body.published === '1' || body.published === 'on',
+        });
+        return {
+            ok: true,
+            app: {
+                slug: app.slug,
+                name: app.name,
+                version: app.version,
+                minVersion: app.minVersion,
+                releaseNotes: app.releaseNotes,
+                downloadUrl: app.downloadUrl,
+                absoluteDownloadUrl: this.toAbsoluteSiteUrl(req, app.downloadUrl),
+                fileName: app.fileName,
+                fileSize: app.fileSize,
+                published: app.published,
+                updatedAt: app.updatedAt,
+            },
+        };
+    }
     adminGames(req, res) {
         return this.renderAdminSection(req, res, 'Games');
     }
@@ -1207,6 +1231,30 @@ let SiteController = class SiteController {
             return false;
         }
     }
+    async requireInstallerUploadAccess(req) {
+        const token = this.readBearerToken(req);
+        const configuredToken = process.env.INSTALLER_UPLOAD_TOKEN || process.env.AI_INSTALLER_UPLOAD_TOKEN;
+        if (configuredToken && token === configuredToken)
+            return;
+        const sessionUser = this.authService.getCurrentUser(req);
+        const bearerUser = token ? await this.authService.verifyBearerToken(req) : null;
+        if (sessionUser?.role === 'superadmin' || bearerUser?.role === 'superadmin')
+            return;
+        throw new common_1.UnauthorizedException('Installer upload token is required.');
+    }
+    readBearerToken(req) {
+        const authHeader = req.headers.authorization;
+        if (!authHeader?.startsWith('Bearer '))
+            return '';
+        return authHeader.slice(7).trim();
+    }
+    toAbsoluteSiteUrl(req, path) {
+        if (/^https?:\/\//i.test(path))
+            return path;
+        const host = req.hostname?.toLowerCase().split(':')[0];
+        const origin = host === 'localhost' || host === '127.0.0.1' ? 'http://localhost:3000' : 'https://justaidyn.com';
+        return `${origin}${path.startsWith('/') ? path : `/${path}`}`;
+    }
     parseDesktopRedirectUri(value) {
         try {
             const url = new URL(value);
@@ -1448,6 +1496,17 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object, String, Object]),
     __metadata("design:returntype", void 0)
 ], SiteController.prototype, "adminAppUpload", null);
+__decorate([
+    (0, common_1.Post)('/api/apps/:slug/installer'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('installer', installerUpload)),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('slug')),
+    __param(2, (0, common_1.UploadedFile)()),
+    __param(3, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, Object, Object]),
+    __metadata("design:returntype", Promise)
+], SiteController.prototype, "apiAppInstallerUpload", null);
 __decorate([
     (0, common_1.Get)('/admin/games'),
     __param(0, (0, common_1.Req)()),

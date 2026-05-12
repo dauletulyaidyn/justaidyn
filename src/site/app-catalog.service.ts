@@ -28,6 +28,12 @@ interface SaveAppInput {
   published: boolean;
 }
 
+interface PublishInstallerInput {
+  version?: string;
+  releaseNotes?: string;
+  published?: boolean;
+}
+
 @Injectable()
 export class AppCatalogService {
   private readonly installerExtensions = new Set(['.msi', '.exe', '.zip', '.dmg', '.pkg']);
@@ -94,6 +100,34 @@ export class AppCatalogService {
   attachInstaller(slug: string, file: { originalname: string; path: string; size: number }): AppCatalogItem {
     if (!file?.path) throw new BadRequestException('Installer file is required.');
     const app = this.get(slug);
+    return this.attachInstallerToApp(app, file);
+  }
+
+  publishInstaller(slug: string, file: { originalname: string; path: string; size: number }, input: PublishInstallerInput = {}): AppCatalogItem {
+    if (!file?.path) throw new BadRequestException('Installer file is required.');
+    const app = this.get(slug);
+    const version = input.version?.trim() || this.inferVersionFromFileName(file.originalname) || app.version;
+    if (!/^\d+\.\d+\.\d+$/.test(version)) {
+      rmSync(file.path, { force: true });
+      throw new BadRequestException('version must be in format X.Y.Z.');
+    }
+    const releaseNotes = typeof input.releaseNotes === 'string' && input.releaseNotes.trim()
+      ? input.releaseNotes.trim()
+      : `${app.name} ${version} release.`;
+
+    const updatedApp = {
+      ...app,
+      version,
+      minVersion: version,
+      releaseNotes,
+      published: typeof input.published === 'boolean' ? input.published : true,
+      required: true,
+      updatedAt: new Date().toISOString(),
+    };
+    return this.attachInstallerToApp(updatedApp, file);
+  }
+
+  private attachInstallerToApp(app: AppCatalogItem, file: { originalname: string; path: string; size: number }): AppCatalogItem {
     const extension = extname(file.originalname).toLowerCase();
     if (!this.installerExtensions.has(extension)) {
       rmSync(file.path, { force: true });
@@ -203,5 +237,9 @@ export class AppCatalogService {
   private safeInstallerName(name: string, version: string, extension: string): string {
     const base = name.replace(/[<>:"/\\|?*\x00-\x1F]/g, '').replace(/\s+/g, ' ').trim() || 'app';
     return `${base} ${version}${extension}`;
+  }
+
+  private inferVersionFromFileName(fileName: string): string {
+    return fileName.match(/(?:^|[^\d])(\d+\.\d+\.\d+)(?:[^\d]|$)/)?.[1] ?? '';
   }
 }
