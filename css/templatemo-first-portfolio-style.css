@@ -3754,6 +3754,17 @@ h2[data-en="Group formats and pricing"] + .row .group-plan-accent {
     font-size: 12px;
     padding: 5px 9px;
   }
+
+  .hero-position-card {
+    align-items: center;
+    padding-top: 30px;
+  }
+
+  .hero-roles {
+    font-size: 30px;
+    letter-spacing: 0;
+    padding: 10px 18px 14px 18px;
+  }
 }
 
 /*---------------------------------------
