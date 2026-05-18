@@ -91,18 +91,18 @@ let SiteService = class SiteService {
     getAppsPage() {
         return {
             view: 'pages/apps',
-            title: 'Apps | JustAidyn',
-            description: 'JustAidyn apps hub.',
+            title: 'JustAidyn Apps - Screen Recorder and Digital Software Products',
+            description: 'Download JustAidyn apps including JustAidyn ScreenCam, a Windows screen recorder and video recorder for courses, lessons, tutorials, demos, camera overlay, MP4 export, subtitles, and support.',
             pageKey: 'apps',
             eyebrow: 'Apps',
             heroTitle: 'JustAidyn application hub.',
-            heroText: 'Applications will move here one by one. The first route is already wired into the NestJS platform.',
+            heroText: 'Applications for screen recording, video courses, online lessons, demos, research, productivity, and future JustAidyn tools.',
             primaryAction: { label: 'Open ScreenCam', url: '/justaidyn-screencam' },
             secondaryAction: { label: 'Back to Main Site', url: 'https://justaidyn.com/' },
             cards: [
                 {
                     title: 'JustAidyn ScreenCam',
-                    text: 'Download page, release routing, and product detail page are now ready to be migrated into the new app shell.',
+                    text: 'Windows screen recorder and course video recorder for lessons, demos, tutorials, lectures, camera overlay, MP4 export, and subtitle generation.',
                     href: '/justaidyn-screencam',
                     cta: 'Open app page',
                 },
@@ -112,15 +112,15 @@ let SiteService = class SiteService {
     getScreenCamPage() {
         return {
             view: 'pages/app-detail',
-            title: 'JustAidyn ScreenCam',
-            description: 'JustAidyn ScreenCam download page.',
+            title: 'JustAidyn ScreenCam - Screen Recorder and Course Video Recorder for Windows',
+            description: 'JustAidyn ScreenCam is a Windows screen recorder and video recorder for courses, online lessons, tutorials, demos, camera overlay, MP4 export, watermark, hotkeys, and SRT subtitles.',
             pageKey: 'app-detail',
             eyebrow: 'Desktop App',
             heroTitle: 'JustAidyn ScreenCam',
-            heroText: 'Capture workflows and download management will live here. The binary is still served from the shared downloads directory.',
+            heroText: 'Capture video courses, online lessons, tutorials, demos, lectures, and training videos with screen recording, camera overlay, audio capture, drawing tools, MP4 export, and SRT subtitle generation.',
             primaryAction: {
                 label: 'Download MSI',
-                url: '/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.1.msi',
+                url: '/downloads/apps/justaidyn-screencam/JustAidyn%20ScreenCam%201.1.3.msi',
             },
             secondaryAction: { label: 'Open Downloads Folder', url: '/downloads/apps/justaidyn-screencam/' },
             cards: [
@@ -130,7 +130,7 @@ let SiteService = class SiteService {
                 },
                 {
                     title: 'Expected Binary',
-                    text: 'JustAidyn ScreenCam 1.1.1.msi',
+                    text: 'JustAidyn ScreenCam 1.1.3.msi',
                 },
             ],
         };

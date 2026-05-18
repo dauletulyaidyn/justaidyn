@@ -62,7 +62,7 @@ export class SiteController {
       return res.render('pages/apps-landing', this.withSharedModel(this.getAppsLandingPage(), req));
     }
     if (site === 'shop') {
-      return this.renderStaticHtmlFile(req, res, join(process.cwd(), 'shop', 'index.html'));
+      return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('shop'), req));
     }
 
     return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage(site), req));
@@ -607,12 +607,23 @@ export class SiteController {
 
   @Get('/skillsminds')
   async skillsmindsProject(@Req() req: Request, @Res() res: Response) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site !== 'main' && site !== 'skillsminds') {
+      return this.toProjectSite(req, res, 'skillsminds', '/');
+    }
+    if (site === 'skillsminds') {
+      return res.redirect(301, '/');
+    }
     const posts = await this.postService.listPublished('skillsminds');
     return res.render('pages/posts-hub', this.withSharedModel(this.siteService.getPostsHubPage('skillsminds', posts), req));
   }
 
   @Get('/skillsminds/post/:slug')
   async skillsmindsPost(@Req() req: Request, @Res() res: Response, @Param('slug') slug: string) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site !== 'main' && site !== 'skillsminds') {
+      return this.toProjectSite(req, res, 'skillsminds', `/post/${slug}`);
+    }
     const post = await this.postService.getBySlug('skillsminds', slug);
     return res.render('pages/post-detail', this.withSharedModel(this.siteService.getPostDetailPage(post), req));
   }
@@ -636,6 +647,13 @@ export class SiteController {
 
   @Get('/nofacethinker')
   async nofacethinkerProject(@Req() req: Request, @Res() res: Response) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site !== 'main' && site !== 'nofacethinker') {
+      return this.toProjectSite(req, res, 'nofacethinker', '/');
+    }
+    if (site === 'nofacethinker') {
+      return res.redirect(301, '/');
+    }
     const user = this.authService.getCurrentUser(req);
     const isSubscribed = user && (user.thinkerSubscriptionStatus === 'active' || user.thinkerSubscriptionStatus === 'trialing');
     const posts = await this.postService.listPublished('nofacethinker');
@@ -647,6 +665,10 @@ export class SiteController {
 
   @Get('/nofacethinker/post/:slug')
   async nofacethinkerPost(@Req() req: Request, @Res() res: Response, @Param('slug') slug: string) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site !== 'main' && site !== 'nofacethinker') {
+      return this.toProjectSite(req, res, 'nofacethinker', `/post/${slug}`);
+    }
     const user = this.authService.getCurrentUser(req);
     const isSubscribed = user && (user.thinkerSubscriptionStatus === 'active' || user.thinkerSubscriptionStatus === 'trialing');
     const post = await this.postService.getBySlug('nofacethinker', slug);
@@ -681,21 +703,40 @@ export class SiteController {
 
   @Get('/apps')
   appsProject(@Req() req: Request, @Res() res: Response) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site !== 'main' && site !== 'apps') {
+      return this.toProjectSite(req, res, 'apps', '/');
+    }
+    if (site === 'apps') {
+      return res.redirect(301, '/');
+    }
     this.trackPageView(req, 'apps', 'apps-hub', 'Apps Hub');
     return res.render('pages/apps-landing', this.withSharedModel(this.getAppsLandingPage(), req));
   }
 
   @Get('/games')
-  @Render('pages/host-router')
-  gamesProject(@Req() req: Request) {
+  gamesProject(@Req() req: Request, @Res() res: Response) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site !== 'main' && site !== 'games') {
+      return this.toProjectSite(req, res, 'games', '/');
+    }
+    if (site === 'games') {
+      return res.redirect(301, '/');
+    }
     this.trackPageView(req, 'games', 'games-hub', 'Games Hub');
-    return this.withSharedModel(this.siteService.getComingSoonPage('games'), req);
+    return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('games'), req));
   }
 
   @Get('/shop')
-  @Render('pages/host-router')
-  shopProject(@Req() req: Request) {
-    return this.withSharedModel(this.siteService.getComingSoonPage('shop'), req);
+  shopProject(@Req() req: Request, @Res() res: Response) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site !== 'main' && site !== 'shop') {
+      return this.toProjectSite(req, res, 'shop', '/');
+    }
+    if (site === 'shop') {
+      return res.redirect(301, '/');
+    }
+    return res.render('pages/host-router', this.withSharedModel(this.siteService.getComingSoonPage('shop'), req));
   }
 
   @Get('/api')
@@ -710,6 +751,9 @@ export class SiteController {
     if (site !== 'apps') {
       throw new NotFoundException();
     }
+    if (!req.path.endsWith('/')) {
+      return res.redirect(301, '/justaidyn-screencam/');
+    }
 
     this.trackPageView(req, 'apps', 'justaidyn-screencam', 'JustAidyn ScreenCam');
     return res.sendFile(join(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
@@ -717,13 +761,23 @@ export class SiteController {
 
   @Get(['/apps/justaidyn-screencam', '/apps/justaidyn-screencam/'])
   appDetailPath(@Req() req: Request, @Res() res: Response) {
+    const site = this.siteService.resolveHost(req.hostname);
+    if (site === 'apps') {
+      return res.redirect(301, '/justaidyn-screencam/');
+    }
+    if (site !== 'main') {
+      return this.toProjectSite(req, res, 'apps', '/justaidyn-screencam/');
+    }
+    if (!req.path.endsWith('/')) {
+      return res.redirect(301, '/apps/justaidyn-screencam/');
+    }
     this.trackPageView(req, 'apps', 'justaidyn-screencam', 'JustAidyn ScreenCam');
     return res.sendFile(join(process.cwd(), 'apps', 'justaidyn-screencam', 'index.html'));
   }
 
   @Get('/p/apps/justaidyn-screencam')
   appDetailAlias(@Res() res: Response) {
-    return res.redirect(301, '/apps/justaidyn-screencam');
+    return res.redirect(301, '/apps/justaidyn-screencam/');
   }
 
   @Get('/apps/:slug')
@@ -849,14 +903,41 @@ export class SiteController {
     return { canceled: true };
   }
 
+  @Get('/robots.txt')
+  robots(@Req() req: Request, @Res() res: Response) {
+    const host = req.hostname?.toLowerCase().split(':')[0] || 'justaidyn.com';
+    const isLocal = host === 'localhost' || host === '127.0.0.1' || host.endsWith('.justaidyn.local');
+    const publicHost = isLocal ? 'justaidyn.com' : host;
+    const body = [
+      'User-agent: *',
+      'Allow: /',
+      '',
+      'Disallow: /admin',
+      'Disallow: /auth/',
+      'Disallow: /api/',
+      '',
+      `Sitemap: https://${publicHost}/sitemap.xml`,
+      '',
+    ].join('\n');
+    res.set('Content-Type', 'text/plain; charset=utf-8');
+    return res.send(body);
+  }
+
   @Get('/sitemap.xml')
-  async sitemap(@Res() res: Response) {
-    const base = 'https://justaidyn.com';
+  async sitemap(@Req() req: Request, @Res() res: Response) {
+    const site = this.siteService.resolveHost(req.hostname);
+    const host = req.hostname?.toLowerCase().split(':')[0] || '';
+    const isLocal = host === 'localhost' || host === '127.0.0.1' || host.endsWith('.justaidyn.local');
+    const baseHost = isLocal ? 'justaidyn.com' : (host || 'justaidyn.com');
+    const base = `https://${baseHost}`;
+    const projectBase = (project: 'skillsminds' | 'nofacethinker' | 'apps' | 'games' | 'shop') =>
+      isLocal ? `https://${project}.justaidyn.com` : `https://${project}.justaidyn.com`;
+    const mainAppsBase = `${base}/apps`;
     const [skillsPosts, thinkerPosts] = await Promise.all([
       this.postService.listPublished('skillsminds'),
       this.postService.listPublished('nofacethinker'),
     ]);
-    const staticUrls: { loc: string; priority: string; changefreq: string; lastmod?: string }[] = [
+    let staticUrls: { loc: string; priority: string; changefreq: string; lastmod?: string }[] = [
       { loc: `${base}/`, priority: '1.0', changefreq: 'weekly', lastmod: '2026-05-01' },
       { loc: `${base}/projects.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
       { loc: `${base}/faq.html`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
@@ -897,14 +978,45 @@ export class SiteController {
       { loc: `${base}/articles/programming/installing-python-and-setting-up-path.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
       { loc: `${base}/articles/programming/github-registration-and-repository-creation.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
       { loc: `${base}/articles/programming/adding-codex-to-visual-studio-code.html`, priority: '0.6', changefreq: 'monthly', lastmod: '2026-05-01' },
-      { loc: `${base}/skillsminds`, priority: '0.9', changefreq: 'daily', lastmod: '2026-05-01' },
-      { loc: `${base}/nofacethinker`, priority: '0.8', changefreq: 'daily', lastmod: '2026-05-01' },
-      { loc: `${base}/apps`, priority: '0.7', changefreq: 'weekly', lastmod: '2026-05-01' },
-      { loc: `${base}/apps/justaidyn-screencam/`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-05-01' },
+      { loc: `${projectBase('skillsminds')}/`, priority: '0.9', changefreq: 'daily', lastmod: '2026-05-14' },
+      { loc: `${projectBase('nofacethinker')}/`, priority: '0.8', changefreq: 'daily', lastmod: '2026-05-14' },
+      { loc: `${mainAppsBase}/`, priority: '0.8', changefreq: 'weekly', lastmod: '2026-05-18' },
+      ...this.appCatalogService.listPublished().map((app) => ({
+        loc: `${mainAppsBase}/${app.slug}/`,
+        priority: app.slug === 'justaidyn-screencam' ? '0.9' : '0.8',
+        changefreq: app.slug === 'justaidyn-screencam' ? 'weekly' : 'monthly',
+        lastmod: app.updatedAt?.slice(0, 10) || '2026-05-18',
+      })),
+      { loc: `${projectBase('games')}/`, priority: '0.6', changefreq: 'weekly', lastmod: '2026-05-14' },
+      { loc: `${projectBase('shop')}/`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-05-14' },
     ];
+    if (site === 'skillsminds') {
+      staticUrls = [{ loc: `${base}/`, priority: '0.9', changefreq: 'daily', lastmod: '2026-05-14' }];
+    } else if (site === 'nofacethinker') {
+      staticUrls = [{ loc: `${base}/`, priority: '0.8', changefreq: 'daily', lastmod: '2026-05-14' }];
+    } else if (site === 'apps') {
+      const publishedApps = this.appCatalogService.listPublished();
+      staticUrls = [
+        { loc: `${base}/`, priority: '0.8', changefreq: 'weekly', lastmod: '2026-05-18' },
+        ...publishedApps.map((app) => ({
+          loc: `${base}/${app.slug}/`,
+          priority: '0.8',
+          changefreq: 'monthly',
+          lastmod: app.updatedAt?.slice(0, 10) || '2026-05-15',
+        })),
+      ];
+    } else if (site === 'games') {
+      staticUrls = [{ loc: `${base}/`, priority: '0.6', changefreq: 'weekly', lastmod: '2026-05-14' }];
+    } else if (site === 'shop') {
+      staticUrls = [{ loc: `${base}/`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-05-14' }];
+    }
     const postUrls = [
-      ...skillsPosts.map(p => ({ loc: `${base}/skillsminds/post/${p.slug}`, priority: '0.8', changefreq: 'monthly', lastmod: p.publishedAt?.slice(0, 10) })),
-      ...thinkerPosts.map(p => ({ loc: `${base}/nofacethinker/post/${p.slug}`, priority: '0.6', changefreq: 'monthly', lastmod: p.publishedAt?.slice(0, 10) })),
+      ...(site === 'main' || site === 'skillsminds'
+        ? skillsPosts.map(p => ({ loc: `${site === 'skillsminds' ? base : projectBase('skillsminds')}/post/${p.slug}`, priority: '0.8', changefreq: 'monthly', lastmod: p.publishedAt?.slice(0, 10) }))
+        : []),
+      ...(site === 'main' || site === 'nofacethinker'
+        ? thinkerPosts.map(p => ({ loc: `${site === 'nofacethinker' ? base : projectBase('nofacethinker')}/post/${p.slug}`, priority: '0.6', changefreq: 'monthly', lastmod: p.publishedAt?.slice(0, 10) }))
+        : []),
     ];
     const allUrls = [...staticUrls, ...postUrls];
     const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${allUrls.map(u => `  <url><loc>${u.loc}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}<changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}\n</urlset>`;
@@ -1120,15 +1232,15 @@ export class SiteController {
     const totalDownloads = apps.reduce((sum, app) => sum + app.downloadCount, 0);
 
     return {
-      title: 'Apps | JustAidyn',
-      description: 'Download JustAidyn desktop applications and view latest releases.',
+      title: 'JustAidyn Apps - Screen Recorder and Digital Software Products',
+      description: 'Download JustAidyn apps including JustAidyn ScreenCam, a Windows screen recorder and video recorder for courses, lessons, tutorials, demos, camera overlay, MP4 export, subtitles, and support.',
       pageKey: 'apps',
       view: 'apps-landing',
       lowerNav: [
         { labelEn: 'Apps', labelRu: 'Apps', labelKk: 'Apps', url: '/apps', active: true },
       ],
       heroTitle: 'JustAidyn Apps',
-      heroText: 'Desktop programs built for recording, productivity, and future JustAidyn tools.',
+      heroText: 'Digital software products built for screen recording, video courses, online lessons, tutorials, demos, education, research, productivity, and future JustAidyn tools.',
       apps,
       totalDownloads,
       appCount: apps.length,
@@ -1297,7 +1409,9 @@ export class SiteController {
   private getAppDetailPage(app: { name: string; shortDescription: string; description: string; slug: string; version: string; releaseNotes: string; downloadUrl: string; updatedAt: string }): PageModel {
     const downloadCount = Number(this.readDownloadCounts()[app.slug] || 0);
     return {
-      title: `${app.name} | JustAidyn Apps`,
+      title: app.slug === 'justaidyn-screencam'
+        ? `${app.name} - Screen Recorder and Course Video Recorder for Windows`
+        : `${app.name} | JustAidyn Apps`,
       description: app.shortDescription || app.description,
       pageKey: `app-${app.slug}`,
       analyticsSection: 'apps',
@@ -1318,22 +1432,28 @@ export class SiteController {
       features: [
         {
           icon: 'bi-cloud-arrow-down',
-          title: 'Latest release delivery',
-          text: 'The download button always points to the current installer published from the JustAidyn admin panel.',
+          title: app.slug === 'justaidyn-screencam' ? 'Windows screen recorder' : 'Downloadable software',
+          text: app.slug === 'justaidyn-screencam'
+            ? 'Record selected screen regions, camera overlay, microphone audio, optional system audio, and MP4 output for lessons, demos, tutorials, and training videos.'
+            : 'This is a digital software product delivered as an installer with current release information and product support.',
         },
         {
           icon: 'bi-shield-check',
-          title: 'Account-based access',
-          text: 'Products can use JustAidyn sign-in and subscription status checks when access control is required.',
+          title: app.slug === 'justaidyn-screencam' ? 'Video recorder for courses' : 'Account-based access',
+          text: app.slug === 'justaidyn-screencam'
+            ? 'Use ScreenCam for video courses, online lessons, lecture recordings, coding walkthroughs, product demos, student feedback, and other educational videos.'
+            : 'Paid products can use JustAidyn sign-in, subscription status, and session checks when access control is required.',
         },
         {
           icon: 'bi-arrow-repeat',
-          title: 'Update-ready page',
-          text: 'Version, release notes, and installer metadata are shown from the app catalog.',
+          title: app.slug === 'justaidyn-screencam' ? 'Course-ready publishing tools' : 'Transparent product details',
+          text: app.slug === 'justaidyn-screencam'
+            ? 'Watermark controls, hotkeys, drawing tools, live camera preview, and SRT subtitle generation help prepare reusable course and tutorial recordings.'
+            : 'Version, release notes, installer metadata, pricing links, terms, refund policy, and contact information are shown before purchase.',
         },
       ],
-      pricingTitle: 'Simple access for this JustAidyn program.',
-      pricingText: 'Each product page includes pricing, download, terms, and support sections so customers can evaluate the program before installing it.',
+      pricingTitle: 'Software access and subscription terms.',
+      pricingText: 'Each product page includes pricing, download, terms, privacy, refund, and support sections so customers can evaluate the digital product before installing it.',
       planName: 'Product access',
       price: 'See plan',
       pricePeriod: 'on checkout',
@@ -1431,6 +1551,19 @@ export class SiteController {
     const isLocal = host === 'localhost' || host === '127.0.0.1' || host.endsWith('.justaidyn.local');
     const base = isLocal ? 'http://localhost:3000' : 'https://justaidyn.com';
     return res.redirect(302, `${base}${path}`);
+  }
+
+  private toProjectSite(req: Request, res: Response, project: 'skillsminds' | 'nofacethinker' | 'apps' | 'games' | 'shop', path = '/') {
+    const host = req.hostname?.toLowerCase().split(':')[0] || '';
+    const isLocalIp = host === 'localhost' || host === '127.0.0.1';
+    const isLocalDomain = host.endsWith('.justaidyn.local');
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    const base = isLocalIp
+      ? `http://localhost:3000/${project}`
+      : isLocalDomain
+        ? `http://${project}.justaidyn.local:3000`
+        : `https://${project}.justaidyn.com`;
+    return res.redirect(301, `${base}${isLocalIp ? normalizedPath.replace(/^\/$/, '') : normalizedPath}`);
   }
 
   private renderStaticHtmlFile(req: Request, res: Response, filePath: string) {

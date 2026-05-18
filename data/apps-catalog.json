@@ -2,8 +2,8 @@
   {
     "slug": "justaidyn-screencam",
     "name": "JustAidyn ScreenCam",
-    "shortDescription": "Screen recording app for JustAidyn users.",
-    "description": "Capture workflows, record screen sessions, and receive automatic updates from JustAidyn.",
+    "shortDescription": "Windows screen recorder and video recorder for courses, lessons, demos, tutorials, lectures, and content production.",
+    "description": "JustAidyn ScreenCam is a downloadable digital software product for Windows. It provides screen recording, camera overlay, audio capture, drawing tools, watermarking, hotkeys, MP4 export, and automatic subtitle file generation for video courses, online lessons, tutorials, lectures, education, product demos, research workflows, training videos, and creator content.",
     "version": "1.1.3",
     "minVersion": "1.1.3",
     "releaseNotes": "JustAidyn ScreenCam 1.1.3 release.",
@@ -12,6 +12,6 @@
     "fileSize": 524406784,
     "required": true,
     "published": true,
-    "updatedAt": "2026-05-01T23:04:30.000Z"
+    "updatedAt": "2026-05-18T00:00:00.000Z"
   }
 ]

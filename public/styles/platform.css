@@ -16,15 +16,13 @@
 body.platform-body {
   margin: 0;
   color: var(--platform-text);
-  background:
-    linear-gradient(rgba(243, 247, 251, 0.9), rgba(243, 247, 251, 0.98)),
-    url('/images/portrait-happy-excited-man-holding-laptop-computer.png') center top / cover no-repeat fixed;
+  background: #f3f7fb;
   font-family: 'Roboto Slab', serif;
 }
 
 .platform-main {
   min-height: calc(100vh - 120px);
-  padding-top: calc(var(--site-header-offset, 148px) + 24px);
+  padding-top: calc(var(--site-header-offset, 148px) + 8px);
 }
 
 .platform-hero {
@@ -78,11 +76,11 @@ body.platform-body {
 }
 
 .platform-section {
-  padding: 40px 0 56px;
+  padding: 28px 0 44px;
 }
 
 .platform-auth-section {
-  padding: 72px 0 88px;
+  padding: 40px 0 60px;
 }
 
 .platform-auth-shell {
@@ -166,7 +164,7 @@ body.platform-body {
   }
 
   .platform-auth-section {
-    padding: 24px 0 56px;
+    padding: 16px 0 40px;
   }
 
   .platform-auth-shell {

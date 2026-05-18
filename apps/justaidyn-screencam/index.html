@@ -4,14 +4,109 @@
   <meta charset="UTF-8">
   <meta name="google-site-verification" content="dIyQej_DeYbNN1TxKXD_y2Exrk-8smfMADQga5G621I">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JustAidyn ScreenCam - Screen Recorder with Camera Overlay</title>
-  <meta name="description" content="JustAidyn ScreenCam is a Windows screen recorder for lessons, demos, tutorials, and presentations with camera preview, drawing tools, watermark, audio capture, and subtitle generation.">
+  <title>JustAidyn ScreenCam - Screen Recorder and Course Video Recorder for Windows</title>
+  <meta name="description" content="JustAidyn ScreenCam is a Windows screen recorder and video recorder for courses, online lessons, tutorials, demos, voice, system audio, camera overlay, annotations, MP4 export, watermark, hotkeys, and SRT subtitles.">
+  <meta name="keywords" content="screen recorder, video recorder for courses, course video recorder, screen recording software, Windows screen recorder, screen recorder with camera overlay, record screen and camera, tutorial video recorder, lesson recording software, lecture recorder, training video recorder, MP4 screen recorder, JustAidyn ScreenCam">
   <link rel="canonical" href="https://justaidyn.com/apps/justaidyn-screencam/">
-  <meta property="og:title" content="JustAidyn ScreenCam">
-  <meta property="og:description" content="Record your screen, camera, audio, annotations, watermark, and subtitles in one lightweight Windows app.">
+  <meta property="og:title" content="JustAidyn ScreenCam - Screen Recorder and Course Video Recorder">
+  <meta property="og:description" content="Record video courses, online lessons, tutorials, demos, screen, camera, audio, annotations, watermark, MP4 output, and subtitles in one Windows app.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://justaidyn.com/apps/justaidyn-screencam/">
   <meta property="og:image" content="https://justaidyn.com/images/justaidyn-screencam-logo.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "JustAidyn ScreenCam",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Windows",
+    "description": "Windows screen recorder and course video recorder for online lessons, tutorials, demos, lectures, training videos, and presentations with camera overlay, audio capture, drawing tools, MP4 export, watermarking, and subtitle generation.",
+    "image": "https://justaidyn.com/images/justaidyn-screencam-logo.png",
+    "url": "https://justaidyn.com/apps/justaidyn-screencam/",
+    "downloadUrl": "https://justaidyn.com/track/download/apps/justaidyn-screencam",
+    "softwareVersion": "1.1.3",
+    "applicationSubCategory": "Screen recorder",
+    "softwareRequirements": "Windows desktop computer. Camera and microphone are recommended for course and tutorial recording. Google account is used for sign-in.",
+    "featureList": [
+      "Screen recording with selectable region",
+      "Camera overlay and live camera preview",
+      "Microphone and system audio capture",
+      "Drawing, pointer, laser, and highlighter tools",
+      "Watermark controls",
+      "MP4 video export",
+      "SRT subtitle file generation"
+    ],
+    "dateModified": "2026-05-18",
+    "author": {
+      "@type": "Person",
+      "name": "Aidyn Kunikeyev",
+      "email": "aidyn.daulet@gmail.com"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "5.90",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock",
+      "url": "https://justaidyn.com/apps/justaidyn-screencam/"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the best screen recorder for video courses?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A useful recorder for video courses should capture the screen, camera, microphone audio, annotations, and export a reusable video file. JustAidyn ScreenCam is built for this workflow on Windows."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use JustAidyn ScreenCam as a video recorder for courses?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. ScreenCam can be used as a video recorder for courses, online lessons, lecture recordings, tutorials, software walkthroughs, demos, and student feedback videos."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I record my screen and camera at the same time?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. ScreenCam records a selected screen region while keeping a live camera preview visible, so creators can explain material with face-to-camera context."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does it export MP4 videos?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. ScreenCam saves recordings as MP4 files for course platforms, learning portals, video hosting tools, and social channels."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does it generate subtitles?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. After a recording stops, ScreenCam can generate an SRT subtitle file for video players, editing software, and publishing workflows."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is JustAidyn ScreenCam a screen recorder with camera overlay?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. It records a selected screen region and keeps a webcam preview available for lessons, demos, tutorial videos, and training content."
+        }
+      }
+    ]
+  }
+  </script>
   <link rel="icon" type="image/png" href="/favicon.png?v=20260331c">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -257,7 +352,8 @@
 
     .use-grid,
     .feature-grid,
-    .workflow-grid {
+    .workflow-grid,
+    .faq-grid {
       display: grid;
       gap: 18px;
     }
@@ -274,9 +370,14 @@
       grid-template-columns: repeat(5, 1fr);
     }
 
+    .faq-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .use-card,
     .feature-card,
     .workflow-step,
+    .faq-card,
     .price-card {
       border: 1px solid var(--sc-line);
       border-radius: 8px;
@@ -553,6 +654,25 @@
       padding: 26px;
     }
 
+    .faq-card {
+      padding: 22px;
+      min-height: 160px;
+    }
+
+    .faq-card h3 {
+      margin: 0 0 10px;
+      color: var(--sc-ink);
+      font-size: 1.03rem;
+      line-height: 1.35;
+    }
+
+    .faq-card p {
+      margin: 0;
+      color: var(--sc-muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+    }
+
     .contact-support-card h3 {
       margin: 0 0 12px;
       color: var(--sc-ink);
@@ -640,6 +760,7 @@
       .use-grid,
       .feature-grid,
       .workflow-grid,
+      .faq-grid,
       .included-list,
       .contact-card {
         grid-template-columns: 1fr;
@@ -703,6 +824,7 @@
             <li class="nav-item"><a class="nav-link active" href="/apps/justaidyn-screencam/">ScreenCam</a></li>
             <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
             <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+            <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
             <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
           </ul>
         </div>
@@ -716,7 +838,7 @@
         <div>
           <div class="eyebrow"><i class="bi bi-windows"></i> Windows desktop app</div>
           <h1 class="hero-title">JustAidyn ScreenCam</h1>
-          <p class="hero-copy">A focused screen recorder for lessons, demos, tutorials, and product walkthroughs. Capture your screen, camera, voice, system audio, annotations, watermark, and subtitle file from one lightweight app.</p>
+          <p class="hero-copy">Windows screen recorder with camera overlay and a practical video recorder for courses, online lessons, tutorials, demos, product walkthroughs, lectures, training videos, and quick explainer videos. Record screen and webcam together with voice, system audio, annotations, watermark, MP4 export, hotkeys, and SRT subtitle generation from one lightweight desktop app.</p>
           <div class="hero-actions">
             <a class="btn-main" href="/track/download/apps/justaidyn-screencam">
               <i class="bi bi-download"></i>
@@ -736,6 +858,8 @@
             </span>
           </div>
           <div class="hero-proof">
+            <span class="proof-pill"><i class="bi bi-display"></i> Screen recorder</span>
+            <span class="proof-pill"><i class="bi bi-mortarboard"></i> Video recorder for courses</span>
             <span class="proof-pill"><i class="bi bi-camera-video"></i> Camera overlay</span>
             <span class="proof-pill"><i class="bi bi-mic"></i> Voice and system audio</span>
             <span class="proof-pill"><i class="bi bi-pencil-square"></i> Drawing tools</span>
@@ -753,24 +877,24 @@
       <div class="landing-inner">
         <div class="section-heading">
           <p class="section-kicker">Built for real recording work</p>
-          <h2>One app for teaching, explaining, and publishing faster.</h2>
-          <p>ScreenCam keeps the common recording workflow compact: prepare the screen, show yourself when needed, annotate while recording, then save the video and subtitle file.</p>
+          <h2>One screen recorder and course video recorder for teaching, explaining, and publishing faster.</h2>
+          <p>ScreenCam keeps the common recording workflow compact: prepare the screen, show yourself when needed, annotate while recording, then save the MP4 video and subtitle file. It fits search needs such as screen recorder, video recorder for courses, lecture recorder, tutorial video recorder, and training video recorder without forcing a heavy editing suite into the workflow.</p>
         </div>
         <div class="use-grid">
           <article class="use-card">
             <i class="bi bi-mortarboard"></i>
-            <h3>Online lessons</h3>
-            <p>Record lectures, homework explanations, coding walkthroughs, and student feedback with a clear camera presence.</p>
+            <h3>Video courses and online lessons</h3>
+            <p>Use ScreenCam as course video recorder and lesson recording software for lectures, homework explanations, coding walkthroughs, and student feedback with a clear camera presence.</p>
           </article>
           <article class="use-card">
             <i class="bi bi-kanban"></i>
             <h3>Product demos</h3>
-            <p>Capture product flows with custom regions, pause/resume hotkeys, and a watermark for branded delivery.</p>
+            <p>Capture product flows with custom screen regions, pause/resume hotkeys, camera overlay, and watermark controls for branded delivery.</p>
           </article>
           <article class="use-card">
             <i class="bi bi-play-btn"></i>
-            <h3>Short-form content</h3>
-            <p>Use presets for social formats and export MP4 recordings that are easier to reuse across channels.</p>
+            <h3>Tutorial videos</h3>
+            <p>Record tutorial videos, training clips, software walkthroughs, presentation recordings, and short-form content with MP4 files that are easier to reuse across channels.</p>
           </article>
           <article class="use-card">
             <i class="bi bi-people"></i>
@@ -791,7 +915,7 @@
           <article class="feature-card">
             <i class="bi bi-display"></i>
             <h3>Region-based screen recording</h3>
-            <p>Select a capture area, use common presets, and save recordings as MP4 files.</p>
+            <p>Select a capture area, use common presets, record the screen region you need, and save recordings as MP4 files.</p>
           </article>
           <article class="feature-card">
             <i class="bi bi-camera-video"></i>
@@ -864,7 +988,7 @@
           <div class="section-heading">
             <p class="section-kicker">Pricing</p>
             <h2>Simple monthly access for ScreenCam.</h2>
-            <p>Start with a free trial, then continue with a monthly subscription if the workflow fits your lessons, demos, or content production.</p>
+            <p>Start with a free trial, then continue with a monthly software subscription if the workflow fits your lessons, demos, or content production. ScreenCam is a digital software product, not consulting, custom development, or advisory service.</p>
           </div>
           <ul class="included-list">
             <li><i class="bi bi-check-circle-fill"></i><span>Windows installer download</span></li>
@@ -873,6 +997,7 @@
             <li><i class="bi bi-check-circle-fill"></i><span>Subtitle file generation after recording</span></li>
             <li><i class="bi bi-check-circle-fill"></i><span>One purchased seat allows one active desktop session at a time</span></li>
           </ul>
+          <p class="trial-note">Seller: Aidyn Kunikeyev, operating under the JustAidyn brand. Payment checkout is provided through Paddle. The checkout shows the current subscription price, free trial, renewal period, taxes where applicable, and cancellation terms before payment.</p>
           <div class="requirements">
             <span class="requirement"><i class="bi bi-windows"></i> Windows</span>
             <span class="requirement"><i class="bi bi-camera-video"></i> Camera recommended</span>
@@ -885,7 +1010,7 @@
           <h3>Full recording workflow</h3>
           <div class="price"><strong>$5.90</strong><span>/ month</span><span class="old-price">$10.90</span></div>
           <p class="launch-note"><i class="bi bi-tag-fill"></i> Launch discount: first release price. Regular price will be $10.90/month later.</p>
-          <p class="trial-note">Includes a 14-day free trial. Subscription status is checked through your JustAidyn account. If you buy more than one quantity, that quantity becomes the number of devices that can use ScreenCam at the same time.</p>
+          <p class="trial-note">Includes a 14-day free trial. Subscription status is checked through your JustAidyn account. If you buy more than one quantity, that quantity becomes the number of devices that can use ScreenCam at the same time. Review the Terms, Subscription Terms, Privacy Policy, and Refund Policy before purchase.</p>
           <div class="price-actions">
             <button class="btn-subscribe subscribe-action" type="button" onclick="openSubscribeCheckout()">
               <i class="bi bi-star"></i>
@@ -905,13 +1030,61 @@
       </div>
     </section>
 
+    <section class="landing-band soft-band" id="faq">
+      <div class="landing-inner">
+        <div class="section-heading">
+          <p class="section-kicker">FAQ</p>
+          <h2>Screen recording for courses, lessons, and tutorials.</h2>
+          <p>These answers help visitors and search engines understand exactly what JustAidyn ScreenCam does.</p>
+        </div>
+        <div class="faq-grid">
+          <article class="faq-card">
+            <h3>What is the best screen recorder for video courses?</h3>
+            <p>The best recorder for video courses should capture screen, camera, microphone audio, annotations, and export a reusable video file. JustAidyn ScreenCam is built for this workflow on Windows, especially for lessons, tutorials, demos, and training videos.</p>
+          </article>
+          <article class="faq-card">
+            <h3>Can I record my screen and camera at the same time?</h3>
+            <p>Yes. ScreenCam can record the selected screen region while keeping a live camera preview visible, so course creators and teachers can explain material with face-to-camera context.</p>
+          </article>
+          <article class="faq-card">
+            <h3>Can I use JustAidyn ScreenCam as a video recorder for courses?</h3>
+            <p>Yes. ScreenCam is designed as a video recorder for courses, online lessons, lecture recordings, homework explanations, coding walkthroughs, product demos, student feedback, and other educational videos.</p>
+          </article>
+          <article class="faq-card">
+            <h3>Does it export MP4 videos?</h3>
+            <p>Yes. ScreenCam saves recordings as MP4 files, making them easier to upload to course platforms, learning portals, video hosting tools, and social channels.</p>
+          </article>
+          <article class="faq-card">
+            <h3>Does it generate subtitles?</h3>
+            <p>Yes. After a recording stops, ScreenCam can generate an SRT subtitle file that can be reused with video players, editing software, and publishing workflows.</p>
+          </article>
+          <article class="faq-card">
+            <h3>Is it available for Windows?</h3>
+            <p>Yes. JustAidyn ScreenCam is a downloadable Windows desktop app. A Google account is used for sign-in and subscription status checks.</p>
+          </article>
+          <article class="faq-card">
+            <h3>How much does ScreenCam cost?</h3>
+            <p>ScreenCam Monthly costs $5.90 per month during the launch discount period and includes a 14-day free trial. The regular price is planned as $10.90 per month later.</p>
+          </article>
+          <article class="faq-card">
+            <h3>Is JustAidyn ScreenCam a screen recorder with camera overlay?</h3>
+            <p>Yes. It records a selected screen region and keeps a webcam preview available for lessons, demos, tutorial videos, and training content where viewers need to see both the screen and presenter.</p>
+          </article>
+          <article class="faq-card">
+            <h3>Who sells JustAidyn ScreenCam?</h3>
+            <p>JustAidyn ScreenCam is sold by Aidyn Kunikeyev under the JustAidyn brand. Product support is available by email, WhatsApp, and Telegram, and the Terms, Privacy Policy, Subscription Terms, and Refund Policy are linked on this page.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <section class="landing-band soft-band" id="contact">
       <div class="landing-inner contact-layout">
         <div>
           <div class="section-heading">
             <p class="section-kicker">Contact</p>
             <h2>Need help with setup, billing, or the desktop app?</h2>
-            <p>Use the channel that fits the question. For account and subscription issues, include the email used for Google sign-in so support can find the correct JustAidyn profile.</p>
+            <p>Seller and product support: Aidyn Kunikeyev, aidyn.daulet@gmail.com. Use the channel that fits the question. For account and subscription issues, include the email used for Google sign-in so support can find the correct JustAidyn profile.</p>
           </div>
           <div class="contact-card">
             <a class="contact-link-card" href="mailto:aidyn.daulet@gmail.com">
@@ -933,6 +1106,21 @@
               <i class="bi bi-receipt"></i>
               <strong>Refund policy</strong>
               <span>Review subscription, cancellation, and refund terms before purchase.</span>
+            </a>
+            <a class="contact-link-card" href="/privacy">
+              <i class="bi bi-shield-lock"></i>
+              <strong>Privacy Policy</strong>
+              <span>How account, analytics, download, and support data are handled.</span>
+            </a>
+            <a class="contact-link-card" href="/terms">
+              <i class="bi bi-file-text"></i>
+              <strong>Terms of Service</strong>
+              <span>Rules for using JustAidyn websites and digital products.</span>
+            </a>
+            <a class="contact-link-card" href="/subscription-terms">
+              <i class="bi bi-credit-card"></i>
+              <strong>Subscription Terms</strong>
+              <span>Billing, renewal, access, and cancellation details.</span>
             </a>
           </div>
         </div>

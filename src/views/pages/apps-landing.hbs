@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{title}}</title>
   <meta name="description" content="{{description}}">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  {{#if canonicalUrl}}<link rel="canonical" href="{{canonicalUrl}}">{{/if}}
+  <meta property="og:title" content="{{title}}">
+  <meta property="og:description" content="{{description}}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{canonicalUrl}}">
+  <meta property="og:image" content="https://justaidyn.com/images/generated/screencam-product-mockup.png">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="/favicon.png?v=20260331c">
   <link href="/css/bootstrap.min.css" rel="stylesheet">
   <link href="/css/bootstrap-icons.css" rel="stylesheet">
@@ -62,6 +70,12 @@
     .program-pill { display: inline-flex; align-items: center; gap: 7px; min-height: 30px; padding: 5px 10px; border-radius: 8px; background: rgba(83,93,161,.10); color: var(--apps-primary-dark); font-size: .78rem; font-weight: 900; }
     .program-pill.downloads { background: rgba(20,183,137,.12); color: #0e8a63; }
     .program-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; }
+    .apps-policy-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .apps-policy-link { display: block; min-height: 118px; padding: 18px; border: 1px solid var(--apps-line); border-radius: 8px; background: #fff; color: var(--apps-ink); text-decoration: none; }
+    .apps-policy-link:hover { color: var(--apps-ink); border-color: rgba(83,93,161,.38); box-shadow: 0 14px 28px rgba(23,33,43,.08); }
+    .apps-policy-link i { display: inline-grid; place-items: center; width: 36px; height: 36px; margin-bottom: 10px; border-radius: 8px; background: rgba(83,93,161,.10); color: var(--apps-primary); }
+    .apps-policy-link strong, .apps-policy-link span { display: block; }
+    .apps-policy-link span { margin-top: 6px; color: var(--apps-muted); font-size: .86rem; line-height: 1.5; }
     @media (max-width: 991px) {
       .apps-page { padding-top: 0 !important; }
       .apps-hero { min-height: auto; }
@@ -70,7 +84,7 @@
     }
     @media (max-width: 640px) {
       .apps-band { padding: 40px 18px; }
-      .apps-grid, .apps-stats { grid-template-columns: 1fr; }
+      .apps-grid, .apps-stats, .apps-policy-grid { grid-template-columns: 1fr; }
       .apps-actions .apps-btn, .program-actions .apps-btn { width: 100%; }
     }
   </style>
@@ -109,8 +123,8 @@
       <div class="apps-inner apps-hero-grid">
         <div>
           <div class="apps-kicker"><i class="bi bi-grid-3x3-gap"></i> JustAidyn Apps</div>
-          <h1>Desktop programs from JustAidyn.</h1>
-          <p>Download the latest versions, open product pages, and see how often JustAidyn applications have been downloaded.</p>
+          <h1>Screen recorder and digital software products from JustAidyn.</h1>
+          <p>Download subscription-ready desktop tools for screen recording, video courses, online lessons, tutorials, demos, education, research, and productivity workflows. JustAidyn Apps sells software access and digital product updates, not consulting, custom development, or advisory services.</p>
           <div class="apps-actions">
             <a class="apps-btn primary" href="#programs"><i class="bi bi-window-stack"></i> View programs</a>
             <a class="apps-btn secondary" href="#contact"><i class="bi bi-envelope"></i> Contact</a>
@@ -128,7 +142,7 @@
         <div class="apps-section-heading">
           <div class="apps-kicker"><i class="bi bi-download"></i> Programs</div>
           <h2>Latest available applications.</h2>
-          <p>Each card shows the current release and the number of tracked downloads from JustAidyn.</p>
+          <p>Each card shows the current release, product description, and download path. Use JustAidyn ScreenCam when you need a Windows screen recorder, video recorder for courses, lecture recorder, tutorial video recorder, or MP4 screen recording tool with camera overlay.</p>
         </div>
         <div class="apps-grid">
           {{#each apps}}
@@ -159,11 +173,27 @@
         <div class="apps-section-heading">
           <div class="apps-kicker"><i class="bi bi-life-preserver"></i> Contact</div>
           <h2>Need help with an installer or subscription?</h2>
-          <p>For support, send your product name, app version, Windows version, and the email used for JustAidyn sign-in.</p>
+          <p>Seller and product support: Aidyn Kunikeyev, aidyn.daulet@gmail.com. For support, send your product name, app version, Windows version, and the email used for JustAidyn sign-in.</p>
         </div>
         <div class="apps-actions">
           <a class="apps-btn primary" href="mailto:aidyn.daulet@gmail.com"><i class="bi bi-envelope"></i> Email support</a>
           <a class="apps-btn secondary" href="/refunds"><i class="bi bi-receipt"></i> Refund policy</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="apps-band apps-white" id="policies">
+      <div class="apps-inner">
+        <div class="apps-section-heading">
+          <div class="apps-kicker"><i class="bi bi-file-earmark-text"></i> Product policies</div>
+          <h2>Terms, privacy, and refund information.</h2>
+          <p>These pages explain how JustAidyn digital products, subscriptions, account access, cancellations, refunds, and customer data are handled.</p>
+        </div>
+        <div class="apps-policy-grid">
+          <a class="apps-policy-link" href="/privacy"><i class="bi bi-shield-lock"></i><strong>Privacy Policy</strong><span>Data collected for accounts, downloads, analytics, and support.</span></a>
+          <a class="apps-policy-link" href="/terms"><i class="bi bi-file-text"></i><strong>Terms of Service</strong><span>Rules for using JustAidyn websites and digital products.</span></a>
+          <a class="apps-policy-link" href="/subscription-terms"><i class="bi bi-credit-card"></i><strong>Subscription Terms</strong><span>Billing, access, renewal, and cancellation details.</span></a>
+          <a class="apps-policy-link" href="/refunds"><i class="bi bi-receipt"></i><strong>Refund Policy</strong><span>Refund eligibility and support process for digital products.</span></a>
         </div>
       </div>
     </section>

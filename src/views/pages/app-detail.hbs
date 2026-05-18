@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{title}}</title>
   <meta name="description" content="{{description}}">
+  {{#if noIndex}}<meta name="robots" content="noindex,follow">{{else}}<meta name="robots" content="index,follow,max-image-preview:large">{{/if}}
+  {{#if canonicalUrl}}<link rel="canonical" href="{{canonicalUrl}}">{{/if}}
+  <meta property="og:title" content="{{title}}">
+  <meta property="og:description" content="{{description}}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{canonicalUrl}}">
+  <meta property="og:image" content="https://justaidyn.com/images/generated/screencam-product-mockup.png">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="/favicon.png?v=20260331c">
   <link href="/css/bootstrap.min.css" rel="stylesheet">
   <link href="/css/bootstrap-icons.css" rel="stylesheet">
@@ -162,7 +170,7 @@
       <div class="app-inner">
         <div class="app-section-heading">
           <div class="app-kicker"><i class="bi bi-stars"></i> Features</div>
-          <h2>Product page structure for every JustAidyn program.</h2>
+          <h2>Downloadable software product.</h2>
           <p>{{description}}</p>
         </div>
         <div class="app-grid">
@@ -197,7 +205,8 @@
           <p class="app-note">{{pricingNote}}</p>
           <div class="app-actions">
             <a class="app-btn primary" href="{{primaryAction.url}}"><i class="bi bi-download"></i> {{primaryAction.label}}</a>
-            <a class="app-btn secondary" href="/subscription-terms"><i class="bi bi-file-text"></i> Terms</a>
+            <a class="app-btn secondary" href="/subscription-terms"><i class="bi bi-file-text"></i> Subscription terms</a>
+            <a class="app-btn secondary" href="/refunds"><i class="bi bi-receipt"></i> Refund policy</a>
           </div>
         </aside>
       </div>
@@ -209,7 +218,7 @@
           <div class="app-section-heading">
             <div class="app-kicker"><i class="bi bi-life-preserver"></i> Contact</div>
             <h2>Support for setup, billing, and product questions.</h2>
-            <p>Contact JustAidyn through the channel that fits the request. For account issues, include the email used for Google sign-in.</p>
+            <p>Seller and product support: Aidyn Kunikeyev, aidyn.daulet@gmail.com. Contact JustAidyn through the channel that fits the request. For account issues, include the email used for Google sign-in.</p>
           </div>
           <div class="app-contact-card">
             <div class="app-contact-list">

@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{title}}</title>
   <meta name="description" content="{{description}}">
-  <link rel="canonical" href="https://justaidyn.com/{{platform}}">
+  {{#if canonicalUrl}}<link rel="canonical" href="{{canonicalUrl}}">{{/if}}
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="{{title}}">
   <meta property="og:description" content="{{description}}">
-  <meta property="og:url" content="https://justaidyn.com/{{platform}}">
+  <meta property="og:url" content="{{canonicalUrl}}">
   <meta property="og:site_name" content="JustAidyn">
   {{#if posts.[0].coverImage}}<meta property="og:image" content="https://justaidyn.com{{posts.[0].coverImage}}">{{/if}}
   <!-- Twitter Card -->
@@ -18,7 +18,7 @@
   <meta name="twitter:title" content="{{title}}">
   <meta name="twitter:description" content="{{description}}">
   {{#if posts.[0].coverImage}}<meta name="twitter:image" content="https://justaidyn.com{{posts.[0].coverImage}}">{{/if}}
-  {{#if isPaywall}}<meta name="robots" content="noindex">{{/if}}
+  <meta name="robots" content="index,follow,max-image-preview:large">
   <link rel="icon" type="image/png" href="/favicon.png?v=20260331c">
   <link href="/css/bootstrap.min.css" rel="stylesheet">
   <link href="/css/bootstrap-icons.css" rel="stylesheet">
@@ -256,6 +256,10 @@
           </div>
         {{/if}}
       {{else}}
+        <section class="hub-intro" id="intro">
+          <h1>no Face Thinker</h1>
+          <p class="hub-intro-lead">no Face Thinker is a subscription-based digital content product from JustAidyn. Members get online access to structured posts, essays, and learning materials about independent thinking, AI workflows, productivity, education, research, and self-development. It is not a consulting, advisory, or custom service offering.</p>
+        </section>
         <div class="posts-header" id="posts">
           <h1>{{heroTitle}}</h1>
           {{#if (eq currentUser.role 'superadmin')}}
@@ -297,7 +301,8 @@
           <div class="paywall-card">
             <i class="bi bi-star-fill" style="font-size:2.2rem;color:#535da1;display:block;margin-bottom:16px"></i>
             <h2 data-en="Subscribe to read all posts" data-ru="Подпишитесь для полного доступа" data-kk="Барлық постқа қол жеткізу үшін жазылыңыз">Subscribe to read all posts</h2>
-            <p data-en="Get full access to all no Face Thinker posts. $3.90/month with a 7-day free trial." data-ru="Получите полный доступ ко всем постам no Face Thinker. $3.90/мес, 7 дней бесплатно." data-kk="no Face Thinker постарының барлығына қол жеткізіңіз. Айына $3.90, 7 күн тегін.">Get full access to all no Face Thinker posts. $3.90/month with a 7-day free trial.</p>
+            <p data-en="Get full online access to all no Face Thinker digital posts and structured learning materials. $3.90/month with a 7-day free trial." data-ru="Получите полный онлайн-доступ ко всем цифровым постам и учебным материалам no Face Thinker. $3.90/мес, 7 дней бесплатно." data-kk="no Face Thinker цифрлық посттары мен құрылымды оқу материалдарына толық онлайн қол жеткізіңіз. Айына $3.90, 7 күн тегін.">Get full online access to all no Face Thinker digital posts and structured learning materials. $3.90/month with a 7-day free trial.</p>
+            <p style="font-size:0.9rem;color:#5e6c79;margin-top:-8px;">Seller and support: Aidyn Kunikeyev, aidyn.daulet@gmail.com. Review <a href="/terms">Terms</a>, <a href="/privacy">Privacy Policy</a>, <a href="/subscription-terms">Subscription Terms</a>, and <a href="/refunds">Refund Policy</a> before purchase.</p>
             <p style="font-size:0.9rem;color:#5e6c79;margin-top:-8px;"
                data-en="Subscription quantity defines the number of simultaneous active sessions for products that require session checks."
                data-ru="Количество в подписке определяет число одновременных активных сессий для продуктов, где требуется проверка сессии."
