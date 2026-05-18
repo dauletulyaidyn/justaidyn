@@ -22,13 +22,13 @@
     }
 
     body { background: #f6f8fb; color: var(--app-ink); }
-    .app-page { padding-top: 112px; overflow: hidden; }
-    .app-band { padding: 74px 24px; }
+    .app-page { padding-top: 0; overflow: hidden; }
+    .app-band { padding: 58px 24px; }
     .app-inner { width: min(1140px, 100%); margin: 0 auto; }
     .app-hero {
-      min-height: calc(100vh - 112px);
+      min-height: auto;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       background:
         linear-gradient(90deg, rgba(246, 248, 251, 0.98), rgba(246, 248, 251, 0.88) 56%, rgba(246, 248, 251, 0.70)),
         url("/images/generated/screencam-hero-bg.png") center / cover no-repeat;
@@ -85,13 +85,13 @@
     .app-contact-link strong, .app-contact-link span { display: block; }
     .app-contact-link span { color: var(--app-muted); font-size: .86rem; margin-top: 6px; line-height: 1.5; }
     @media (max-width: 991px) {
-      .app-page { padding-top: 190px; }
+      .app-page { padding-top: 0 !important; }
       .app-hero { min-height: auto; }
       .app-hero-grid, .app-price-layout, .app-contact-layout { grid-template-columns: 1fr; }
       .app-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     @media (max-width: 640px) {
-      .app-band { padding: 48px 18px; }
+      .app-band { padding: 40px 18px; }
       .app-actions .app-btn { width: 100%; }
       .app-grid, .app-included, .app-contact-list { grid-template-columns: 1fr; }
     }

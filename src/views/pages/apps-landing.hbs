@@ -22,13 +22,13 @@
     }
 
     body { background: #f6f8fb; color: var(--apps-ink); }
-    .apps-page { padding-top: 112px; overflow: hidden; }
-    .apps-band { padding: 74px 24px; }
+    .apps-page { padding-top: 0; overflow: hidden; }
+    .apps-band { padding: 58px 24px; }
     .apps-inner { width: min(1140px, 100%); margin: 0 auto; }
     .apps-hero {
-      min-height: calc(78vh - 112px);
+      min-height: auto;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       background:
         linear-gradient(90deg, rgba(246, 248, 251, 0.98), rgba(246, 248, 251, 0.90) 56%, rgba(246, 248, 251, 0.70)),
         url("/images/generated/apps-hub-bg.png") center / cover no-repeat;
@@ -63,13 +63,13 @@
     .program-pill.downloads { background: rgba(20,183,137,.12); color: #0e8a63; }
     .program-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; }
     @media (max-width: 991px) {
-      .apps-page { padding-top: 190px; }
+      .apps-page { padding-top: 0 !important; }
       .apps-hero { min-height: auto; }
       .apps-hero-grid { grid-template-columns: 1fr; }
       .apps-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     @media (max-width: 640px) {
-      .apps-band { padding: 48px 18px; }
+      .apps-band { padding: 40px 18px; }
       .apps-grid, .apps-stats { grid-template-columns: 1fr; }
       .apps-actions .apps-btn, .program-actions .apps-btn { width: 100%; }
     }

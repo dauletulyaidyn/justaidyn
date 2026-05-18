@@ -139,8 +139,8 @@ a:hover {
 }
 
 .section-padding {
-  padding-top: 120px;
-  padding-bottom: 120px;
+  padding-top: 84px;
+  padding-bottom: 84px;
 }
 
 b,
@@ -963,27 +963,29 @@ strong {
   background: var(--secondary-color);
   position: relative;
   overflow: hidden;
-  padding-top: 330px;
-  padding-bottom: 330px;
+  padding-top: 56px;
+  padding-bottom: 92px;
+  min-height: 0;
 }
 
 @media screen and (min-width: 992px) {
   .navbar-split + main .hero {
-    padding-top: 520px;
+    padding-top: 56px;
   }
 
   .navbar-split + main .hero-text {
-    top: 190px;
+    top: 0;
   }
 
   .navbar-split + main .hero-position-card {
-    padding-top: 190px;
+    padding-top: 0;
   }
 }
 
 @media  screen and (min-width: 991px) {
   .hero {
-    height: 60vh;
+    height: auto;
+    min-height: clamp(520px, 52vh, 680px);
   }
 }
 
@@ -1031,7 +1033,7 @@ strong {
   justify-content: center;
   align-items: flex-start;
   height: 100%;
-  padding-top: 70px;
+  padding-top: 24px;
   position: relative;
   z-index: 22;
 }
@@ -1054,7 +1056,7 @@ strong {
 .hero-text {
   position: relative;
   z-index: 22;
-  top: 70px;
+  top: 0;
 }
 
 .hero-skills-wrap {
@@ -2046,8 +2048,8 @@ strong {
 -----------------------------------------*/
 .subpage-hero {
   background: var(--secondary-color);
-  padding-top: 190px;
-  padding-bottom: 80px;
+  padding-top: 72px;
+  padding-bottom: 64px;
   position: relative;
   overflow: hidden;
 }
@@ -3237,8 +3239,9 @@ h2[data-en="Group formats and pricing"] + .row .group-plan-accent {
 -----------------------------------------*/
 @media screen and (min-width: 1600px) {
   .hero {
-    padding-top: 380px;
-    padding-bottom: 380px;
+    padding-top: 64px;
+    padding-bottom: 104px;
+    min-height: 700px;
   }
 
   .hero-image-wrap {
@@ -3287,8 +3290,8 @@ h2[data-en="Group formats and pricing"] + .row .group-plan-accent {
   }
 
   .section-padding {
-    padding-top: 80px;
-    padding-bottom: 80px;
+    padding-top: 64px;
+    padding-bottom: 64px;
   }
 
   .custom-btn,
@@ -3583,13 +3586,14 @@ h2[data-en="Group formats and pricing"] + .row .group-plan-accent {
   }
 
   .hero {
-    padding-top: 200px;
-    padding-bottom: 400px;
+    padding-top: 34px;
+    padding-bottom: 76px;
+    min-height: auto;
   }
 
   .hero-text {
     top: 0;
-    margin-bottom: 120px;
+    margin-bottom: 40px;
   }
 
   .about-thumb {

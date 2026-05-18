@@ -1,8 +1,8 @@
 body.course-page {
   background: var(--section-bg-color);
   font-family: "Roboto Slab", serif;
-  --course-header-offset: var(--site-header-offset, 108px);
-  --course-hero-gap: 18px;
+  --course-header-offset: 0px;
+  --course-hero-gap: 52px;
 }
 
 body.course-page[data-page-key="lite-group"],
@@ -11,7 +11,7 @@ body.course-page[data-page-key="standard-plus-group"],
 body.course-page[data-page-key="vip-group"],
 body.course-page[data-page-key="learning-steps"],
 body.course-page[data-page-key="learning-principles"] {
-  --course-hero-gap: 18px;
+  --course-hero-gap: 52px;
 }
 
 .course-page,
@@ -150,10 +150,10 @@ body.course-page[data-page-key="learning-principles"] {
     radial-gradient(circle at top left, rgba(255, 255, 255, 0.14), transparent 30%),
     linear-gradient(135deg, var(--secondary-color), var(--primary-color));
   align-items: flex-start !important;
-  min-height: 580px;
+  min-height: auto;
   overflow: visible;
-  padding-top: calc(var(--course-header-offset) + var(--course-hero-gap));
-  padding-bottom: 100px;
+  padding-top: var(--course-hero-gap);
+  padding-bottom: 80px;
   position: relative;
 }
 
@@ -939,7 +939,7 @@ body.course-page[data-page-key="learning-principles"] {
 
 @media screen and (max-width: 991px) {
   body.course-page {
-    --course-hero-gap: 18px;
+    --course-hero-gap: 34px;
   }
 
   .course-navbar .container {
@@ -980,7 +980,7 @@ body.course-page[data-page-key="learning-principles"] {
 
   .course-page .hero {
     min-height: auto;
-    padding-bottom: 88px;
+    padding-bottom: 70px;
   }
 
   .course-page .hero-copy {
@@ -1012,7 +1012,7 @@ body.course-page[data-page-key="learning-principles"] {
 
 @media screen and (max-width: 767px) {
   body.course-page {
-    --course-hero-gap: 18px;
+    --course-hero-gap: 30px;
   }
 
   .course-navbar {
@@ -1096,7 +1096,7 @@ body.course-page[data-page-key="learning-principles"] {
   }
 
   .course-page .hero {
-    padding-bottom: 84px;
+    padding-bottom: 64px;
   }
 
   .course-page .course-price-value {
